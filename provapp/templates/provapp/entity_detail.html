@@ -1,0 +1,30 @@
+{% extends "provapp/base.html" %}
+
+{% block title %}Details for an Entity{% endblock %}
+
+{% block content %}
+
+<h2>Entity: {{ entity.label }}</h2>
+Details: 
+<ul>
+<li>id: {{ entity.id }}</li>
+<li>label: {{ entity.label }}</li>
+<li>type: {{ entity.type }}</li>
+<li>description: {{ entity.description }}</li>
+</ul>
+
+<!-- <ul>
+{% for entity in activity.datacomponent_set.all %}
+       <li><a href="{% url 'dmapp:result' datacomponent.id %}">{{ datacomponent.name }}</a></li>
+{% endfor %}
+</ul>
+
+Input DataComponents:
+<ul>
+{% for datacomponent in activity.inputdata.all %}
+       <li><a href="{% url 'dmapp:result' datacomponent.id %}">{{ datacomponent.name }}</a></li>
+{% endfor %}
+
+</ul>
+-->
+{% endblock %}

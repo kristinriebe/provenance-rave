@@ -1,0 +1,21 @@
+{% extends "provapp/base.html" %}
+
+{% block title %}Provenance webapp - Agents{% endblock %}
+
+{% block content %}
+<h1>RAVE Agents</h1>
+
+<p>
+Following agents are recorded for RAVE. Click on one of them to show the details.
+</p>
+{% if agent_list %}
+    <ul>
+    {% for agent in agent_list %}
+        <li><a href="{% url 'provapp:agent_detail' agent.id %}">{{ agent.label }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No agents are available.</p>
+{% endif %}
+
+{% endblock %}

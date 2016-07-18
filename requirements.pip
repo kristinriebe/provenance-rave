@@ -1,0 +1,9 @@
+django>=1.9
+django-braces
+djangorestframework
+django-extensions
+django-test-without-migrations
+pygments
+markdown
+BeautifulSoup
+pygraphviz
