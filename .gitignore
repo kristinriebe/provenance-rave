@@ -1,0 +1,7 @@
+*~
+*txt
+*pyc
+*sql
+*all*.sqlite3
+*.csv
+*png
