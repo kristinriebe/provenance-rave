@@ -1,7 +1,7 @@
 # Provenance webapp in Django
 This webapp is used as a testing environment for implementing the current IVOA Provenance Data Model/W3C model. 
 
-**Warning: This is at a very preliminary state, used only for testing purpoes and object to many changes! No guarantees for anything!**
+**Warning: This is at a very preliminary state, used only for testing purposes and object to many changes! No guarantees for anything!**
 
 
 ## Dependencies/Installation
