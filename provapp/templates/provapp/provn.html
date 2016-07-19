@@ -63,6 +63,14 @@
         <br>
     {% endfor %}
 {% endif %}
+{% if wasAttributedTo_list %}
+    {% for w in wasAttributedTo_list %}
+        <span class="wasAttributedTo">wasAttributedTo</span>( <a href="{% url 'provapp:entity_detail' w.entity.id %}">{{ w.entity.id }}</a>,
+        <a href="{% url 'provapp:agent_detail' w.agent.id %}">{{ w.agent.id }}</a>,
+        [id = '{{ w.id }}, prov:role = '{{ w.role }}'] ),
+        <br>
+    {% endfor %}
+{% endif %}
 </div>
 
 

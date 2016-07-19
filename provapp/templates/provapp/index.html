@@ -19,13 +19,24 @@
     <li><a href="{% url 'provapp:activities' %}">Activity</a></li>
     <li><a href="{% url 'provapp:entities' %}">Entity</a></li>
     <li><a href="{% url 'provapp:agents' %}">Agent</a></li>
-</ul>    
+</ul>
 <p>
-	Or choose any of the following:
+    For one activity, the xml or provjson representation is shown by appending
+    <code>/xml</code> or <code>/json</code> to the existing detail url, e.g.:
+    <ul>
+        <li>details: <a href="/provapp/activities/rave:act_dataextraction/">/provapp/activities/rave:act_dataextraction/</a></li>
+         <li>xml: <a href="/provapp/activities/rave:act_dataextraction/xml/">/provapp/activities/rave:act_dataextraction/xml/</a></li>
+         <li>json: <a href="/provapp/activities/rave:act_dataextraction/json/">/provapp/activities/rave:act_dataextraction/json/</a></li>
+    </ul>
+</p>
+
+<p>
+    Choose one of the following links to explore more provenance graphs:
 </p>
 <ul>
-	<li>Detailed provenance: <a href="{% url 'provapp:get_observationId' %}">Form for RAVE_Obs_Ids</a></li>
-	<li>Overview: <a href="{% url 'provapp:graph' %}">Graph</a> of the main workflow</li>
-	<li>Overview: <a href="{% url 'provapp:provn' %}">Provn</a> representation</li>
+    <li>Detailed provenance: <a href="{% url 'provapp:get_observationId' %}">Form for RAVE_Obs_Ids</a></li>
+    <li>Overview: <a href="{% url 'provapp:graph' %}">Graph</a> of the main workflow</li>
+    <li>Overview: <a href="{% url 'provapp:provn' %}">Provn</a> representation</li>
+    <li>Overview: <a href="{% url 'provapp:prettyprovn' %}">Pretty Provn</a> representation (with clickable links)</li>
 </ul>
 {% endblock %}

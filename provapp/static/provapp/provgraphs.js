@@ -1,5 +1,7 @@
-/* script based on d3-examples, see e.g. https://bost.ocks.org/mike/sankey/ */
-/* adjusted by Kristin Riebe */
+/* script based on d3-examples, see e.g. https://bost.ocks.org/mike/sankey/
+ * and http://bl.ocks.org/mbostock/4062045;
+ * adjusted by Kristin Riebe, AIP
+ */
 
 var margin = {top: 1, right: 1, bottom: 6, left: 1},
     width = 960 - margin.left - margin.right,
@@ -23,7 +25,7 @@ var sankey = d3.sankey()
 var path = sankey.link();
 
 // load the data
-var jsonurl = 'json' // append json to the path
+var jsonurl = 'graphjson' // append graphjson to the path to get json representation of data
 d3.json(jsonurl, function(prov) {
   sankey
       .nodes(prov.nodes)
@@ -86,20 +88,20 @@ d3.json(jsonurl, function(prov) {
 });
 
 
-/* Force-directed graph layout, 
- * see http://bl.ocks.org/mbostock/4062045 for an example.
- */
+/* Force-directed graph layout */
 
 // First draw some lines for a simple legend
 var svg3 = d3.select("#force-legend").append("svg")
-            .attr("width", 160)
-            .attr("height", 70);
+            .attr("width", 300)
+            .attr("height", 65);
 
 var lineData = [
-  { "x1": 5, "y1": 10, "x2": 40, "y2": 10, "name": "used" },
-  { "x1": 5, "y1": 25, "x2": 40, "y2": 25, "name": "wasGeneratedBy" },
-  { "x1": 5, "y1": 40, "x2": 40, "y2": 40, "name": "wasDerivedFrom" },
-  { "x1": 5, "y1": 55, "x2": 40, "y2": 55, "name": "hadMember" }
+  { "x1": 5, "y1": 15, "x2": 40, "y2": 15, "name": "used" },
+  { "x1": 5, "y1": 30, "x2": 40, "y2": 30, "name": "wasGeneratedBy" },
+  { "x1": 5, "y1": 45, "x2": 40, "y2": 45, "name": "hadMember" },
+  { "x1": 155, "y1": 15, "x2": 190, "y2": 15, "name": "wasAssociatedWith" },
+  { "x1": 155, "y1": 30, "x2": 190, "y2": 30, "name": "wasAttributedTo" },
+  { "x1": 155, "y1": 45, "x2": 190, "y2": 45, "name": "wasDerivedFrom" },
   ];
 
 var lines = svg3.selectAll("line")
@@ -139,8 +141,7 @@ var svg2 = d3.select("#force-graph").append("svg")
 
 var defs = svg2.append("svg:defs");
 
-var jsonurl = 'json' //'/dmapp/data/'+{{ datacomponent.id }}+'/json' -- it's enough to just append the json
-//alert("Url for json: "+jsonurl)
+var jsonurl = 'graphjson';
 d3.json(jsonurl, function(prov) {
 
   var force = d3.layout.force()
@@ -154,7 +155,7 @@ d3.json(jsonurl, function(prov) {
 
   // Per-type markers, as they don't inherit styles.
   svg2.append("defs").selectAll("marker")
-      .data(["used", "wasGeneratedBy", "wasAssociatedWith", "hadMember", "wasDerivedFrom"])
+      .data(["used", "wasGeneratedBy", "wasAssociatedWith", "wasAssociatedWith", "hadMember", "wasDerivedFrom"])
     .enter().append("marker")
       .attr("id", function(d) { return d; })
       .attr("viewBox", "0 -5 10 10")

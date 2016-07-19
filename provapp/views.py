@@ -4,7 +4,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
 
-from .models import Activity, Entity, Agent, Used, WasGeneratedBy, WasAssociatedWith, HadMember, WasDerivedFrom, RaveObsids
+from .models import Activity, Entity, Agent, Used, WasGeneratedBy
+from .models import WasAssociatedWith, WasAttributedTo, HadMember, WasDerivedFrom
+from .models import RaveObsids
 
 import json
 from django.http import JsonResponse
@@ -65,6 +67,7 @@ class ActivityDetailView(generic.DetailView):
         context['used_list'] = Used.objects.all()[:]
         context['wasGeneratedBy_list'] = WasGeneratedBy.objects.all()[:]
         context['wasAssociatedWith_list'] = WasAssociatedWith.objects.all()[:]
+        context['wasAttributedTo_list'] = WasAttributedTo.objects.all()[:]
         return context
 
 
@@ -269,6 +272,7 @@ def provn(request):
     used_list = Used.objects.order_by('-id')[:]
     wasGeneratedBy_list = WasGeneratedBy.objects.order_by('-id')[:]
     wasAssociatedWith_list = WasAssociatedWith.objects.order_by('-id')[:]
+    wasAttributedTo_list = WasAttributedTo.objects.order_by('-id')[:]
     #return JsonResponse(activity_dict)
     #return render(request, 'provapp/activities.html', {'activity_list': activity_list})
 
@@ -291,6 +295,9 @@ def provn(request):
     for wa in wasAssociatedWith_list:
         provstr = provstr + "wasAssociatedWith(" + wa.activity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', prov:role = '" + wa.role + "']),\n"
 
+    for wa in wasAttributedTo_list:
+        provstr = provstr + "wasAttributedTo(" + wa.entity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', prov:role = '" + wa.role + "']),\n"
+
     provstr += "endDocument"
 
     return HttpResponse(provstr, content_type='text/plain')
@@ -302,6 +309,7 @@ def prettyprovn(request):
     used_list = Used.objects.order_by('-id')[:]
     wasGeneratedBy_list = WasGeneratedBy.objects.order_by('-id')[:]
     wasAssociatedWith_list = WasAssociatedWith.objects.order_by('-id')[:]
+    wasAttributedTo_list = WasAttributedTo.objects.order_by('-id')[:]
     #return JsonResponse(activity_dict)
     return render(request, 'provapp/provn.html', 
                  {'activity_list': activity_list, 
@@ -309,7 +317,8 @@ def prettyprovn(request):
                   'agent_list': agent_list,
                   'used_list': used_list,
                   'wasGeneratedBy_list': wasGeneratedBy_list,
-                  'wasAssociatedWith_list': wasAssociatedWith_list
+                  'wasAssociatedWith_list': wasAssociatedWith_list,
+                  'wasAttributedTo_list': wasAttributedTo_list
                  })
 
 
@@ -331,6 +340,7 @@ def fullgraphjson(request):
     used_list = Used.objects.all()
     wasGeneratedBy_list = WasGeneratedBy.objects.all()
     wasAssociatedWith_list = WasAssociatedWith.objects.all()
+    wasAttributedTo_list = WasAttributedTo.objects.all()
     hadMember_list = HadMember.objects.all()
 
     nodes_dict = []
@@ -371,6 +381,10 @@ def fullgraphjson(request):
 
     for w in wasAssociatedWith_list:
         links_dict.append({"source": map_activity_ids[w.activity.id], "target": map_agent_ids[w.agent.id], "value": 0.2, "type": "wasAssociatedWith"})
+        count_link = count_link + 1
+
+    for w in wasAttributedTo_list:
+        links_dict.append({"source": map_entity_ids[w.entity.id], "target": map_agent_ids[w.agent.id], "value": 0.2, "type": "wasAttributedTo"})
         count_link = count_link + 1
 
     for h in hadMember_list:

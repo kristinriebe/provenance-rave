@@ -89,10 +89,6 @@ svg {
   stroke-width: 2px;
 }
 
-#licensing {
-  fill: green;
-}
-
 .link.sankey {
   /*stroke: #ccc;*/
   stroke-opacity: 0.5;
@@ -154,7 +150,7 @@ svg {
 }
 
 .link.wasAttributedTo {
-  stroke-dasharray: 0,2 1;
+  /*stroke-dasharray: 0,2 1;*/
   stroke: #ccc;
   fill: none;
 }
