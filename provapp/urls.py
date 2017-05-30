@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^activities/(?P<pk>[0-9a-zA-Z.:_-]+)/json/$', views.ActivityDetailJsonView.as_view(), name='activity_detail_json'),
     url(r'^activities/(?P<pk>[0-9a-zA-Z.:_-]+)/xml/$', views.ActivityDetailXmlView.as_view(), name='activity_detail_xml'),
     url(r'^activities/(?P<activity_id>[0-9a-zA-Z.:_-]+)/myjson/$', views.myjson, name='myjson'),
-    
+
     # entities:
     url(r'^entities/$', views.EntitiesView.as_view(), name='entities'),
     url(r'^entities/(?P<pk>[0-9a-zA-Z.:_-]+)/$', views.EntityDetailView.as_view(), name='entity_detail'),
@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^(?P<observation_id>[0-9a-zA-Z.:_-]+)/basic/graphjson$', views.provbasicjson, name='provbasic'),
     url(r'^(?P<observation_id>[0-9a-zA-Z.:_-]+)/detail/$', views.provdetail, name='provdetail'),
     url(r'^(?P<observation_id>[0-9a-zA-Z.:_-]+)/detail/graphjson$', views.provdetailjson, name='provdetail'),
+    url(r'^(?P<observation_id>[0-9a-zA-Z.:_-]+)/detail/provn$', views.provdetailprovn, name='provdetailprovn'),
 
     # graph overviews
     url(r'^graph/$', views.graph, name='graph'),

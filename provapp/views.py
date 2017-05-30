@@ -85,7 +85,7 @@ def graphjson(request, activity_id):
     #return HttpResponse(json.dumps(data), content_type='application/json')
     #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'description': activity.description}
     #activity_dict = to_dict(activity)
-    
+
     used_list = Used.objects.all()
     wasGeneratedBy_list = WasGeneratedBy.objects.all()
     wasAssociatedWith_list = WasAssociatedWith.objects.all()
@@ -103,7 +103,7 @@ def graphjson(request, activity_id):
             # add node
             nodes_dict.append({"name": "%s" % u.entity.label, "type": "entity"})
             count_nodes = count_nodes + 1
-            
+
             # and add link (source, target, value)
             links_dict.append({"source": count_act, "target": count_nodes, "value": 0.2, "type": "used"})
             count_link = count_link + 1
@@ -114,7 +114,7 @@ def graphjson(request, activity_id):
             # add node
             nodes_dict.append({"name": "%s" % w.entity.label, "type": "entity"})
             count_nodes = count_nodes + 1
-            
+
             # and add link (source, target, value)
             links_dict.append({"source": count_nodes, "target": count_act, "value": 0.2, "type": "wasGeneratedBy"})
             count_link = count_link + 1
@@ -124,7 +124,7 @@ def graphjson(request, activity_id):
             # add node
             nodes_dict.append({"name": "%s" % w.agent.label, "type": "agent"})
             count_nodes = count_nodes + 1
-            
+
             # and add link (source, target, value)
             links_dict.append({"source": count_act, "target": count_nodes, "value": 0.5, "type": "wasAssociatedWith"})
             count_link = count_link + 1
@@ -146,7 +146,7 @@ class ActivityDetailJsonView(JSONResponseMixin, generic.DetailView):
         # Could also use stuff from Django-Rest probably
         activity_dict = to_dict(activity)
         return self.render_json_response(activity_dict)
-        
+
         # alternative with Django-Restframework (no need for JSONResponseMixin):
         # (should then have one serializer for each model!)
         #if request.method == 'GET':
@@ -175,7 +175,7 @@ class ActivityDetailXmlView(generic.DetailView):
         #serializer = ActivitySerializer(activity)
         #return MyJsonResponse(serializer.data)
         #serializers.deserialize("xml", data, ignorenonexistent=True)
-        
+
         data = serializers.serialize('xml', [ activity ] )
         # How to use not all, but only this currently selected activity???
 
@@ -188,14 +188,14 @@ class ActivityDetailXmlView(generic.DetailView):
  #   template_name = 'provapp/activity_detail_json.html'
  #   model = Activity
  #   context_object_name = 'activity_json'
- #   
+ #
  #   def get_queryset(self):
  #       return  HttpResponse(Activity.getjson, content_type='application/json')
 
     #def get_queryset(self):
     #    return Activity.objects.order_by('-startTime')[:1000]
 
-    # def datatree(datadict, datacomponent):    
+    # def datatree(datadict, datacomponent):
     #     datadict['name'] = datacomponent.name
 
     #     if datacomponent.createdFromActivity:
@@ -226,7 +226,7 @@ class ActivityDetailXmlView(generic.DetailView):
     #         actdict['children'] = childlist
     #     else:
     #         pass
-    
+
     #     return datadict
 
 
@@ -515,6 +515,66 @@ def provdetailjson(request, observation_id):
     return JsonResponse(prov_dict)
 
 
+def provdetailprovn(request, observation_id):
+
+    entity = get_object_or_404(Entity, pk=observation_id)
+
+    activity_list = []
+    entity_list = []
+    agent_list = []
+    used_list = []
+    wasGeneratedBy_list = []
+    wasAssociatedWith_list = []
+    wasAttributedTo_list = []
+
+    map_nodes_ids = {}
+    prov = {
+        'activity_list': activity_list,
+        'entity_list': entity_list,
+        'agent_list': agent_list,
+        'used_list': used_list,
+        'wasGeneratedBy_list': wasGeneratedBy_list,
+        'wasAssociatedWith_list': wasAssociatedWith_list,
+        'wasAssociatedWith_list': wasAttributedTo_list
+    }
+
+    # put first entity into provn:
+    # TO BE CONTINUED ...
+    #    prov = find_entity_detail_provn(entity, prov)
+
+    # prov_dict = {"nodes": prov['nodes_dict'], "links": prov['links_dict']}
+
+    #    return JsonResponse(prov_dict)
+
+
+    provstr = "document\n"
+    for a in activity_list:
+        provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [prov:type = '" + a.type + "', prov:label = '" + a.label + "', prov:description = '" + a.description + "']),\n"
+
+    for e in entity_list:
+        provstr = provstr + "entity(" + e.id + ", [prov:type = '" + e.type + "', prov:label = '" + e.label + "', prov:description = '" + e.description + "']),\n"
+
+    for ag in agent_list:
+        provstr = provstr + "agent(" + ag.id + ", [prov:type = '" + ag.type + "', prov:label = '" + ag.label + "', prov:description = '" + ag.description + "']),\n"
+
+    for u in used_list:
+        provstr = provstr + "used(" + u.activity.id + ", " + u.entity.id + ", [id = '" + str(u.id) + "', prov:role = '" + u.role + "']),\n"
+
+    for wg in wasGeneratedBy_list:
+        provstr = provstr + "wasGeneratedBy(" + wg.entity.id + ", " + wg.activity.id + ", [id = '" + str(wg.id) + "', prov:role = '" + wg.role + "']),\n"
+
+    for wa in wasAssociatedWith_list:
+        provstr = provstr + "wasAssociatedWith(" + wa.activity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', prov:role = '" + wa.role + "']),\n"
+
+    for wa in wasAttributedTo_list:
+        provstr = provstr + "wasAttributedTo(" + wa.entity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', prov:role = '" + wa.role + "']),\n"
+
+    provstr += "endDocument"
+
+    return HttpResponse(provstr, content_type='text/plain')
+
+
+
 # some helper functions
 def find_entity_basic(entity, prov):
 
@@ -530,7 +590,7 @@ def find_entity_basic(entity, prov):
         elif (len(queryset) == 1):
             wg = queryset[0]
             print "Entity " + entity.id + " wasGeneratedBy activity: ", wg.activity.id
-        
+
             # add activity to prov-json for graphics, if not yet done
             # (use map_activity_ids for easier checking)
 
@@ -550,10 +610,10 @@ def find_entity_basic(entity, prov):
             # that generated this entity
 
     # if no direct path backwards available, check membership to collection and
-    # follow the collection's provenance 
+    # follow the collection's provenance
     # (Do it even if direct path was available!?)
     queryset = HadMember.objects.filter(entity=entity.id)
-    
+
     if (len(queryset) == 0):
         # nothing found, pass
         pass
@@ -607,7 +667,7 @@ def find_entity_basic(entity, prov):
             prov['links_dict'].append({"source": prov['map_nodes_ids'][entity.id], "target": prov['map_nodes_ids'][wd.entity2.id], "value": 0.2, "type": "wasDerivedFrom"})
             prov['count_link'] = prov['count_link'] + 1
 
-        
+
     # if nothing found until now, then I have reached an endpoint in the graph
     #print "Giving up, no more provenance for entity found."
     return prov
@@ -616,7 +676,7 @@ def find_entity_basic(entity, prov):
 def find_activity_basic(activity, prov):
 
     queryset = Used.objects.filter(activity=activity.id)
-    
+
     # There definitely can be more than one used-relation
     if len(queryset) == 0:
         pass
@@ -645,7 +705,7 @@ def find_activity_basic(activity, prov):
 
 def find_entity_detail(entity, prov):
 
-    if "prov:collection" not in entity.type.split(';'):   
+    if "prov:collection" not in entity.type.split(';'):
         # track the provenance information backwards
         queryset = WasGeneratedBy.objects.filter(entity=entity.id)
         print "queryset: ", queryset
@@ -764,6 +824,7 @@ def find_activity_detail(activity, prov):
 
     #print "Giving up, no more provenance for activity found."
     return prov
+
 
 #def detail(request, activity_id):
 #    activity = get_object_or_404(Activity, pk=activity_id)
