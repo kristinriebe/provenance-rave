@@ -16,7 +16,7 @@ from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 #from rest_framework.renderers import XMLRenderer
-from .serializers import ActivitySerializer, EntitySerializer
+from .serializers import ActivitySerializer, EntitySerializer, ProvenanceSerializer
 from .forms import ObservationIdForm
 
 from rest_framework.response import Response
@@ -536,7 +536,11 @@ def provdal_obsid(request):
         entity = None
         #return HttpResponse(provstr, content_type='text/plain')
 
-    prefix = {"rave": "http://www.rave-survey.org/prov/", "voprov": "http://www.ivoa.net/documents/ProvenanceDM/voprov/"}
+    prefix = {
+        "rave": "http://www.rave-survey.org/prov/",
+        "voprov": "http://www.ivoa.net/documents/ProvenanceDM/voprov/"
+    }
+
     prov = {
         'prefix': prefix,
         'activity': {},
@@ -557,10 +561,13 @@ def provdal_obsid(request):
         # search for further provenance:
         prov = utils.find_entity(entity, prov)
 
-    #print "entity: ", prov['entity_list'][0].id
+    # The prov dictionary now contains the complete provenance information,
+    # in the form of querysets. First serialize them, then render in the 
+    # desired format.
 
-    # write provenance information in required format:
+    # write provenance information in desired format:
     if format == 'PROVN':
+        # TODO: write a provn-renderer for this
         provstr = "document\n"
         for p_id, p in prov['prefix'].iteritems():
             provstr = provstr + "prefix %s <%s>" % (p_id, p)
@@ -603,36 +610,18 @@ def provdal_obsid(request):
         #json_str = serializers.serialize('json', prov['entity_list']) #, fields=('name',''))
         # => works!
 
-        # use custom serializer:
-        # print "entity: ", prov['entity_list'][0]
-        data = {'entity': {}, 'activity': {}}
         # convert querysets to serialized python objects
-        for e_id, e in prov['entity'].iteritems():
-            serializer = EntitySerializer(e)
-            data['entity'][e_id] = serializer.data
+        serializer = ProvenanceSerializer(prov) # => works!
+        data = serializer.data
 
-        for a_id, a in prov['activity'].iteritems():
-            serializer = ActivitySerializer(e)
-            data['activity'][a_id] = serializer.data
-
-#        for a_id, a in prov['agent'].iteritems():
-#            serializer = AgentSerializer(e)
-#            prov['agent'][a_id] = serializer.data
-#
-#        for h_id, h in prov['activity_dict'].iteritems():
-#            serializer = ActivitySerializer(e)
-#            prov['activity_dict'][a_id] = serializer.data
-
-        #serializer = ProvenanceSerializer(e)
-        #data = prov
         json_str = json.dumps(data,
                 sort_keys=True,
                 indent=4
                )
-        # => works!
+       # => works!
 
-        #json_str = JSONRenderer().render(serializer.data)
-        return HttpResponse(json_str, content_type='text/plain; charset=utf-8')
+#        json_str = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_str, content_type='text/json; charset=utf-8')
 
     else:
         # format is not known, return error

@@ -37,3 +37,39 @@ class EntitySerializer(serializers.ModelSerializer):
 
         return value
 
+
+class ProvenanceSerializer(serializers.Serializer):
+    activity = serializers.SerializerMethodField()
+    entity = serializers.SerializerMethodField()
+
+
+    def get_activity(self, obj):
+        activity = {}
+        for a_id, a in obj['activity'].iteritems():
+            serializer = ActivitySerializer(a)
+            activity[a_id] = serializer.data
+        return activity
+
+    def get_entity(self, obj):
+        entity = {}
+        for e_id, e in obj['entity'].iteritems():
+            serializer = EntitySerializer(e)
+            entity[e_id] = serializer.data
+        return entity
+
+    #entity = EntitySerializer(e)
+#    data = {'entity': {}, 'activity': {}}
+
+    # # convert querysets to serialized python objects
+    # for e_id, e in prov['entity'].iteritems():
+    #     serializer = EntitySerializer(e)
+    #     data['entity'][e_id] = serializer.data
+
+    # for a_id, a in prov['activity'].iteritems():
+    #     serializer = ActivitySerializer(e)
+    #     data['activity'][a_id] = serializer.data
+
+#     name = serializers.CharField(source='label')
+#     prov_type = serializers.SerializerMethodField()
+#     foo = serializers.SerializerMethodField()
+
