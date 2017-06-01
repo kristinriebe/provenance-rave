@@ -16,8 +16,10 @@ from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 #from rest_framework.renderers import XMLRenderer
-from .serializers import ActivitySerializer
+from .serializers import ActivitySerializer, EntitySerializer
 from .forms import ObservationIdForm
+
+from rest_framework.response import Response
 
 import sys # just for debugging
 
@@ -131,8 +133,8 @@ def graphjson(request, activity_id):
 
     prov_dict = {"nodes": nodes_dict, "links": links_dict}
 
-
     return JsonResponse(prov_dict)
+
 
 # class-based view for json-response:
 class ActivityDetailJsonView(JSONResponseMixin, generic.DetailView):
@@ -470,7 +472,7 @@ def provbasicjson(request, observation_id):
     prov['map_nodes_ids'][entity.id] = prov['count_nodes']
     prov['count_nodes'] = prov['count_nodes'] + 1
 
-    prov = find_entity_basic(entity, prov)
+    prov = find_entity_basic_graph(entity, prov)
 
     #print "prov: ", prov
 
@@ -478,10 +480,12 @@ def provbasicjson(request, observation_id):
 
     return JsonResponse(prov_dict)
 
+
 def provdetail(request, observation_id):
     entity = get_object_or_404(Entity, pk=observation_id)
 
     return render(request, 'provapp/provdetail.html', {'entity': entity})
+
 
 def provdetailjson(request, observation_id):
 
@@ -506,7 +510,7 @@ def provdetailjson(request, observation_id):
     prov['map_nodes_ids'][entity.id] = prov['count_nodes']
     prov['count_nodes'] = prov['count_nodes'] + 1
 
-    prov = find_entity_detail(entity, prov)
+    prov = find_entity_detail_graph(entity, prov)
 
     #print "prov: ", prov
 
@@ -515,9 +519,24 @@ def provdetailjson(request, observation_id):
     return JsonResponse(prov_dict)
 
 
-def provdetailprovn(request, observation_id):
+def provdal_obsid(request):
 
-    entity = get_object_or_404(Entity, pk=observation_id)
+    # TODO: use &format=... in url!
+    for key, value in request.GET.items():
+        print key, value
+    observation_id = request.GET.get('ID') #default: None
+    step = request.GET.get('STEP', 'LAST') # can be LAST or FIRST
+    format = request.GET.get('FORMAT', 'PROVN') # can be PROVN, PROVJSON, VOTABLE
+    model = request.GET.get('COMPLIANCE', 'IVOA')  # one of IVOA, W3C (or None?)
+
+    try:
+        entity = Entity.objects.get(id=observation_id)
+    except Entity.DoesNotExist:
+        entity = None
+        #return HttpResponse(provstr, content_type='text/plain')
+
+    prefix = {"rave": "http://www.rave-survey.org/prov/", "voprov": "http://www.ivoa.net/documents/ProvenanceDM/voprov/"}
+
 
     activity_list = []
     entity_list = []
@@ -526,8 +545,9 @@ def provdetailprovn(request, observation_id):
     wasGeneratedBy_list = []
     wasAssociatedWith_list = []
     wasAttributedTo_list = []
+    hadMember_list = []
+    wasDerivedFrom_list = []
 
-    map_nodes_ids = {}
     prov = {
         'activity_list': activity_list,
         'entity_list': entity_list,
@@ -535,48 +555,95 @@ def provdetailprovn(request, observation_id):
         'used_list': used_list,
         'wasGeneratedBy_list': wasGeneratedBy_list,
         'wasAssociatedWith_list': wasAssociatedWith_list,
-        'wasAssociatedWith_list': wasAttributedTo_list
+        'wasAttributedTo_list': wasAttributedTo_list,
+        'hadMember_list': hadMember_list,
+        'wasDerivedFrom_list': wasDerivedFrom_list
     }
 
-    # put first entity into provn:
-    # TO BE CONTINUED ...
-    #    prov = find_entity_detail_provn(entity, prov)
+    # store current entity in dict:
+    if entity is not None:
+        prov['entity_list'].append(entity)
 
-    # prov_dict = {"nodes": prov['nodes_dict'], "links": prov['links_dict']}
+        # search for further provenance:
+        prov = find_entity_detail(entity, prov)
 
-    #    return JsonResponse(prov_dict)
+    #print "entity: ", prov['entity_list'][0].id
+
+    # write provenance information in required format:
+    if format == 'PROVN':
+        provstr = "document\n"
+        for p in prefix:
+            provstr = provstr + "prefix %s <%s>" % (p, prefix[p])
+
+        for a in activity_list:
+            provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [voprov:type = '" + a.type + "', voprov:name = '" + a.label + "', voprov:annotation = '" + a.description + "']),\n"
+
+        for e in entity_list:
+            provstr = provstr + "entity(" + e.id + ", [voprov:type = '" + e.type + "', voprov:name = '" + e.label + "', voprov:annotation = '" + e.description + "']),\n"
+
+        for ag in agent_list:
+            provstr = provstr + "agent(" + ag.id + ", [voprov:type = '" + ag.type + "', voprov:name = '" + ag.label + "', voprov:annotation = '" + ag.description + "']),\n"
+
+        for u in used_list:
+            provstr = provstr + "used(" + u.activity.id + ", " + u.entity.id + ", [id = '" + str(u.id) + "', voprov:role = '" + u.role + "']),\n"
+
+        for wg in wasGeneratedBy_list:
+            provstr = provstr + "wasGeneratedBy(" + wg.entity.id + ", " + wg.activity.id + ", [id = '" + str(wg.id) + "', voprov:role = '" + wg.role + "']),\n"
+
+        for wa in wasAssociatedWith_list:
+            provstr = provstr + "wasAssociatedWith(" + wa.activity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', voprov:role = '" + wa.role + "']),\n"
+
+        for wa in wasAttributedTo_list:
+            provstr = provstr + "wasAttributedTo(" + wa.entity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', voprov:role = '" + wa.role + "']),\n"
+
+        for h in hadMember_list:
+            provstr = provstr + "hadMember(" + h.entity.id + ", " + h.entity.id + ", [id = '" + str(h.id) + "']),\n"
+
+        for wd in wasDerivedFrom_list:
+            provstr = provstr + "wasDerivedFrom(" + wd.entity.id + ", " + wd.entity.id + ", [id = '" + str(wd.id) + "']),\n"
+
+        provstr += "endDocument"
+        return HttpResponse(provstr, content_type='text/plain; charset=utf-8')
 
 
-    provstr = "document\n"
-    for a in activity_list:
-        provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [prov:type = '" + a.type + "', prov:label = '" + a.label + "', prov:description = '" + a.description + "']),\n"
+    elif format == 'PROVJSON':
+        #votable = VOTableRenderer().render(data, votable_meta=votable_meta, prettyprint=False)
 
-    for e in entity_list:
-        provstr = provstr + "entity(" + e.id + ", [prov:type = '" + e.type + "', prov:label = '" + e.label + "', prov:description = '" + e.description + "']),\n"
+        # test serializers:
+        #json_str = serializers.serialize('json', prov['entity_list']) #, fields=('name',''))
+        # => works!
 
-    for ag in agent_list:
-        provstr = provstr + "agent(" + ag.id + ", [prov:type = '" + ag.type + "', prov:label = '" + ag.label + "', prov:description = '" + ag.description + "']),\n"
+        # use custom serializer:
+        # print "entity: ", prov['entity_list'][0]
+        #e = Entity(id="rave:something", label="just a test", description="some description for the element")
 
-    for u in used_list:
-        provstr = provstr + "used(" + u.activity.id + ", " + u.entity.id + ", [id = '" + str(u.id) + "', prov:role = '" + u.role + "']),\n"
 
-    for wg in wasGeneratedBy_list:
-        provstr = provstr + "wasGeneratedBy(" + wg.entity.id + ", " + wg.activity.id + ", [id = '" + str(wg.id) + "', prov:role = '" + wg.role + "']),\n"
+        serializer = EntitySerializer(prov['entity_list'], many=True)
 
-    for wa in wasAssociatedWith_list:
-        provstr = provstr + "wasAssociatedWith(" + wa.activity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', prov:role = '" + wa.role + "']),\n"
 
-    for wa in wasAttributedTo_list:
-        provstr = provstr + "wasAttributedTo(" + wa.entity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', prov:role = '" + wa.role + "']),\n"
+        #serializer = ProvenanceSerializer(e)
+        data = {}
+        data['entity'] = serializer.data
+        json_str = json.dumps(data,
+                sort_keys=True,
+                indent=4
+               )
+        # => works!
 
-    provstr += "endDocument"
+        # TODO: still need something in between to take care of reformatting to the correct json-str.
 
-    return HttpResponse(provstr, content_type='text/plain')
+        #json_str = JSONRenderer().render(serializer.data)
+        return HttpResponse(json_str, content_type='text/plain')
+
+    else:
+        # format is not known, return error
+        provstr = "Sorry, unknown format %s was requested, cannot handle this." % format
+    return HttpResponse(provstr, content_type='text/plain; charset=utf-8')
 
 
 
 # some helper functions
-def find_entity_basic(entity, prov):
+def find_entity_basic_graph(entity, prov):
 
     # track the provenance information backwards, but only for collections!
     if "prov:collection" in entity.type.split(';'):
@@ -600,7 +667,7 @@ def find_entity_basic(entity, prov):
                 prov['count_nodes'] = prov['count_nodes'] + 1
 
                 # follow provenance along this activity
-                prov = find_activity_basic(wg.activity, prov)
+                prov = find_activity_basic_graph(wg.activity, prov)
 
             # add wasGeneratedBy-link
             prov['links_dict'].append({"source": prov['map_nodes_ids'][wg.entity.id], "target": prov['map_nodes_ids'][wg.activity.id], "value": 0.2, "type": "wasGeneratedBy"})
@@ -661,7 +728,7 @@ def find_entity_basic(entity, prov):
                 prov['count_nodes'] = prov['count_nodes'] + 1
 
                 # continue with pre-decessor
-                prov = find_entity_basic(wd.entity2, prov)
+                prov = find_entity_basic_graph(wd.entity2, prov)
 
             # add hadMember-link (in any case)
             prov['links_dict'].append({"source": prov['map_nodes_ids'][entity.id], "target": prov['map_nodes_ids'][wd.entity2.id], "value": 0.2, "type": "wasDerivedFrom"})
@@ -673,7 +740,7 @@ def find_entity_basic(entity, prov):
     return prov
 
 
-def find_activity_basic(activity, prov):
+def find_activity_basic_graph(activity, prov):
 
     queryset = Used.objects.filter(activity=activity.id)
 
@@ -693,7 +760,7 @@ def find_activity_basic(activity, prov):
                     prov['count_nodes'] = prov['count_nodes'] + 1
 
                     # follow this entity's provenance
-                    prov = find_entity_basic(u.entity, prov)
+                    prov = find_entity_basic_graph(u.entity, prov)
 
                 # add used-link:
                 prov['links_dict'].append({"source": prov['map_nodes_ids'][activity.id], "target": prov['map_nodes_ids'][u.entity.id], "value": 0.2, "type": "used"})
@@ -703,7 +770,7 @@ def find_activity_basic(activity, prov):
     return prov
 
 
-def find_entity_detail(entity, prov):
+def find_entity_detail_graph(entity, prov):
 
     if "prov:collection" not in entity.type.split(';'):
         # track the provenance information backwards
@@ -727,7 +794,7 @@ def find_entity_detail(entity, prov):
                 prov['count_nodes'] = prov['count_nodes'] + 1
 
                 # follow provenance along this activity
-                prov = find_activity_detail(wg.activity, prov)
+                prov = find_activity_detail_graph(wg.activity, prov)
 
             # add wasGeneratedBy-link
             prov['links_dict'].append({"source": prov['map_nodes_ids'][wg.entity.id], "target": prov['map_nodes_ids'][wg.activity.id], "value": 0.2, "type": "wasGeneratedBy"})
@@ -758,7 +825,7 @@ def find_entity_detail(entity, prov):
                     prov['count_nodes'] = prov['count_nodes'] + 1
 
                     # follow this collection's provenance (if it was not recorded before)
-                    prov = find_entity_detail(h.collection, prov)
+                    prov = find_entity_detail_graph(h.collection, prov)
                 else:
                     # just find it's id:
                     id1 = prov['map_nodes_ids'] # not needed, is found below anyway
@@ -786,11 +853,128 @@ def find_entity_detail(entity, prov):
                 prov['count_nodes'] = prov['count_nodes'] + 1
 
                 # continue with pre-decessor
-                prov = find_entity_detail(wd.entity2, prov)
+                prov = find_entity_detail_graph(wd.entity2, prov)
 
             # add hadMember-link (in any case)
             prov['links_dict'].append({"source": prov['map_nodes_ids'][entity.id], "target": prov['map_nodes_ids'][wd.entity2.id], "value": 0.2, "type": "wasDerivedFrom"})
             prov['count_link'] = prov['count_link'] + 1
+
+    # if nothing found until now, then I have reached an endpoint in the graph
+    #print "Giving up, no more provenance for entity found."
+    return prov
+
+
+def find_activity_detail_graph(activity, prov):
+
+    queryset = Used.objects.filter(activity=activity.id)
+
+    # There definitely can be more than one used-relation
+    if len(queryset) == 0:
+        pass
+    else:
+        for u in queryset:
+            if "prov:collection" not in u.entity.type.split(';'):
+                print "Activity " + activity.id + " used entity ", u.entity.id
+                # add entity to prov-json, if not yet done
+                if u.entity.id not in prov['map_nodes_ids']:
+                    prov['nodes_dict'].append({'name': u.entity.label, 'type': 'entity'})
+                    prov['map_nodes_ids'][u.entity.id] = prov['count_nodes']
+                    prov['count_nodes'] = prov['count_nodes'] + 1
+
+                    # follow this entity's provenance
+                    prov = find_entity_detail_graph(u.entity, prov)
+
+                # add used-link:
+                prov['links_dict'].append({"source": prov['map_nodes_ids'][activity.id], "target": prov['map_nodes_ids'][u.entity.id], "value": 0.2, "type": "used"})
+                prov['count_link'] = prov['count_link'] + 1
+
+
+    #print "Giving up, no more provenance for activity found."
+    return prov
+
+
+
+def find_entity_detail(entity, prov):
+
+    if "prov:collection" not in entity.type.split(';'):
+        # track the provenance information backwards
+        queryset = WasGeneratedBy.objects.filter(entity=entity.id)
+        # print "queryset: ", queryset
+        if (len(queryset) == 0):
+            # nothing found
+            pass
+        elif (len(queryset) > 1):
+            raise ValueError("More than one wasGeneratedBy-relation found. Does this make any sense?")
+            # yes, it does, if ActivityFlow implemented
+        elif (len(queryset) == 1):
+            wg = queryset[0]
+            print "Entity " + entity.id + " wasGeneratedBy activity: ", wg.activity.id
+
+            # add activity to prov-list, IF not existing there already
+            activity_ids = [a.id for a in prov['activity_list']]
+            if wg.activity.id not in activity_ids:
+                prov['activity_list'].append(wg.activity)
+                # prov['count_nodes'] = prov['count_nodes'] + 1
+
+                # follow provenance along this activity
+                prov = find_activity_detail(wg.activity, prov)
+
+            # add wasGeneratedBy-link
+            prov['wasGeneratedBy_list'].append(wg)
+#            prov['links_dict'].append({"source": prov['map_nodes_ids'][wg.entity.id], "target": prov['map_nodes_ids'][wg.activity.id], "value": 0.2, "type": "wasGeneratedBy"})
+#            prov['count_link'] = prov['count_link'] + 1
+
+
+        # if no direct path backwards available, check membership to collection and
+        # follow the collection's provenance
+        # (do NOT do it if direct path was available!)
+        queryset = HadMember.objects.filter(entity=entity.id)
+
+        if (len(queryset) == 0):
+            # nothing found, pass
+            pass
+        else:
+            # can entities belong to more than one collection?
+            # I think it cannot be excluded
+            for h in queryset:
+                print "Entity "+ entity.id + " is member of collection: ", h.collection.id
+
+                # add entity to prov-json, if not yet done
+                entity_ids = [e.id for e in prov['entity_list']]
+                if h.collection.id not in entity_ids:
+                    prov['entity_list'].append(h.collection)
+
+                    # follow this collection's provenance (if it was not recorded before)
+                    prov = find_entity_detail(h.collection, prov)
+                #else:
+                #    # just find it's id:
+                #    id1 = prov['map_nodes_ids'] # not needed, is found below anyway
+
+                # add hadMember-link:
+                # but only, if not yet recorded -> how to check?
+                prov['hadMember_list'].append(h)
+
+
+        queryset = WasDerivedFrom.objects.filter(entity1=entity.id)
+        # this relation is unique, there can be only one ... or not?
+        if (len(queryset) == 0):
+            pass
+        elif (len(queryset) > 1):
+            raise ValueError("More than one wasDerivedFrom-relation found. Does this make any sense?")
+        else:
+            wd = queryset[0]
+            print "Entity " + entity.id + " wasDerivedFrom entity ", wd.entity2.id
+
+            # add entity to prov-json, if not yet done
+            entity_ids = [e.id for e in prov['entity_list']]
+            if wd.entity2.id not in entity_ids:
+                prov['entity_list'].append(wd.entity2)
+
+                # continue with pre-decessor
+                prov = find_entity_detail(wd.entity2, prov)
+
+            # add wasDerivedFrom-link (in any case)
+            prov['wasDerivedFrom_list'].append(wd.entity2)
 
     # if nothing found until now, then I have reached an endpoint in the graph
     #print "Giving up, no more provenance for entity found."
@@ -809,18 +993,15 @@ def find_activity_detail(activity, prov):
             if "prov:collection" not in u.entity.type.split(';'):
                 print "Activity " + activity.id + " used entity ", u.entity.id
                 # add entity to prov-json, if not yet done
-                if u.entity.id not in prov['map_nodes_ids']:
-                    prov['nodes_dict'].append({'name': u.entity.label, 'type': 'entity'})
-                    prov['map_nodes_ids'][u.entity.id] = prov['count_nodes']
-                    prov['count_nodes'] = prov['count_nodes'] + 1
+                entity_ids = [e.id for e in prov['entity_list']]
+                if u.entity.id not in entity_ids:
+                    prov['entity_list'].append(u.entity)
 
                     # follow this entity's provenance
                     prov = find_entity_detail(u.entity, prov)
 
                 # add used-link:
-                prov['links_dict'].append({"source": prov['map_nodes_ids'][activity.id], "target": prov['map_nodes_ids'][u.entity.id], "value": 0.2, "type": "used"})
-                prov['count_link'] = prov['count_link'] + 1
-
+                prov['used_list'].append(u)
 
     #print "Giving up, no more provenance for activity found."
     return prov

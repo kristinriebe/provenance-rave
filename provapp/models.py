@@ -17,7 +17,7 @@ ACTIVITY_TYPE_CHOICES = (
 
 ENTITY_TYPE_CHOICES = (
     ('prov:Collection', 'prov:Collection'),
-    ('voprov:dataSet', 'voprov:ctalog'),
+    ('voprov:dataSet', 'voprov:catalog'),
 )
 
 #DATA_TYPE_CHOICES = (
@@ -27,6 +27,7 @@ AGENT_TYPE_CHOICES = (
     ('voprov:Project','voprov:Project'),
     ('prov:Person','prov:Person'),
 )
+
 
 # main ProvDM classes:
 @python_2_unicode_compatible
