@@ -537,33 +537,22 @@ def provdal_obsid(request):
         #return HttpResponse(provstr, content_type='text/plain')
 
     prefix = {"rave": "http://www.rave-survey.org/prov/", "voprov": "http://www.ivoa.net/documents/ProvenanceDM/voprov/"}
-
-
-    activity_list = []
-    entity_list = []
-    agent_list = []
-    used_list = []
-    wasGeneratedBy_list = []
-    wasAssociatedWith_list = []
-    wasAttributedTo_list = []
-    hadMember_list = []
-    wasDerivedFrom_list = []
-
     prov = {
-        'activity_list': activity_list,
-        'entity_list': entity_list,
-        'agent_list': agent_list,
-        'used_list': used_list,
-        'wasGeneratedBy_list': wasGeneratedBy_list,
-        'wasAssociatedWith_list': wasAssociatedWith_list,
-        'wasAttributedTo_list': wasAttributedTo_list,
-        'hadMember_list': hadMember_list,
-        'wasDerivedFrom_list': wasDerivedFrom_list
+        'prefix': prefix,
+        'activity': {},
+        'entity': {},
+        'agent': {},
+        'used': {},
+        'wasGeneratedBy': {},
+        'wasAssociatedWith': {},
+        'wasAttributedTo': {},
+        'hadMember': {},
+        'wasDerivedFrom': {}
     }
 
     # store current entity in dict:
     if entity is not None:
-        prov['entity_list'].append(entity)
+        prov['entity'][entity.id] = entity
 
         # search for further provenance:
         prov = utils.find_entity(entity, prov)
@@ -573,34 +562,34 @@ def provdal_obsid(request):
     # write provenance information in required format:
     if format == 'PROVN':
         provstr = "document\n"
-        for p in prefix:
-            provstr = provstr + "prefix %s <%s>" % (p, prefix[p])
+        for p_id, p in prov['prefix'].iteritems():
+            provstr = provstr + "prefix %s <%s>" % (p_id, p)
 
-        for a in activity_list:
+        for a_id, a in prov['activity'].iteritems():
             provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [voprov:type = '" + a.type + "', voprov:name = '" + a.label + "', voprov:annotation = '" + a.description + "']),\n"
 
-        for e in entity_list:
+        for e_id, e in prov['entity'].iteritems():
             provstr = provstr + "entity(" + e.id + ", [voprov:type = '" + e.type + "', voprov:name = '" + e.label + "', voprov:annotation = '" + e.description + "']),\n"
 
-        for ag in agent_list:
+        for ag_id, ag in prov['agent'].iteritems():
             provstr = provstr + "agent(" + ag.id + ", [voprov:type = '" + ag.type + "', voprov:name = '" + ag.label + "', voprov:annotation = '" + ag.description + "']),\n"
 
-        for u in used_list:
+        for u_id, u in prov['used'].iteritems():
             provstr = provstr + "used(" + u.activity.id + ", " + u.entity.id + ", [id = '" + str(u.id) + "', voprov:role = '" + u.role + "']),\n"
 
-        for wg in wasGeneratedBy_list:
+        for wg_id, wg in prov['wasGeneratedBy'].iteritems():
             provstr = provstr + "wasGeneratedBy(" + wg.entity.id + ", " + wg.activity.id + ", [id = '" + str(wg.id) + "', voprov:role = '" + wg.role + "']),\n"
 
-        for wa in wasAssociatedWith_list:
+        for wa_id, wa in prov['wasAssociatedWith'].iteritems():
             provstr = provstr + "wasAssociatedWith(" + wa.activity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', voprov:role = '" + wa.role + "']),\n"
 
-        for wa in wasAttributedTo_list:
+        for wa_id, wa in prov['wasAttributedTo'].iteritems():
             provstr = provstr + "wasAttributedTo(" + wa.entity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', voprov:role = '" + wa.role + "']),\n"
 
-        for h in hadMember_list:
+        for h_id, h in prov['hadMember'].iteritems():
             provstr = provstr + "hadMember(" + h.entity.id + ", " + h.entity.id + ", [id = '" + str(h.id) + "']),\n"
 
-        for wd in wasDerivedFrom_list:
+        for wd_id, wd in prov['wasDerivedFrom'].iteritems():
             provstr = provstr + "wasDerivedFrom(" + wd.entity.id + ", " + wd.entity.id + ", [id = '" + str(wd.id) + "']),\n"
 
         provstr += "endDocument"
@@ -616,25 +605,34 @@ def provdal_obsid(request):
 
         # use custom serializer:
         # print "entity: ", prov['entity_list'][0]
-        #e = Entity(id="rave:something", label="just a test", description="some description for the element")
+        data = {'entity': {}, 'activity': {}}
+        # convert querysets to serialized python objects
+        for e_id, e in prov['entity'].iteritems():
+            serializer = EntitySerializer(e)
+            data['entity'][e_id] = serializer.data
 
+        for a_id, a in prov['activity'].iteritems():
+            serializer = ActivitySerializer(e)
+            data['activity'][a_id] = serializer.data
 
-        serializer = EntitySerializer(prov['entity_list'], many=True)
-
+#        for a_id, a in prov['agent'].iteritems():
+#            serializer = AgentSerializer(e)
+#            prov['agent'][a_id] = serializer.data
+#
+#        for h_id, h in prov['activity_dict'].iteritems():
+#            serializer = ActivitySerializer(e)
+#            prov['activity_dict'][a_id] = serializer.data
 
         #serializer = ProvenanceSerializer(e)
-        data = {}
-        data['entity'] = serializer.data
+        #data = prov
         json_str = json.dumps(data,
                 sort_keys=True,
                 indent=4
                )
         # => works!
 
-        # TODO: still need something in between to take care of reformatting to the correct json-str.
-
         #json_str = JSONRenderer().render(serializer.data)
-        return HttpResponse(json_str, content_type='text/plain')
+        return HttpResponse(json_str, content_type='text/plain; charset=utf-8')
 
     else:
         # format is not known, return error

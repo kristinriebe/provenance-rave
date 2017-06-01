@@ -257,24 +257,25 @@ def find_activity_detail_graph(activity, prov):
 
 def find_entity(entity, prov):
 
-#    if "prov:collection" not in entity.type.split(';'):
-# why should we exclude collections? Include them!!
+    if "prov:collection" in entity.type.split(';'):
+        return prov
+# why should we exclude collections? Include them!! -- would make sense, if only a detailed path shall be followed...
 
     # track the provenance information backwards via WasGeneratedBy
     queryset = WasGeneratedBy.objects.filter(entity=entity.id)
     if (len(queryset) > 0):
         for wg in queryset:
+            print "Entity "+ entity.id + " wasGeneratedBy activity: ", wg.activity.id
 
             # add activity to prov-list, IF not existing there already
-            activity_ids = [a.id for a in prov['activity_list']]
-            if wg.activity.id not in activity_ids:
-                prov['activity_list'].append(wg.activity)
+            if wg.activity.id not in prov['activity']:
+                prov['activity'][wg.activity.id] = wg.activity
 
                 # follow provenance along this activity
                 prov = find_activity(wg.activity, prov)
 
             # add wasGeneratedBy-link
-            prov['wasGeneratedBy_list'].append(wg)
+            prov['wasGeneratedBy'][wg.id] = wg
 
 
     # check membership to collection and follow the collection's provenance
@@ -283,38 +284,36 @@ def find_entity(entity, prov):
         # can entities belong to more than one collection?
         # actually not, but we'll allow it here for now ...
         for h in queryset:
-            # print "Entity "+ entity.id + " is member of collection: ", h.collection.id
+            print "Entity "+ entity.id + " is member of collection: ", h.collection.id
 
             # add entity to prov-json, if not yet done
-            entity_ids = [e.id for e in prov['entity_list']]
-            if h.collection.id not in entity_ids:
-                prov['entity_list'].append(h.collection)
+            if h.collection.id not in prov['entity']:
+                prov['entity'][h.collection.id] = h.collection
 
                 # follow this collection's provenance (if it was not recorded before)
                 prov = find_entity(h.collection, prov)
 
             # add hadMember-link:
-            prov['hadMember_list'].append(h)
+            prov['hadMember'][h.id] = h
 
     # check wasDerivedFrom
     queryset = WasDerivedFrom.objects.filter(entity1=entity.id)
     if (len(queryset) > 0):
         for wd in queryset:
-            # print "Entity " + entity.id + " wasDerivedFrom entity ", wd.entity2.id
+            print "Entity " + entity.id + " wasDerivedFrom entity ", wd.entity2.id
 
             # add entity to prov, if not yet done
-            entity_ids = [e.id for e in prov['entity_list']]
-            if wd.entity2.id not in entity_ids:
-                prov['entity_list'].append(wd.entity2)
+            if wd.entity2.id not in prov['entity']:
+                prov['entity'][wd.entity2.id] = wd.entity2
 
                 # continue with pre-decessor
                 prov = find_entity(wd.entity2, prov)
 
             # add wasDerivedFrom-link (in any case)
-            prov['wasDerivedFrom_list'].append(wd.entity2)
+            prov['wasDerivedFrom'][wd.id] = wd
 
     # if nothing found until now, then I have reached an endpoint in the graph
-    #print "Giving up, no more provenance for entity found."
+    print "Giving up, no more provenance for entity %s found." % entity.id
     return prov
 
 
@@ -325,19 +324,21 @@ def find_activity(activity, prov):
     # There definitely can be more than one used-relation
     if len(queryset) > 0:
         for u in queryset:
-            # if "prov:collection" not in u.entity.type.split(';'):
-            # print "Activity " + activity.id + " used entity ", u.entity.id
+            # because only want details, no collection prov:return f it is a collection
+            if "prov:collection" in u.entity.type.split(';'):
+                return prov
+            print "Activity " + activity.id + " used entity ", u.entity.id
 
             # add entity to prov, if not yet done
-            entity_ids = [e.id for e in prov['entity_list']]
-            if u.entity.id not in entity_ids:
-                prov['entity_list'].append(u.entity)
+            if u.entity.id not in prov['entity']:
+                prov['entity'][u.entity.id] = u.entity
 
                 # follow this entity's provenance
                 prov = find_entity(u.entity, prov)
 
             # add used-link:
-            prov['used_list'].append(u)
+            prov['used'][u.id] = u
+    print "Giving up, no more provenance for activity %s found." % activity.id
 
     return prov
 

@@ -36,3 +36,4 @@ class EntitySerializer(serializers.ModelSerializer):
             value['type'] = "xsd:QName" # or prov:QUALIFIED_NAME as used in Prov_Store
 
         return value
+
