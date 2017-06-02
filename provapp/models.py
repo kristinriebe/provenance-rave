@@ -43,6 +43,7 @@ class Activity(models.Model):
     def __str__(self):
         return self.name
 
+
 @python_2_unicode_compatible
 class Entity(models.Model):
     id = models.CharField(primary_key=True, max_length=128)

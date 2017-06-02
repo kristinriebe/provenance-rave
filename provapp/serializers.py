@@ -1,6 +1,16 @@
 from rest_framework import serializers
 
-from .models import Activity, Entity, Agent, Used, WasGeneratedBy, HadMember, WasDerivedFrom, WasAssociatedWith, WasAttributedTo
+from .models import (
+    Activity,
+    Entity,
+    Agent,
+    Used,
+    WasGeneratedBy,
+    HadMember,
+    WasDerivedFrom,
+    WasAssociatedWith,
+    WasAttributedTo
+    )
 
 
 class ActivitySerializer(serializers.ModelSerializer):

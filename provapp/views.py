@@ -4,44 +4,42 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
 
-from .models import Activity, Entity, Agent, Used, WasGeneratedBy
-from .models import WasAssociatedWith, WasAttributedTo, HadMember, WasDerivedFrom
-from .models import RaveObsids
-
 import json
 from django.http import JsonResponse
 from braces.views import JSONResponseMixin
 from django.db.models.fields.related import ManyToManyField
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.renderers import JSONRenderer
-#from rest_framework.renderers import XMLRenderer
-from .serializers import ActivitySerializer, EntitySerializer, ProvenanceSerializer
-from .forms import ObservationIdForm
 
+#from rest_framework.renderers import XMLRenderer
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from rest_framework import viewsets
 
 import sys # just for debugging
 import utils
 
-def to_dict(instance):
-    """
-    Convert a model instance to a Python dictionary.
-    Similar to Django's model_to_dict, but includes also non-editable fields.
-    Also many-to-many fields are taken into account.
-    """
+from .models import (
+    Activity,
+    Entity,
+    Agent,
+    Used,
+    WasGeneratedBy,
+    WasAssociatedWith,
+    WasAttributedTo,
+    HadMember,
+    WasDerivedFrom,
+    RaveObsids
+)
 
-    options = instance._meta
-    data = {}
-    for f in options.concrete_fields + options.many_to_many:
-        if isinstance(f, ManyToManyField):
-            if instance.pk is None:
-                data[f.name] = []
-            else:
-                data[f.name] = list(f.value_from_object(instance).values_list('pk', flat=True))
-        else:
-            data[f.name] = f.value_from_object(instance)
-    return data
+from .serializers import (
+    ActivitySerializer,
+    EntitySerializer,
+    AgentSerializer,
+    ProvenanceSerializer
+)
+
+from .forms import ObservationIdForm
 
 
 class IndexView(generic.ListView):
@@ -53,34 +51,19 @@ class IndexView(generic.ListView):
         return Activity.objects.order_by('-startTime')[:1000]
 
 
-class ActivitiesView(generic.ListView):
-    template_name = 'provapp/activities.html'
-    context_object_name = 'activity_list'
-
-    def get_queryset(self):
-        """Return the activities (at most 1000, ordered by startTime)."""
-        return Activity.objects.order_by('-startTime')[:1000]
+class ActivityViewSet(viewsets.ModelViewSet):
+    serializer_class = ActivitySerializer
+    queryset = Activity.objects.all()
 
 
-class ActivityDetailView(generic.DetailView):
-    model = Activity
-
-    def get_context_data(self, **kwargs):
-        context = super(ActivityDetailView, self).get_context_data(**kwargs)
-        context['used_list'] = Used.objects.all()[:]
-        context['wasGeneratedBy_list'] = WasGeneratedBy.objects.all()[:]
-        context['wasAssociatedWith_list'] = WasAssociatedWith.objects.all()[:]
-        context['wasAttributedTo_list'] = WasAttributedTo.objects.all()[:]
-        return context
+class EntityViewSet(viewsets.ModelViewSet):
+    serializer_class = EntitySerializer
+    queryset = Entity.objects.all()
 
 
-# simple json view, using just a function:
-def myjson(request, activity_id):
-    activity = get_object_or_404(Activity, pk=activity_id)
-    #return HttpResponse(json.dumps(data), content_type='application/json')
-    #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'annotation': activity.annotation}
-    activity_dict = to_dict(activity)
-    return JsonResponse(activity_dict)
+class AgentViewSet(viewsets.ModelViewSet):
+    serializer_class = AgentSerializer
+    queryset = Agent.objects.all()
 
 
 def graphjson(request, activity_id):
@@ -137,38 +120,6 @@ def graphjson(request, activity_id):
     return JsonResponse(prov_dict)
 
 
-# class-based view for json-response:
-class ActivityDetailJsonView(JSONResponseMixin, generic.DetailView):
-    model = Activity
-    #json_dumps_kwargs = {u"indent": 2}
-
-    def get(self, request, *args, **kwargs):
-        activity = self.get_object() # wrap in try/except??? (404 error)
-        # convert model to dictionary, cannot use built-in model_to_dict, since
-        # this would ignore non-editable fields!
-        # Could also use stuff from Django-Rest probably
-        activity_dict = to_dict(activity)
-        return self.render_json_response(activity_dict)
-
-        # alternative with Django-Restframework (no need for JSONResponseMixin):
-        # (should then have one serializer for each model!)
-        #if request.method == 'GET':
-        #    serializer = ActivitySerializer(activity)
-        #return MyJsonResponse(serializer.data)
-
-        # another idea: write own JSON-mixin etc.
-
-# helper class for serializing into json, if using Django-Restframework
-class MyJsonResponse(HttpResponse):
-    """
-    Http Response with JSON content
-    """
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
-        kwargs['content_type'] = 'application/json'
-        super(MyJsonResponse, self).__init__(content, **kwargs)
-
-
 class ActivityDetailXmlView(generic.DetailView):
     model = Activity
     #json_dumps_kwargs = {u"indent": 2}
@@ -186,85 +137,12 @@ class ActivityDetailXmlView(generic.DetailView):
         return HttpResponse(data, content_type="application/xml")
 
 
-
-#class ActivityDetailJsonView(generic.ListView):
- #   template_name = 'provapp/activity_detail_json.html'
- #   model = Activity
- #   context_object_name = 'activity_json'
- #
- #   def get_queryset(self):
- #       return  HttpResponse(Activity.getjson, content_type='application/json')
-
-    #def get_queryset(self):
-    #    return Activity.objects.order_by('-startTime')[:1000]
-
-    # def datatree(datadict, datacomponent):
-    #     datadict['name'] = datacomponent.name
-
-    #     if datacomponent.createdFromActivity:
-    #         activity = datacomponent.createdFromActivity
-    #         actdict = {}
-    #         actdict['name'] = activity.name
-
-
-    #         # append activity to datacomponent
-    #         actlist = []
-    #         actlist.append(actdict)
-    #         datadict['children'] = actlist
-
-
-    #         # get all inputs as dict.
-    #         inputlist = activity.inputdata.all()
-    #         childlist = []
-    #         for dc in inputlist:
-    #         #for dc in datacomponent.createdFromActivity.inputdata.all():
-    #             inputdata = {}
-    #             #inputdata['name'] = dc.name
-
-    #             datatree(inputdata, dc)
-
-    #             childlist.append(inputdata)
-
-    #         # append all inputs to activity
-    #         actdict['children'] = childlist
-    #     else:
-    #         pass
-
-    #     return datadict
-
-
 class GraphView(generic.ListView):
     """ Create the full provenance-graph needed for d3js or similar here """
     pass
 
     def get_queryset(self):
         return Activity.objects.order_by('-id')
-
-
-class EntitiesView(generic.ListView):
-    template_name = 'provapp/entities.html'
-    context_object_name = 'entity_list'
-
-    def get_queryset(self):
-        """Return the entities (at most 1000, ordered by name)."""
-        return Entity.objects.order_by('-name')[:1000]
-
-
-class EntityDetailView(generic.DetailView):
-    model = Entity
-
-
-class AgentsView(generic.ListView):
-    template_name = 'provapp/agents.html'
-    context_object_name = 'agent_list'
-
-    def get_queryset(self):
-        """Return the agents (at most 1000, ordered by name)."""
-        return Agent.objects.order_by('-name')[:1000]
-
-
-class AgentDetailView(generic.DetailView):
-    model = Agent
 
 
 # simple prov-n view, using just a function:
@@ -520,11 +398,9 @@ def provdetailjson(request, observation_id):
     return JsonResponse(prov_dict)
 
 
-def provdal_obsid(request):
+def provdal(request):
 
     # TODO: use &format=... in url!
-    for key, value in request.GET.items():
-        print key, value
     observation_id = request.GET.get('ID') #default: None
     step = request.GET.get('STEP', 'LAST') # can be LAST or FIRST
     format = request.GET.get('FORMAT', 'PROVN') # can be PROVN, PROVJSON, VOTABLE
@@ -570,7 +446,7 @@ def provdal_obsid(request):
         # TODO: write a provn-renderer for this
         provstr = "document\n"
         for p_id, p in prov['prefix'].iteritems():
-            provstr = provstr + "prefix %s <%s>" % (p_id, p)
+            provstr = provstr + "prefix %s <%s>\n" % (p_id, p)
 
         for a_id, a in prov['activity'].iteritems():
             provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [voprov:type = '" + a.type + "', voprov:name = '" + a.name + "', voprov:annotation = '" + a.annotation + "']),\n"
