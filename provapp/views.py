@@ -94,7 +94,7 @@ def graphjson(request, activity_id):
     wasAssociatedWith_list = WasAssociatedWith.objects.all()
 
     nodes_dict = []
-    nodes_dict.append({"name": activity.label, "type": "activity"})
+    nodes_dict.append({"name": activity.name, "type": "activity"})
     count_nodes = 0
     count_act = 0
 
@@ -104,7 +104,7 @@ def graphjson(request, activity_id):
     for u in used_list:
         if u.activity.id == activity_id:
             # add node
-            nodes_dict.append({"name": "%s" % u.entity.label, "type": "entity"})
+            nodes_dict.append({"name": "%s" % u.entity.name, "type": "entity"})
             count_nodes = count_nodes + 1
 
             # and add link (source, target, value)
@@ -115,7 +115,7 @@ def graphjson(request, activity_id):
     for w in wasGeneratedBy_list:
         if w.activity.id == activity_id:
             # add node
-            nodes_dict.append({"name": "%s" % w.entity.label, "type": "entity"})
+            nodes_dict.append({"name": "%s" % w.entity.name, "type": "entity"})
             count_nodes = count_nodes + 1
 
             # and add link (source, target, value)
@@ -125,7 +125,7 @@ def graphjson(request, activity_id):
     for w in wasAssociatedWith_list:
         if w.activity.id == activity_id:
             # add node
-            nodes_dict.append({"name": "%s" % w.agent.label, "type": "agent"})
+            nodes_dict.append({"name": "%s" % w.agent.name, "type": "agent"})
             count_nodes = count_nodes + 1
 
             # and add link (source, target, value)
@@ -246,8 +246,8 @@ class EntitiesView(generic.ListView):
     context_object_name = 'entity_list'
 
     def get_queryset(self):
-        """Return the entities (at most 1000, ordered by label)."""
-        return Entity.objects.order_by('-label')[:1000]
+        """Return the entities (at most 1000, ordered by name)."""
+        return Entity.objects.order_by('-name')[:1000]
 
 
 class EntityDetailView(generic.DetailView):
@@ -259,8 +259,8 @@ class AgentsView(generic.ListView):
     context_object_name = 'agent_list'
 
     def get_queryset(self):
-        """Return the agents (at most 1000, ordered by label)."""
-        return Agent.objects.order_by('-label')[:1000]
+        """Return the agents (at most 1000, ordered by name)."""
+        return Agent.objects.order_by('-name')[:1000]
 
 
 class AgentDetailView(generic.DetailView):
@@ -270,8 +270,8 @@ class AgentDetailView(generic.DetailView):
 # simple prov-n view, using just a function:
 def provn(request):
     activity_list = Activity.objects.order_by('-startTime')[:]
-    entity_list = Entity.objects.order_by('-label')[:]
-    agent_list = Agent.objects.order_by('-label')[:]
+    entity_list = Entity.objects.order_by('-name')[:]
+    agent_list = Agent.objects.order_by('-name')[:]
     used_list = Used.objects.order_by('-id')[:]
     wasGeneratedBy_list = WasGeneratedBy.objects.order_by('-id')[:]
     wasAssociatedWith_list = WasAssociatedWith.objects.order_by('-id')[:]
@@ -281,13 +281,13 @@ def provn(request):
 
     provstr = "document\n"
     for a in activity_list:
-        provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [prov:type = '" + a.type + "', prov:label = '" + a.label + "', prov:description = '" + a.description + "']),\n"
+        provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [prov:type = '" + a.type + "', prov:name = '" + a.name + "', prov:description = '" + a.description + "']),\n"
 
     for e in entity_list:
-        provstr = provstr + "entity(" + e.id + ", [prov:type = '" + e.type + "', prov:label = '" + e.label + "', prov:description = '" + e.description + "']),\n"
+        provstr = provstr + "entity(" + e.id + ", [prov:type = '" + e.type + "', prov:name = '" + e.name + "', prov:description = '" + e.description + "']),\n"
 
     for ag in agent_list:
-        provstr = provstr + "agent(" + ag.id + ", [prov:type = '" + ag.type + "', prov:label = '" + ag.label + "', prov:description = '" + ag.description + "']),\n"
+        provstr = provstr + "agent(" + ag.id + ", [prov:type = '" + ag.type + "', prov:name = '" + ag.name + "', prov:description = '" + ag.description + "']),\n"
 
     for u in used_list:
         provstr = provstr + "used(" + u.activity.id + ", " + u.entity.id + ", [id = '" + str(u.id) + "', prov:role = '" + u.role + "']),\n"
@@ -307,8 +307,8 @@ def provn(request):
 
 def prettyprovn(request):
     activity_list = Activity.objects.order_by('-startTime')[:]
-    entity_list = Entity.objects.order_by('-label')[:]
-    agent_list = Agent.objects.order_by('-label')[:]
+    entity_list = Entity.objects.order_by('-name')[:]
+    agent_list = Agent.objects.order_by('-name')[:]
     used_list = Used.objects.order_by('-id')[:]
     wasGeneratedBy_list = WasGeneratedBy.objects.order_by('-id')[:]
     wasAssociatedWith_list = WasAssociatedWith.objects.order_by('-id')[:]
@@ -359,17 +359,17 @@ def fullgraphjson(request):
 
 
     for a in activity_list:
-        nodes_dict.append({"name": a.label, "type": "activity"})
+        nodes_dict.append({"name": a.name, "type": "activity"})
         map_activity_ids[a.id] = count_nodes
         count_nodes = count_nodes + 1
 
     for e in entity_list:
-        nodes_dict.append({"name": e.label, "type": "entity"})
+        nodes_dict.append({"name": e.name, "type": "entity"})
         map_entity_ids[e.id] = count_nodes
         count_nodes = count_nodes + 1
 
     for ag in agent_list:
-        nodes_dict.append({"name": ag.label, "type": "agent"})
+        nodes_dict.append({"name": ag.name, "type": "agent"})
         map_agent_ids[ag.id] = count_nodes
         count_nodes = count_nodes + 1
 
@@ -426,7 +426,7 @@ def get_observationId(request):
 
                 #if obsid: -- should we check this??
                 # get the entity from entity table:
-                entity = Entity.objects.get(label=form.cleaned_data['observation_id'])
+                entity = Entity.objects.get(name=form.cleaned_data['observation_id'])
 
                 if detail == 'basic':
                     return HttpResponseRedirect('/provapp/' + str(entity.id) + '/basic')
@@ -469,7 +469,7 @@ def provbasicjson(request, observation_id):
     }
 
     # put first entity into json:
-    prov['nodes_dict'].append({'name': entity.label, 'type': 'entity'})
+    prov['nodes_dict'].append({'name': entity.name, 'type': 'entity'})
     prov['map_nodes_ids'][entity.id] = prov['count_nodes']
     prov['count_nodes'] = prov['count_nodes'] + 1
 
@@ -507,7 +507,7 @@ def provdetailjson(request, observation_id):
     }
 
     # put first entity into json:
-    prov['nodes_dict'].append({'name': entity.label, 'type': 'entity'})
+    prov['nodes_dict'].append({'name': entity.name, 'type': 'entity'})
     prov['map_nodes_ids'][entity.id] = prov['count_nodes']
     prov['count_nodes'] = prov['count_nodes'] + 1
 
@@ -573,13 +573,13 @@ def provdal_obsid(request):
             provstr = provstr + "prefix %s <%s>" % (p_id, p)
 
         for a_id, a in prov['activity'].iteritems():
-            provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [voprov:type = '" + a.type + "', voprov:name = '" + a.label + "', voprov:annotation = '" + a.description + "']),\n"
+            provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [voprov:type = '" + a.type + "', voprov:name = '" + a.name + "', voprov:annotation = '" + a.description + "']),\n"
 
         for e_id, e in prov['entity'].iteritems():
-            provstr = provstr + "entity(" + e.id + ", [voprov:type = '" + e.type + "', voprov:name = '" + e.label + "', voprov:annotation = '" + e.description + "']),\n"
+            provstr = provstr + "entity(" + e.id + ", [voprov:type = '" + e.type + "', voprov:name = '" + e.name + "', voprov:annotation = '" + e.description + "']),\n"
 
         for ag_id, ag in prov['agent'].iteritems():
-            provstr = provstr + "agent(" + ag.id + ", [voprov:type = '" + ag.type + "', voprov:name = '" + ag.label + "', voprov:annotation = '" + ag.description + "']),\n"
+            provstr = provstr + "agent(" + ag.id + ", [voprov:type = '" + ag.type + "', voprov:name = '" + ag.name + "', voprov:annotation = '" + ag.description + "']),\n"
 
         for u_id, u in prov['used'].iteritems():
             provstr = provstr + "used(" + u.activity.id + ", " + u.entity.id + ", [id = '" + str(u.id) + "', voprov:role = '" + u.role + "']),\n"

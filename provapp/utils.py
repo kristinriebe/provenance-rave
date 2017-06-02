@@ -313,17 +313,17 @@ def find_entity(entity, prov):
             prov['wasGeneratedBy'][wg.id] = wg
 
     # check wasDerivedFrom
-    queryset = WasDerivedFrom.objects.filter(entity1=entity.id)
+    queryset = WasDerivedFrom.objects.filter(generatedEntity=entity.id)
     if len(queryset) > 0:
         for wd in queryset:
-            print "Entity " + entity.id + " wasDerivedFrom entity ", wd.entity2.id
+            print "Entity " + entity.id + " wasDerivedFrom entity ", wd.usedEntity.id
 
             # add entity to prov, if not yet done
             if wd.entity2.id not in prov['entity']:
-                prov['entity'][wd.entity2.id] = wd.entity2
+                prov['entity'][wd.usedEntity.id] = wd.usedEntity
 
                 # continue with pre-decessor
-                prov = find_entity(wd.entity2, prov)
+                prov = find_entity(wd.usedEntity, prov)
 
             # add wasDerivedFrom-link (in any case)
             prov['wasDerivedFrom'][wd.id] = wd

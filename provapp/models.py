@@ -33,43 +33,38 @@ AGENT_TYPE_CHOICES = (
 @python_2_unicode_compatible
 class Activity(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
-    label = models.CharField(max_length=128, null=True) # should require this, otherwise do not know what to show!
+    name = models.CharField(max_length=128, null=True) # should require this, otherwise do not know what to show!
     type = models.CharField(max_length=128, null=True, choices=ACTIVITY_TYPE_CHOICES)
-    description = models.CharField(max_length=1024, blank=True, null=True)
+    annotation = models.CharField(max_length=1024, blank=True, null=True)
     startTime = models.DateTimeField(null=True) # should be: null=False, default=timezone.now())
     endTime = models.DateTimeField(null=True) # should be: null=False, default=timezone.now())
-    docuLink = models.CharField('documentation link', max_length=512, blank=True, null=True)
+    doculink = models.CharField('documentation link', max_length=512, blank=True, null=True)
 
     def __str__(self):
-        return self.label
-        # maybe better use self.id here??
-
-    def getjson(self, activity_id):
-        activity_dict = {'id': id, 'label': label, 'type': type, 'description': description}
-        return JsonResponse(activity_dict)
+        return self.name
 
 @python_2_unicode_compatible
 class Entity(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
-    label = models.CharField(max_length=128, null=True) # human readable label
+    name = models.CharField(max_length=128, null=True) # human readable label
     type = models.CharField(max_length=128, null=True, choices=ENTITY_TYPE_CHOICES) # types of entities: single entity, dataset
-    description = models.CharField(max_length=1024, null=True, blank=True)
+    annotation = models.CharField(max_length=1024, null=True, blank=True)
     status = models.CharField(max_length=128, null=True, blank=True)
     dataType= models.CharField(max_length=128, null=True, blank=True)
     storageLocation = models.CharField('storage location', max_length=1024, null=True, blank=True)
 
     def __str__(self):
-        return self.label
+        return self.name
 
 @python_2_unicode_compatible
 class Agent(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
-    label = models.CharField(max_length=128, null=True) # human readable label, firstname + lastname
+    name = models.CharField(max_length=128, null=True) # human readable label, firstname + lastname
     type = models.CharField(max_length=128, null=True, choices=AGENT_TYPE_CHOICES) # types of entities: single entity, dataset
-    description = models.CharField(max_length=1024, null=True)
+    annotation = models.CharField(max_length=1024, null=True)
 
     def __str__(self):
-        return self.label
+        return self.name
 
 # relation classes
 @python_2_unicode_compatible
@@ -105,11 +100,11 @@ class HadMember(models.Model):
 @python_2_unicode_compatible
 class WasDerivedFrom(models.Model):
     id = models.AutoField(primary_key=True)
-    entity1 = models.ForeignKey(Entity, null=True) 
-    entity2 = models.ForeignKey(Entity, related_name='entity1', null=True) #, on_delete=models.CASCADE)
+    generatedEntity = models.ForeignKey(Entity, null=True) 
+    usedEntity = models.ForeignKey(Entity, related_name='generatedEntity', null=True) #, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "id=%s; entity1=%s; entity2=%s" % (str(self.id), self.entity1, self.entity2)
+        return "id=%s; generatedEntity=%s; usedEntity=%s" % (str(self.id), self.generatedEntity, self.usedEntity)
 
 @python_2_unicode_compatible
 class WasAssociatedWith(models.Model):

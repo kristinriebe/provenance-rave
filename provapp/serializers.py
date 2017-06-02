@@ -5,9 +5,6 @@ from .models import Activity, Entity, Agent, Used, WasGeneratedBy, HadMember, Wa
 
 class ActivitySerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='label')
-    annotation = serializers.CharField(source='description')
-
     class Meta:
         model = Activity
         fields = ('id', 'name', 'type', 'annotation')
@@ -15,8 +12,7 @@ class ActivitySerializer(serializers.ModelSerializer):
 
 class EntitySerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='label')
-    annotation = serializers.CharField(source='description')
+#     name = serializers.CharField(source='label')
     prov_type = serializers.SerializerMethodField()
 
     class Meta:

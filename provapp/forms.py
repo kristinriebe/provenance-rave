@@ -6,7 +6,8 @@ from provapp.models import Entity, RaveObsids
 class EntityForm(forms.Form):
     #observation_id = forms.CharField(label='RAVE observation id', max_length=1024)    # An inline class to provide additional information on the form.
     entity_list = Entity.objects.all()
-    observation_id = forms.ChoiceField(choices=[(x.id, x.label+" ("+x.type+")") for x in entity_list])
+#    observation_id = forms.ChoiceField(choices=[(x.id, x.name+" ("+x.type+")") for x in entity_list])
+    observation_id = forms.ChoiceField(choices=[(x.id, x.id+" ("+x.type+")") for x in entity_list])
 
     def clean_observation_id(self):
         desired_id = self.cleaned_data['observation_id']
