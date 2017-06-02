@@ -22,33 +22,27 @@ class ActivitySerializer(serializers.ModelSerializer):
 
 class EntitySerializer(serializers.ModelSerializer):
 
-#     name = serializers.CharField(source='label')
-    type = serializers.SerializerMethodField() #field_name = "prov:type")
+    prov_type = serializers.CharField(source='type')
+    prov_label = serializers.CharField(source='name')
+    prov_description = serializers.CharField(source='annotation')
+    #prov_type = serializers.SerializerMethodField() #field_name = "prov:type")
     # But this is now readonly, i.e. could not be filled when using rest api for creating new entity or updating!
 
 
     class Meta:
         model = Entity
-        fields = ('id', 'name', 'type', 'annotation')
+        fields = ('id', 'prov_label', 'prov_type', 'prov_description')
 
-    def get_type(self, obj):
-        value = obj.type
-
-        valuearr = obj.type.split(':')
-        if len(valuearr) == 2:
-            value = {}
-            value['$'] = obj.type
-            value['type'] = "xsd:QName" # or prov:QUALIFIED_NAME as used in Prov_Store
-
-        return value
-
-#    def to_representation(self, obj):
-        #for key, value in obj.items():
-        #    print key
-        # field_name=...
-        # return obj
-        #pass
-#        return
+    #def get_prov_type(self, obj):
+    #    value = obj.type
+#
+#        valuearr = obj.type.split(':')
+#        if len(valuearr) == 2:
+#            value = {}
+#            value['$'] = obj.type
+#            value['type'] = "xsd:QName" # or prov:QUALIFIED_NAME as used in Prov_Store
+#
+#        return value
 
 
 class AgentSerializer(serializers.ModelSerializer):
@@ -59,28 +53,68 @@ class AgentSerializer(serializers.ModelSerializer):
 
 
 class ProvenanceSerializer(serializers.Serializer):
+
     activity = serializers.SerializerMethodField()
     entity = serializers.SerializerMethodField()
     agent = serializers.SerializerMethodField()
 
 
+    # get all the class instances serialized by their
+    # corresponding serializer;
+    # adjust the serialization, where necessary
+
     def get_activity(self, obj):
         activity = {}
         for a_id, a in obj['activity'].iteritems():
             serializer = ActivitySerializer(a)
-            activity[a_id] = serializer.data
+            data = serializer.data
+
+            for key, value in data.iteritems():
+
+                # replace prov_by prov:
+                if key.startswith('prov_'):
+                    newkey = key.replace('prov_', 'prov:')
+                    data[newkey] = data.pop[key]
+
+                # restructure serialisation of qualified values
+                if ':' in value:
+                    # need to split up, specify that qualified string is used
+                    val = {}
+                    val['$'] = value
+                    val['type'] = "xsd:QName"
+                    data[key] = val
+
+            activity[a_id] = data
+
         return activity
 
     def get_entity(self, obj):
         entity = {}
         for e_id, e in obj['entity'].iteritems():
             serializer = EntitySerializer(e)
-            entity[e_id] = serializer.data
+            data = serializer.data
+
+            for key, value in data.iteritems():
+
+                # replace prov_by prov:
+                if key.startswith('prov_'):
+                    newkey = key.replace('prov_', 'prov:')
+                    data[newkey] = data.pop(key)
+
+                # restructure serialisation of qualified values
+                if ':' in value:
+                    # need to split up, specify that qualified string is used
+                    val = {}
+                    val['$'] = value
+                    val['type'] = "xsd:QName"
+                    data[key] = val
+
+            entity[e_id] = data
 
             # while doing this, add qualifier to keys, where needed
-            entity[e_id]['prov:type'] = entity[e_id].pop('type')
-            if 'label' in entity[e_id]:
-                entity[e_id]['prov:label'] = entity[e_id].pop('label')
+            #entity[e_id]['prov:type'] = entity[e_id].pop('type')
+            #if 'label' in entity[e_id]:
+            #    entity[e_id]['prov:label'] = entity[e_id].pop('label')
         return entity
 
     def get_agent(self, obj):

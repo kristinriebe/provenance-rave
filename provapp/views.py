@@ -325,8 +325,6 @@ def get_observationId(request):
 
 
 def provdal_form(request):
-    # Get the context from the request.
-    #context = RequestContext(request)
 
     if request.method == 'POST':
         form = ProvDalForm(request.POST)
@@ -334,17 +332,14 @@ def provdal_form(request):
         if form.is_valid():
         # process the data in form.cleaned_data as required
             try:
-                #print form.cleaned_data
-                #entity = Entity.objects.get(label=form.cleaned_data['observation_id'])
-                #return HttpResponseRedirect('/provapp/provdetail/'+entity.id)
-
                 obsid = RaveObsids.objects.get(rave_obs_id=form.cleaned_data['observation_id'])
                 step = form.cleaned_data['step_flag']
                 format = form.cleaned_data['format']
+                compliance = form.cleaned_data['compliance']
 
                 entity = Entity.objects.get(name=form.cleaned_data['observation_id'])
 
-                return HttpResponseRedirect('/provapp/provdal/?ID=%s&STEP=%s&FORMAT=%s' % (str(entity.id), str(step), str(format)))
+                return HttpResponseRedirect(reverse('provapp:provdal_form')+"?ID=%s&STEP=%s&FORMAT=%s&COMPLIANCE=%s" % (str(entity.id), str(step), str(format), str(compliance)))
 
 
 #                if detail == 'basic':
