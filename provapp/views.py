@@ -78,7 +78,7 @@ class ActivityDetailView(generic.DetailView):
 def myjson(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     #return HttpResponse(json.dumps(data), content_type='application/json')
-    #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'description': activity.description}
+    #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'annotation': activity.annotation}
     activity_dict = to_dict(activity)
     return JsonResponse(activity_dict)
 
@@ -86,7 +86,7 @@ def myjson(request, activity_id):
 def graphjson(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     #return HttpResponse(json.dumps(data), content_type='application/json')
-    #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'description': activity.description}
+    #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'annotation': activity.annotation}
     #activity_dict = to_dict(activity)
 
     used_list = Used.objects.all()
@@ -281,13 +281,13 @@ def provn(request):
 
     provstr = "document\n"
     for a in activity_list:
-        provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [prov:type = '" + a.type + "', prov:name = '" + a.name + "', prov:description = '" + a.description + "']),\n"
+        provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [prov:type = '" + a.type + "', prov:name = '" + a.name + "', prov:annotation = '" + a.annotation + "']),\n"
 
     for e in entity_list:
-        provstr = provstr + "entity(" + e.id + ", [prov:type = '" + e.type + "', prov:name = '" + e.name + "', prov:description = '" + e.description + "']),\n"
+        provstr = provstr + "entity(" + e.id + ", [prov:type = '" + e.type + "', prov:name = '" + e.name + "', prov:annotation = '" + e.annotation + "']),\n"
 
     for ag in agent_list:
-        provstr = provstr + "agent(" + ag.id + ", [prov:type = '" + ag.type + "', prov:name = '" + ag.name + "', prov:description = '" + ag.description + "']),\n"
+        provstr = provstr + "agent(" + ag.id + ", [prov:type = '" + ag.type + "', prov:name = '" + ag.name + "', prov:annotation = '" + ag.annotation + "']),\n"
 
     for u in used_list:
         provstr = provstr + "used(" + u.activity.id + ", " + u.entity.id + ", [id = '" + str(u.id) + "', prov:role = '" + u.role + "']),\n"
@@ -332,7 +332,7 @@ def graph(request):
 def fullgraphjson(request):
     #activity = get_object_or_404(Activity, pk=activity_id)
     #return HttpResponse(json.dumps(data), content_type='application/json')
-    #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'description': activity.description}
+    #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'annotation': activity.annotation}
     #activity_dict = to_dict(activity)
 
 
@@ -573,13 +573,13 @@ def provdal_obsid(request):
             provstr = provstr + "prefix %s <%s>" % (p_id, p)
 
         for a_id, a in prov['activity'].iteritems():
-            provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [voprov:type = '" + a.type + "', voprov:name = '" + a.name + "', voprov:annotation = '" + a.description + "']),\n"
+            provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [voprov:type = '" + a.type + "', voprov:name = '" + a.name + "', voprov:annotation = '" + a.annotation + "']),\n"
 
         for e_id, e in prov['entity'].iteritems():
-            provstr = provstr + "entity(" + e.id + ", [voprov:type = '" + e.type + "', voprov:name = '" + e.name + "', voprov:annotation = '" + e.description + "']),\n"
+            provstr = provstr + "entity(" + e.id + ", [voprov:type = '" + e.type + "', voprov:name = '" + e.name + "', voprov:annotation = '" + e.annotation + "']),\n"
 
         for ag_id, ag in prov['agent'].iteritems():
-            provstr = provstr + "agent(" + ag.id + ", [voprov:type = '" + ag.type + "', voprov:name = '" + ag.name + "', voprov:annotation = '" + ag.description + "']),\n"
+            provstr = provstr + "agent(" + ag.id + ", [voprov:type = '" + ag.type + "', voprov:name = '" + ag.name + "', voprov:annotation = '" + ag.annotation + "']),\n"
 
         for u_id, u in prov['used'].iteritems():
             provstr = provstr + "used(" + u.activity.id + ", " + u.entity.id + ", [id = '" + str(u.id) + "', voprov:role = '" + u.role + "']),\n"
