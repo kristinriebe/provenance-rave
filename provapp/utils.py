@@ -23,7 +23,7 @@ def find_entity_basic_graph(entity, prov):
             # (use map_activity_ids for easier checking)
 
             if wg.activity.id not in prov['map_nodes_ids']:
-                prov['nodes_dict'].append({'name': wg.activity.label, 'type': 'activity'})
+                prov['nodes_dict'].append({'name': wg.activity.name, 'type': 'activity'})
                 prov['map_nodes_ids'][wg.activity.id] = prov['count_nodes']
                 prov['count_nodes'] = prov['count_nodes'] + 1
 
@@ -53,12 +53,12 @@ def find_entity_basic_graph(entity, prov):
 
             # add entity to prov-json, if not yet done
             if h.collection.id not in prov['map_nodes_ids']:
-                prov['nodes_dict'].append({'name': h.collection.label, 'type': 'entity'})
+                prov['nodes_dict'].append({'name': h.collection.name, 'type': 'entity'})
                 prov['map_nodes_ids'][h.collection.id] = prov['count_nodes']
                 prov['count_nodes'] = prov['count_nodes'] + 1
 
                 # follow this collection's provenance (if it was not recorded before)
-                prov = find_entity_basic(h.collection, prov)
+                prov = find_entity_basic_graph(h.collection, prov)
             else:
                 # just find it's id:
                 id1 = prov['map_nodes_ids'] # not needed, is found below anyway
@@ -69,7 +69,7 @@ def find_entity_basic_graph(entity, prov):
             prov['count_link'] = prov['count_link'] + 1
 
 
-    queryset = WasDerivedFrom.objects.filter(entity1=entity.id)
+    queryset = WasDerivedFrom.objects.filter(generatedEntity=entity.id)
     # this relation is unique, there can be only one ... or not?
     if (len(queryset) == 0):
         pass
@@ -77,22 +77,22 @@ def find_entity_basic_graph(entity, prov):
         raise ValueError("More than one wasDerivedFrom-relation found. Does this make any sense?")
     else:
         wd = queryset[0]
-        print "Entity " + entity.id + " wasDerivedFrom entity ", wd.entity2.id
+        print "Entity " + entity.id + " wasDerivedFrom entity ", wd.usedEntity.id
 
         # use entity only, if it is a collection
         if "prov:collection" in entity.type.split(';'):
 
             # add entity to prov-json, if not yet done
-            if wd.entity2.id not in prov['map_nodes_ids']:
-                prov['nodes_dict'].append({'name': wd.entity2.label, 'type': 'entity'})
-                prov['map_nodes_ids'][wd.entity2.id] = prov['count_nodes']
+            if wd.usedEntity.id not in prov['map_nodes_ids']:
+                prov['nodes_dict'].append({'name': wd.usedEntity.name, 'type': 'entity'})
+                prov['map_nodes_ids'][wd.usedEntity.id] = prov['count_nodes']
                 prov['count_nodes'] = prov['count_nodes'] + 1
 
                 # continue with pre-decessor
-                prov = find_entity_basic_graph(wd.entity2, prov)
+                prov = find_entity_basic_graph(wd.usedEntity, prov)
 
             # add hadMember-link (in any case)
-            prov['links_dict'].append({"source": prov['map_nodes_ids'][entity.id], "target": prov['map_nodes_ids'][wd.entity2.id], "value": 0.2, "type": "wasDerivedFrom"})
+            prov['links_dict'].append({"source": prov['map_nodes_ids'][entity.id], "target": prov['map_nodes_ids'][wd.usedEntity.id], "value": 0.2, "type": "wasDerivedFrom"})
             prov['count_link'] = prov['count_link'] + 1
 
 
@@ -116,7 +116,7 @@ def find_activity_basic_graph(activity, prov):
                 print "Activity " + activity.id + " used entity ", u.entity.id
                 # add entity to prov-json, if not yet done
                 if (u.entity.id not in prov['map_nodes_ids']):
-                    prov['nodes_dict'].append({'name': u.entity.label, 'type': 'entity'})
+                    prov['nodes_dict'].append({'name': u.entity.name, 'type': 'entity'})
                     prov['map_nodes_ids'][u.entity.id] = prov['count_nodes']
                     prov['count_nodes'] = prov['count_nodes'] + 1
 
@@ -150,7 +150,7 @@ def find_entity_detail_graph(entity, prov):
             # (use map_activity_ids for easier checking)
 
             if wg.activity.id not in prov['map_nodes_ids']:
-                prov['nodes_dict'].append({'name': wg.activity.label, 'type': 'activity'})
+                prov['nodes_dict'].append({'name': wg.activity.name, 'type': 'activity'})
                 prov['map_nodes_ids'][wg.activity.id] = prov['count_nodes']
                 prov['count_nodes'] = prov['count_nodes'] + 1
 
@@ -181,7 +181,7 @@ def find_entity_detail_graph(entity, prov):
 
                 # add entity to prov-json, if not yet done
                 if h.collection.id not in prov['map_nodes_ids']:
-                    prov['nodes_dict'].append({'name': h.collection.label, 'type': 'entity'})
+                    prov['nodes_dict'].append({'name': h.collection.name, 'type': 'entity'})
                     prov['map_nodes_ids'][h.collection.id] = prov['count_nodes']
                     prov['count_nodes'] = prov['count_nodes'] + 1
 
@@ -197,7 +197,7 @@ def find_entity_detail_graph(entity, prov):
                 prov['count_link'] = prov['count_link'] + 1
 
 
-        queryset = WasDerivedFrom.objects.filter(entity1=entity.id)
+        queryset = WasDerivedFrom.objects.filter(generatedEntity=entity.id)
         # this relation is unique, there can be only one ... or not?
         if (len(queryset) == 0):
             pass
@@ -205,19 +205,19 @@ def find_entity_detail_graph(entity, prov):
             raise ValueError("More than one wasDerivedFrom-relation found. Does this make any sense?")
         else:
             wd = queryset[0]
-            print "Entity " + entity.id + " wasDerivedFrom entity ", wd.entity2.id
+            print "Entity " + entity.id + " wasDerivedFrom entity ", wd.usedEntity.id
 
             # add entity to prov-json, if not yet done
-            if wd.entity2.id not in prov['map_nodes_ids']:
-                prov['nodes_dict'].append({'name': wd.entity2.label, 'type': 'entity'})
-                prov['map_nodes_ids'][wd.entity2.id] = prov['count_nodes']
+            if wd.usedEentity.id not in prov['map_nodes_ids']:
+                prov['nodes_dict'].append({'name': wd.usedEntity.name, 'type': 'entity'})
+                prov['map_nodes_ids'][wd.usedEentity.id] = prov['count_nodes']
                 prov['count_nodes'] = prov['count_nodes'] + 1
 
                 # continue with pre-decessor
-                prov = find_entity_detail_graph(wd.entity2, prov)
+                prov = find_entity_detail_graph(wd.usedEntity, prov)
 
             # add hadMember-link (in any case)
-            prov['links_dict'].append({"source": prov['map_nodes_ids'][entity.id], "target": prov['map_nodes_ids'][wd.entity2.id], "value": 0.2, "type": "wasDerivedFrom"})
+            prov['links_dict'].append({"source": prov['map_nodes_ids'][entity.id], "target": prov['map_nodes_ids'][wd.usedEntity.id], "value": 0.2, "type": "wasDerivedFrom"})
             prov['count_link'] = prov['count_link'] + 1
 
     # if nothing found until now, then I have reached an endpoint in the graph
@@ -238,7 +238,7 @@ def find_activity_detail_graph(activity, prov):
                 print "Activity " + activity.id + " used entity ", u.entity.id
                 # add entity to prov-json, if not yet done
                 if u.entity.id not in prov['map_nodes_ids']:
-                    prov['nodes_dict'].append({'name': u.entity.label, 'type': 'entity'})
+                    prov['nodes_dict'].append({'name': u.entity.name, 'type': 'entity'})
                     prov['map_nodes_ids'][u.entity.id] = prov['count_nodes']
                     prov['count_nodes'] = prov['count_nodes'] + 1
 
@@ -319,7 +319,7 @@ def find_entity(entity, prov):
             print "Entity " + entity.id + " wasDerivedFrom entity ", wd.usedEntity.id
 
             # add entity to prov, if not yet done
-            if wd.entity2.id not in prov['entity']:
+            if wd.usedEntity.id not in prov['entity']:
                 prov['entity'][wd.usedEntity.id] = wd.usedEntity
 
                 # continue with pre-decessor
