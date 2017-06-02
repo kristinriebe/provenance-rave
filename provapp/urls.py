@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^(?P<observation_id>[0-9a-zA-Z.:_-]+)/detail/$', views.provdetail, name='provdetail'),
     url(r'^(?P<observation_id>[0-9a-zA-Z.:_-]+)/detail/graphjson$', views.provdetailjson, name='provdetail'),
     url(r'^provdal/$', views.provdal, name='provdal'),
+    url(r'^provdalform/$', views.provdal_form, name='provdal_form'),
 
     # graph overviews
     url(r'^graph/$', views.graph, name='graph'),

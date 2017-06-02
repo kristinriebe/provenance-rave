@@ -23,13 +23,15 @@ class ActivitySerializer(serializers.ModelSerializer):
 class EntitySerializer(serializers.ModelSerializer):
 
 #     name = serializers.CharField(source='label')
-    prov_type = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField() #field_name = "prov:type")
+    # But this is now readonly, i.e. could not be filled when using rest api for creating new entity or updating!
+
 
     class Meta:
         model = Entity
-        fields = ('id', 'name', 'prov_type', 'annotation')
+        fields = ('id', 'name', 'type', 'annotation')
 
-    def get_prov_type(self, obj):
+    def get_type(self, obj):
         value = obj.type
 
         valuearr = obj.type.split(':')
@@ -39,6 +41,14 @@ class EntitySerializer(serializers.ModelSerializer):
             value['type'] = "xsd:QName" # or prov:QUALIFIED_NAME as used in Prov_Store
 
         return value
+
+#    def to_representation(self, obj):
+        #for key, value in obj.items():
+        #    print key
+        # field_name=...
+        # return obj
+        #pass
+#        return
 
 
 class AgentSerializer(serializers.ModelSerializer):
@@ -66,6 +76,11 @@ class ProvenanceSerializer(serializers.Serializer):
         for e_id, e in obj['entity'].iteritems():
             serializer = EntitySerializer(e)
             entity[e_id] = serializer.data
+
+            # while doing this, add qualifier to keys, where needed
+            entity[e_id]['prov:type'] = entity[e_id].pop('type')
+            if 'label' in entity[e_id]:
+                entity[e_id]['prov:label'] = entity[e_id].pop('label')
         return entity
 
     def get_agent(self, obj):

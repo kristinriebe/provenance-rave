@@ -39,7 +39,7 @@ from .serializers import (
     ProvenanceSerializer
 )
 
-from .forms import ObservationIdForm
+from .forms import ObservationIdForm, ProvDalForm
 
 
 class IndexView(generic.ListView):
@@ -324,6 +324,47 @@ def get_observationId(request):
     return render(request, 'provapp/observationId.html', {'form': form})
 
 
+def provdal_form(request):
+    # Get the context from the request.
+    #context = RequestContext(request)
+
+    if request.method == 'POST':
+        form = ProvDalForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+        # process the data in form.cleaned_data as required
+            try:
+                #print form.cleaned_data
+                #entity = Entity.objects.get(label=form.cleaned_data['observation_id'])
+                #return HttpResponseRedirect('/provapp/provdetail/'+entity.id)
+
+                obsid = RaveObsids.objects.get(rave_obs_id=form.cleaned_data['observation_id'])
+                step = form.cleaned_data['step_flag']
+                format = form.cleaned_data['format']
+
+                entity = Entity.objects.get(name=form.cleaned_data['observation_id'])
+
+                return HttpResponseRedirect('/provapp/provdal/?ID=%s&STEP=%s&FORMAT=%s' % (str(entity.id), str(step), str(format)))
+
+
+#                if detail == 'basic':
+#                    return HttpResponseRedirect('/provapp/' + str(entity.id) + '/basic')
+#                else:
+#                    return HttpResponseRedirect('/provapp/' + str(entity.id) + '/detail')
+
+            except ValueError:
+                form = ProvDalForm(request.POST)
+        else:
+            #print form.errors # or add_error??
+            pass
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = ProvDalForm()
+
+    return render(request, 'provapp/provdalform.html', {'form': form})
+
+
 def provbasic(request, observation_id):
     entity = get_object_or_404(Entity, pk=observation_id)
     return render(request, 'provapp/provdetail.html', {'entity': entity})
@@ -480,14 +521,11 @@ def provdal(request):
 
 
     elif format == 'PROVJSON':
-        #votable = VOTableRenderer().render(data, votable_meta=votable_meta, prettyprint=False)
-
-        # test serializers:
-        #json_str = serializers.serialize('json', prov['entity_list']) #, fields=('name',''))
-        # => works!
 
         # convert querysets to serialized python objects
-        serializer = ProvenanceSerializer(prov) # => works!
+        serializer = ProvenanceSerializer(prov)
+        # s = serializer.to_representation(prov)
+        # print "s: ", serializer
         data = serializer.data
 
         json_str = json.dumps(data,

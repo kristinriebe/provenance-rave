@@ -4,15 +4,15 @@
 
 {% block content %}
 
-<h2>Provenance search</h2>
+<h2>Provenance Data Access Layer (ProvDAL)</h2>
 
 <div class="row">
   <div class="col-md-6">
-Put a RAVE observation id in the field below and submit for getting detailed 
-provenance information for this observation. 
+    Put a RAVE observation id in the field below and submit
+    for retrieving the provenance record.
   </div>
 </div>
-<form action="{% url 'provapp:get_observationId' %}" method="post">
+<form action="{% url 'provapp:provdal_form' %}" method="post">
     {% csrf_token %}
 
     {% for field in form.visible_fields %}
