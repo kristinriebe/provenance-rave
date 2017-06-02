@@ -257,30 +257,23 @@ def find_activity_detail_graph(activity, prov):
 
 def find_entity(entity, prov):
 
-    if "prov:collection" in entity.type.split(';'):
-        return prov
-# why should we exclude collections? Include them!! -- would make sense, if only a detailed path shall be followed...
 
-    # track the provenance information backwards via WasGeneratedBy
-    queryset = WasGeneratedBy.objects.filter(entity=entity.id)
-    if (len(queryset) > 0):
-        for wg in queryset:
-            print "Entity "+ entity.id + " wasGeneratedBy activity: ", wg.activity.id
+    # check agent relation (attribution)
+    queryset = WasAttributedTo.objects.filter(entity=entity.id)
+    if len(queryset) > 0:
+        for wa in queryset:
+            print "Entity " + entity.id + " WasAttributedTo agent ", wa.agent.id
 
-            # add activity to prov-list, IF not existing there already
-            if wg.activity.id not in prov['activity']:
-                prov['activity'][wg.activity.id] = wg.activity
+            if wa.agent.id not in prov['agent']:
+                # add agent to prov
+                prov['agent'][wa.agent.id] = wa.agent
 
-                # follow provenance along this activity
-                prov = find_activity(wg.activity, prov)
+            # add wasAttributedto relationship
+            prov['wasAttributedto'] = wa
 
-            # add wasGeneratedBy-link
-            prov['wasGeneratedBy'][wg.id] = wg
-
-
-    # check membership to collection and follow the collection's provenance
+    # check membership to collection and (maybe) follow the collection's provenance
     queryset = HadMember.objects.filter(entity=entity.id)
-    if (len(queryset) > 0):
+    if len(queryset) > 0:
         # can entities belong to more than one collection?
         # actually not, but we'll allow it here for now ...
         for h in queryset:
@@ -296,9 +289,32 @@ def find_entity(entity, prov):
             # add hadMember-link:
             prov['hadMember'][h.id] = h
 
+
+    # do not check wasGeneratedBy and wasDerivedFrom for collections,
+    # if we only want to follow the provenance path of a detailed entity;
+    # thus return here, if it is a collection
+    if "prov:collection" in entity.type.split(';'):
+        return prov
+
+    # track the provenance information backwards via WasGeneratedBy
+    queryset = WasGeneratedBy.objects.filter(entity=entity.id)
+    if len(queryset) > 0:
+        for wg in queryset:
+            print "Entity "+ entity.id + " wasGeneratedBy activity: ", wg.activity.id
+
+            # add activity to prov-list, IF not existing there already
+            if wg.activity.id not in prov['activity']:
+                prov['activity'][wg.activity.id] = wg.activity
+
+                # follow provenance along this activity
+                prov = find_activity(wg.activity, prov)
+
+            # add wasGeneratedBy-link
+            prov['wasGeneratedBy'][wg.id] = wg
+
     # check wasDerivedFrom
     queryset = WasDerivedFrom.objects.filter(entity1=entity.id)
-    if (len(queryset) > 0):
+    if len(queryset) > 0:
         for wd in queryset:
             print "Entity " + entity.id + " wasDerivedFrom entity ", wd.entity2.id
 
@@ -324,9 +340,9 @@ def find_activity(activity, prov):
     # There definitely can be more than one used-relation
     if len(queryset) > 0:
         for u in queryset:
-            # because only want details, no collection prov:return f it is a collection
-            if "prov:collection" in u.entity.type.split(';'):
-                return prov
+            # because only want details, no collection, return if it is a collection
+            #if "prov:collection" in u.entity.type.split(';'):
+            #    return prov
             print "Activity " + activity.id + " used entity ", u.entity.id
 
             # add entity to prov, if not yet done
@@ -339,6 +355,19 @@ def find_activity(activity, prov):
             # add used-link:
             prov['used'][u.id] = u
     print "Giving up, no more provenance for activity %s found." % activity.id
+
+    # check agent relation (association)
+    queryset = WasAssociatedWith.objects.filter(activity=activity.id)
+    if len(queryset) > 0:
+        for wa in queryset:
+            print "Agent " + wa.agent.id + " WasAssociatedWith activity ", wa.activity.id
+
+            if wa.agent.id not in prov['agent']:
+                # add agent to prov
+                prov['agent'][wa.agent.id] = wa.agent
+
+            # add relationship to prov
+            prov['WasAssociatedWith'] = wa
 
     return prov
 

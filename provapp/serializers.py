@@ -5,26 +5,23 @@ from .models import Activity, Entity, Agent, Used, WasGeneratedBy, HadMember, Wa
 
 class ActivitySerializer(serializers.ModelSerializer):
 
+    name = serializers.CharField(source='label')
+    annotation = serializers.CharField(source='description')
+
     class Meta:
         model = Activity
-        fields = ('id', 'label', 'type', 'description')
+        fields = ('id', 'name', 'type', 'annotation')
 
 
 class EntitySerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(source='label')
+    annotation = serializers.CharField(source='description')
     prov_type = serializers.SerializerMethodField()
-    foo = serializers.SerializerMethodField()
-
-    #activity = ActivitySerializer(many=True)
 
     class Meta:
         model = Entity
-        fields = '__all__'
-        #fields = ('id', 'label', 'description', 'dataType', 'name', 'foo', 'type')
-
-    def get_foo(self, obj):
-        return obj.label + '-hallo'
+        fields = ('id', 'name', 'prov_type', 'annotation')
 
     def get_prov_type(self, obj):
         value = obj.type
@@ -38,9 +35,17 @@ class EntitySerializer(serializers.ModelSerializer):
         return value
 
 
+class AgentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Agent
+        fields = '__all__'
+
+
 class ProvenanceSerializer(serializers.Serializer):
     activity = serializers.SerializerMethodField()
     entity = serializers.SerializerMethodField()
+    agent = serializers.SerializerMethodField()
 
 
     def get_activity(self, obj):
@@ -57,19 +62,8 @@ class ProvenanceSerializer(serializers.Serializer):
             entity[e_id] = serializer.data
         return entity
 
-    #entity = EntitySerializer(e)
-#    data = {'entity': {}, 'activity': {}}
-
-    # # convert querysets to serialized python objects
-    # for e_id, e in prov['entity'].iteritems():
-    #     serializer = EntitySerializer(e)
-    #     data['entity'][e_id] = serializer.data
-
-    # for a_id, a in prov['activity'].iteritems():
-    #     serializer = ActivitySerializer(e)
-    #     data['activity'][a_id] = serializer.data
-
-#     name = serializers.CharField(source='label')
-#     prov_type = serializers.SerializerMethodField()
-#     foo = serializers.SerializerMethodField()
-
+    def get_agent(self, obj):
+        agent = {}
+        for a_id, a in obj['agent'].iteritems():
+            agent[a_id] = AgentSerializer(a).data
+        return agent

@@ -562,7 +562,7 @@ def provdal_obsid(request):
         prov = utils.find_entity(entity, prov)
 
     # The prov dictionary now contains the complete provenance information,
-    # in the form of querysets. First serialize them, then render in the 
+    # in the form of querysets. First serialize them, then render in the
     # desired format.
 
     # write provenance information in desired format:
