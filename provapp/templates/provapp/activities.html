@@ -11,7 +11,7 @@ Following activities are recorded for RAVE. Click on one of them to show the det
 {% if activity_list %}
     <ul>
     {% for activity in activity_list %}
-        <li><a href="{% url 'provapp:activity_detail' activity.id %}">{{ activity.label }}</a></li>
+        <li><a href="{% url 'provapp:activity_detail' activity.id %}">{{ activity.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

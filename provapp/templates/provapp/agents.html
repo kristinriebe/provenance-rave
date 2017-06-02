@@ -11,7 +11,7 @@ Following agents are recorded for RAVE. Click on one of them to show the details
 {% if agent_list %}
     <ul>
     {% for agent in agent_list %}
-        <li><a href="{% url 'provapp:agent_detail' agent.id %}">{{ agent.label }}</a></li>
+        <li><a href="{% url 'provapp:agent_detail' agent.id %}">{{ agent.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

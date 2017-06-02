@@ -11,7 +11,7 @@ Following entities are recorded for RAVE. Click on one of them to show the detai
 {% if entity_list %}
     <ul>
     {% for entity in entity_list %}
-        <li><a href="{% url 'provapp:entity_detail' entity.id %}">{{ entity.label }}</a></li>
+        <li><a href="{% url 'provapp:entity_detail' entity.id %}">{{ entity.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

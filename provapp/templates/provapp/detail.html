@@ -4,13 +4,13 @@
 
 {% block content %}
 
-<h2>Activity: {{ activity.label }}</h2>
+<h2>Activity: {{ activity.name }}</h2>
 Details: 
 <ul>
 <li>id: {{ activity.id }}</li>
-<li>label: {{ activity.label }}</li>
+<li>label: {{ activity.name }}</li>
 <li>type: {{ activity.type }}</li>
-<li>description: {{ activity.description }}</li>
+<li>annotation: {{ activity.annotation }}</li>
 <li>startTime: {{ activity.startTime }}</li>
 <li>endTime: {{ activity.endTime }}</li>
 </ul>

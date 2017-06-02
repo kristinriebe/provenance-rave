@@ -13,8 +13,8 @@
         {{ activity.startTime }}, 
         {{ activity.endTime }}, 
         [prov:type = '{{ activity.type }}', 
-         prov:label = '{{ activity.label }}', 
-         prov:description = '{{ activity.description }}'
+         prov:name = '{{ activity.name }}', 
+         prov:annotation = '{{ activity.annotation }}'
         ] ),
         <br>
     {% endfor %}
@@ -23,8 +23,8 @@
     {% for entity in activity_list %}
         <span class="entity">entity</span>( <a href="{% url 'provapp:entity_detail' entity.id %}">{{ entity.id }}</a>, 
         [prov:type = '{{ entity.type }}', 
-         prov:label = '{{ entity.label }}', 
-         prov:description = '{{ entity.description }}'
+         prov:name = '{{ entity.name }}', 
+         prov:annotation = '{{ entity.annotation }}'
         ] ),
         <br>
     {% endfor %}
@@ -33,8 +33,8 @@
     {% for ag in agent_list %}
         <span class="agent">agent</span>( <a href="{% url 'provapp:agent_detail' ag.id %}">{{ ag.id }}</a>, 
         [prov:type = '{{ ag.type }}', 
-         prov:label = '{{ ag.label }}', 
-         prov:description = '{{ ag.description }}'
+         prov:name = '{{ ag.name }}', 
+         prov:annotation = '{{ ag.annotation }}'
         ] ),
         <br>
     {% endfor %}

@@ -8,9 +8,9 @@
 <h3>Details</h3>
 <ul>
 <li>id: {{ activity.id }}</li>
-<li>label: {{ activity.label }}</li>
+<li>name: {{ activity.name }}</li>
 <li>type: {{ activity.type }}</li>
-<li>description: {{ activity.description }}</li>
+<li>annotation: {{ activity.annotation }}</li>
 <li>startTime: {{ activity.startTime }}</li>
 <li>endTime: {{ activity.endTime }}</li>
 </ul>
@@ -22,9 +22,9 @@
     <ul>
     {% for used in used_list %}
         {% if activity.id in used.activity.id %}
-            <li><a href="{% url 'provapp:activity_detail' activity.id %}">{{ activity.label }}</a> 
+            <li><a href="{% url 'provapp:activity_detail' activity.id %}">{{ activity.name }}</a> 
                 used 
-                <a href="{% url 'provapp:entity_detail' used.entity.id %}">{{ used.entity.label }}</a></li>
+                <a href="{% url 'provapp:entity_detail' used.entity.id %}">{{ used.entity.name }}</a></li>
         {% endif %}
     {% endfor %}
     </ul>
@@ -38,9 +38,9 @@
     <ul>
     {% for wasGeneratedBy in wasGeneratedBy_list %}
         {% if activity.id in wasGeneratedBy.activity.id %}
-            <li><a href="{% url 'provapp:entity_detail' wasGeneratedBy.entity.id %}">{{ wasGeneratedBy.entity.label }}</a>
+            <li><a href="{% url 'provapp:entity_detail' wasGeneratedBy.entity.id %}">{{ wasGeneratedBy.entity.name }}</a>
                 wasGeneratedBy 
-                <a href="{% url 'provapp:activity_detail' activity.id %}">{{ activity.label }}</a> 
+                <a href="{% url 'provapp:activity_detail' activity.id %}">{{ activity.name }}</a> 
                 </li>
         {% endif %}
     {% endfor %}
@@ -55,9 +55,9 @@
     <ul>
     {% for wasAssociatedWith in wasAssociatedWith_list %}
         {% if activity.id in wasAssociatedWith.activity.id %}
-            <li><a href="{% url 'provapp:activity_detail' activity.id %}">{{ activity.label }}</a>
+            <li><a href="{% url 'provapp:activity_detail' activity.id %}">{{ activity.name }}</a>
                 wasAssociatedWith 
-                <a href="{% url 'provapp:agent_detail' wasAssociatedWith.agent.id %}">{{ wasAssociatedWith.agent.label }}</a> 
+                <a href="{% url 'provapp:agent_detail' wasAssociatedWith.agent.id %}">{{ wasAssociatedWith.agent.name }}</a> 
                 </li>
         {% endif %}
     {% endfor %}
