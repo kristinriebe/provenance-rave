@@ -262,14 +262,14 @@ def find_entity(entity, prov):
     queryset = WasAttributedTo.objects.filter(entity=entity.id)
     if len(queryset) > 0:
         for wa in queryset:
-            print "Entity " + entity.id + " WasAttributedTo agent ", wa.agent.id
+            print "**Entity " + entity.id + " WasAttributedTo agent ", wa.agent.id
 
             if wa.agent.id not in prov['agent']:
                 # add agent to prov
                 prov['agent'][wa.agent.id] = wa.agent
 
             # add wasAttributedto relationship
-            prov['wasAttributedto'] = wa
+            prov['wasAttributedTo'][wa.id] = wa
 
     # check membership to collection and (maybe) follow the collection's provenance
     queryset = HadMember.objects.filter(entity=entity.id)
@@ -367,7 +367,7 @@ def find_activity(activity, prov):
                 prov['agent'][wa.agent.id] = wa.agent
 
             # add relationship to prov
-            prov['WasAssociatedWith'] = wa
+            prov['wasAssociatedWith'][wa.id] = wa
 
     return prov
 

@@ -519,16 +519,12 @@ def provdal(request):
 
         # convert querysets to serialized python objects
         serializer = ProvenanceSerializer(prov)
-        # s = serializer.to_representation(prov)
-        # print "s: ", serializer
         data = serializer.data
 
         json_str = json.dumps(data,
                 sort_keys=True,
                 indent=4
                )
-       # => works!
-
 #        json_str = JSONRenderer().render(serializer.data)
         return HttpResponse(json_str, content_type='text/json; charset=utf-8')
 
