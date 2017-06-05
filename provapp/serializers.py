@@ -26,6 +26,14 @@ class ActivitySerializer(serializers.ModelSerializer):
         # but still keep it here in the serializer
 
 
+# IVOA specific serializer
+class ActivitySerializerVO(serializers.ModelSerializer):
+
+    class Meta:
+        model = Activity
+        fields = ('id', 'name', 'type', 'description')
+
+
 class EntitySerializer(serializers.ModelSerializer):
 
     prov_type = serializers.CharField(source='type')

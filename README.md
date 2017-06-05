@@ -81,3 +81,15 @@ This webapp allows to:
 * Use MySQL database/remote database instead of Sqlite3
 * Use migrations and fixtures for properly dealing with database
 * ...
+
+* Finish provdal implementation: step, ivoa compliance
+    - should use a different serializer for each class for VO,
+    or can I serialize differently depending on a parameter?
+    - or use a basic ActivitySerializer class (abstract?) and then
+      make the switch there (or in another class? (In the ProvenanceSerializer_VO?))
+* use Serializer + renderer for prov-n
+* implement ActivityFlow, maybe also use Description-side?
+* connect with real data from the real database
+* write implementation report, including nice overview on used classes (graphical?)
+
+

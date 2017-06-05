@@ -3,7 +3,6 @@ from django.conf.urls import url, include
 from rest_framework import routers
 
 from . import views
-from provapp.views import ActivityViewSet
 
 app_name = 'provapp'
 
@@ -12,6 +11,12 @@ router = routers.DefaultRouter()
 router.register(r'activities', views.ActivityViewSet)
 router.register(r'entities', views.EntityViewSet)
 router.register(r'agents', views.AgentViewSet)
+router.register(r'used', views.UsedViewSet)
+router.register(r'wasgeneratedby', views.WasGeneratedByViewSet)
+router.register(r'wasassociatedwith', views.WasAssociatedWithViewSet)
+router.register(r'wasattributedto', views.WasAttributedToViewSet)
+router.register(r'hadmember', views.HadMemberViewSet)
+router.register(r'wasderivedfrom', views.WasDerivedFromViewSet)
 
 urlpatterns = [
     # index view:

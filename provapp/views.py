@@ -36,6 +36,12 @@ from .serializers import (
     ActivitySerializer,
     EntitySerializer,
     AgentSerializer,
+    UsedSerializer,
+    WasGeneratedBySerializer,
+    WasAssociatedWithSerializer,
+    WasAttributedToSerializer,
+    HadMemberSerializer,
+    WasDerivedFromSerializer,
     ProvenanceSerializer
 )
 
@@ -60,10 +66,33 @@ class EntityViewSet(viewsets.ModelViewSet):
     serializer_class = EntitySerializer
     queryset = Entity.objects.all()
 
-
 class AgentViewSet(viewsets.ModelViewSet):
     serializer_class = AgentSerializer
     queryset = Agent.objects.all()
+
+class UsedViewSet(viewsets.ModelViewSet):
+    serializer_class = UsedSerializer
+    queryset = Used.objects.all()
+
+class WasGeneratedByViewSet(viewsets.ModelViewSet):
+    serializer_class = WasGeneratedBySerializer
+    queryset = WasGeneratedBy.objects.all()
+
+class WasAssociatedWithViewSet(viewsets.ModelViewSet):
+    serializer_class = WasAssociatedWithSerializer
+    queryset = WasAssociatedWith.objects.all()
+
+class WasAttributedToViewSet(viewsets.ModelViewSet):
+    serializer_class = WasAttributedToSerializer
+    queryset = WasAttributedTo.objects.all()
+
+class HadMemberViewSet(viewsets.ModelViewSet):
+    serializer_class = HadMemberSerializer
+    queryset = HadMember.objects.all()
+
+class WasDerivedFromViewSet(viewsets.ModelViewSet):
+    serializer_class = WasDerivedFromSerializer
+    queryset = WasDerivedFrom.objects.all()
 
 
 def graphjson(request, activity_id):
