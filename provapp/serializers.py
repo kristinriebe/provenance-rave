@@ -1,4 +1,8 @@
+from collections import OrderedDict
+
 from rest_framework import serializers
+from rest_framework.fields import SkipField
+from rest_framework.relations import PKOnlyObject
 
 from .models import (
     Activity,
@@ -12,98 +16,180 @@ from .models import (
     WasDerivedFrom
 )
 
+# Define custom CharField to add attribute custom field name
+class CustomCharField(serializers.CharField):
 
-class ActivitySerializer(serializers.ModelSerializer):
+    def __init__(self, **kwargs):
+        self.allow_blank = kwargs.pop('allow_blank', False)
+        self.trim_whitespace = kwargs.pop('trim_whitespace', True)
+        self.max_length = kwargs.pop('max_length', None)
+        self.min_length = kwargs.pop('min_length', None)
+        self.custom_field_name = kwargs.pop('custom_field_name', None)
+        # print "custom: ", self.custom_field_name
 
-    prov_type = serializers.CharField(source='type')
-    prov_label = serializers.CharField(source='name')
-    prov_description = serializers.CharField(source='annotation')
+        super(CustomCharField, self).__init__(**kwargs)
+        if self.max_length is not None:
+            message = self.error_messages['max_length'].format(max_length=self.max_length)
+            self.validators.append(MaxLengthValidator(self.max_length, message=message))
+        if self.min_length is not None:
+            message = self.error_messages['min_length'].format(min_length=self.min_length)
+            self.validators.append(MinLengthValidator(self.min_length, message=message))
+
+
+# Define custom serializer class with some modifications
+class NonNullCustomSerializer(serializers.ModelSerializer):
+
+    def to_representation(self, instance):
+        """
+        Object instance -> Dict of primitive datatypes.
+        """
+        # Overwrite this method from serializers.py, Serializer-class,
+        # because I want to skip empty fields in serialisation and need qualified fieldnames
+        ret = OrderedDict()
+        fields = self._readable_fields
+
+        for field in fields:
+            try:
+                attribute = field.get_attribute(instance)
+            except SkipField:
+                continue
+
+            # Check, if there is a custom_field_name attribute.
+            # If so (and it's not None), then use this instead of field name.
+            # This is useful for namespaced fieldnames, e.g. "prov:label"
+            field_name = field.field_name
+            if hasattr(field, 'custom_field_name'):
+                custom_field_name = field.custom_field_name
+                if custom_field_name is not None:
+                    field_name = custom_field_name
+
+            # We skip `to_representation` for `None` values so that fields do
+            # not have to explicitly deal with that case.
+            #
+            # For related fields with `use_pk_only_optimization` we need to
+            # resolve the pk value.
+            check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
+            if check_for_none is None:
+                # skip this field, if it is none
+                pass
+            else:
+                representation = field.to_representation(attribute)
+                if representation is None:
+                    # Do not seralize empty objects
+                    continue
+                if isinstance(representation, list) and not representation:
+                    # Do not serialize empty lists
+                    continue
+
+                ret[field_name] = representation
+
+        return ret
+
+
+class ActivitySerializer(NonNullCustomSerializer):
+
+    prov_id = CustomCharField(source='id', custom_field_name='prov:id')
+    prov_label = CustomCharField(source='name', custom_field_name='prov:label')
+    prov_type = CustomCharField(source='type', custom_field_name='prov:type')
+    prov_description = CustomCharField(source='annotation', custom_field_name='prov:description')
 
     class Meta:
         model = Activity
-        fields = ('id', 'prov_label', 'prov_type', 'prov_description')
+        fields = ('prov_id', 'prov_label', 'prov_type', 'prov_description')
         # exclude id later on, when it will be used as key in the dictionary anyway
         # but still keep it here in the serializer
 
 
 # IVOA specific serializer
-class ActivitySerializerVO(serializers.ModelSerializer):
+class ActivitySerializerVO(NonNullCustomSerializer):
 
     class Meta:
         model = Activity
         fields = ('id', 'name', 'type', 'description')
 
 
-class EntitySerializer(serializers.ModelSerializer):
+class EntitySerializer(NonNullCustomSerializer):
 
-    prov_type = serializers.CharField(source='type')
-    prov_label = serializers.CharField(source='name')
-    prov_description = serializers.CharField(source='annotation')
-    #prov_type = serializers.SerializerMethodField() #field_name = "prov:type")
-    # But this is now readonly, i.e. could not be filled when using rest api for creating new entity or updating!
+    prov_id = CustomCharField(source='id', custom_field_name='prov:id')
+    prov_label = CustomCharField(source='name', custom_field_name='prov:label')
+    prov_type = CustomCharField(source='type', custom_field_name='prov:type')
+    prov_description = CustomCharField(source='annotation', custom_field_name='prov:description')
 
     class Meta:
         model = Entity
-        fields = ('id', 'prov_label', 'prov_type', 'prov_description')
+        fields = ('prov_id', 'prov_label', 'prov_type', 'prov_description')
 
 
-class AgentSerializer(serializers.ModelSerializer):
+class AgentSerializer(NonNullCustomSerializer):
+
+    prov_id = CustomCharField(source='id', custom_field_name='prov:id')
+    voprov_name = CustomCharField(source='name', custom_field_name='voprov:name')
+    prov_type = CustomCharField(source='type', custom_field_name='prov:type')
 
     class Meta:
         model = Agent
-        fields = '__all__'
+        fields = ('prov_id', 'voprov_name', 'prov_type')
 
 
-class UsedSerializer(serializers.ModelSerializer):
+class UsedSerializer(NonNullCustomSerializer):
+
+    prov_activity = CustomCharField(source='activity_id', custom_field_name='prov:activity')
+    prov_entity = CustomCharField(source='entity_id', custom_field_name='prov:entity')
+    prov_role = CustomCharField(source='role', custom_field_name='prov:role')
 
     class Meta:
         model = Used
-        fields = '__all__'
+        fields = ('id', 'prov_activity', 'prov_entity', 'prov_role')
 
 
-class WasGeneratedBySerializer(serializers.ModelSerializer):
+class WasGeneratedBySerializer(NonNullCustomSerializer):
+
+    prov_entity = CustomCharField(source='entity_id', custom_field_name='prov:entity')
+    prov_activity = CustomCharField(source='activity_id', custom_field_name='prov:activity')
+    prov_role = CustomCharField(source='role', custom_field_name='prov:role')
 
     class Meta:
         model = WasGeneratedBy
-        fields = '__all__'
+        fields = ('id', 'prov_entity', 'prov_activity', 'prov_role')
 
 
-class WasAssociatedWithSerializer(serializers.ModelSerializer):
+class WasAssociatedWithSerializer(NonNullCustomSerializer):
 
     class Meta:
         model = WasAssociatedWith
         fields = '__all__'
 
 
-class WasAttributedToSerializer(serializers.ModelSerializer):
+class WasAttributedToSerializer(NonNullCustomSerializer):
 
     class Meta:
         model = WasAttributedTo
         fields = '__all__'
 
 
-class HadMemberSerializer(serializers.ModelSerializer):
+class HadMemberSerializer(NonNullCustomSerializer):
 
     class Meta:
         model = HadMember
         fields = '__all__'
 
 
-class WasDerivedFromSerializer(serializers.ModelSerializer):
+class WasDerivedFromSerializer(NonNullCustomSerializer):
 
     class Meta:
         model = WasDerivedFrom
         fields = '__all__'
 
 
-
 class ProvenanceSerializer(serializers.Serializer):
+
+    # prefix = {}
 
     activity = serializers.SerializerMethodField()
     entity = serializers.SerializerMethodField()
     agent = serializers.SerializerMethodField()
     used = serializers.SerializerMethodField()
-    wasDerivedFrom = serializers.SerializerMethodField()
+    wasGeneratedBy = serializers.SerializerMethodField()
     wasAssociatedWith = serializers.SerializerMethodField()
     wasAttributedTo = serializers.SerializerMethodField()
     hadMember = serializers.SerializerMethodField()
@@ -117,7 +203,7 @@ class ProvenanceSerializer(serializers.Serializer):
         activity = {}
         for a_id, a in obj['activity'].iteritems():
             data = ActivitySerializer(a).data
-            activity[a_id] = self.restructure_qualifiers(data)
+            activity[a_id] = data #self.restructure_qualifiers(data)
 
         return activity
 
@@ -125,7 +211,7 @@ class ProvenanceSerializer(serializers.Serializer):
         entity = {}
         for e_id, e in obj['entity'].iteritems():
             data = EntitySerializer(e).data
-            entity[e_id] = self.restructure_qualifiers(data)
+            entity[e_id] = (data)
 
         return entity
 
@@ -133,7 +219,7 @@ class ProvenanceSerializer(serializers.Serializer):
         agent = {}
         for a_id, a in obj['agent'].iteritems():
             data = AgentSerializer(a).data
-            agent[a_id] = self.restructure_qualifiers(data)
+            agent[a_id] = data
 
         return agent
 
@@ -141,7 +227,8 @@ class ProvenanceSerializer(serializers.Serializer):
         used = {}
         for u_id, u in obj['used'].iteritems():
             data = UsedSerializer(u).data
-            used[u_id] = self.restructure_qualifiers(data)
+            u_id = self.add_relationnamespace(u_id)
+            used[u_id] = self.restructure_relationqualifiers(data)
 
         return used
 
@@ -149,7 +236,8 @@ class ProvenanceSerializer(serializers.Serializer):
         wasGeneratedBy = {}
         for w_id, w in obj['wasGeneratedBy'].iteritems():
             data = WasGeneratedBySerializer(w).data
-            wasGeneratedBy[w_id] = self.restructure_qualifiers(data)
+            w_id = self.add_relationnamespace(w_id)
+            wasGeneratedBy[w_id] = self.restructure_relationqualifiers(data)
 
         return wasGeneratedBy
 
@@ -157,7 +245,8 @@ class ProvenanceSerializer(serializers.Serializer):
         wasAssociatedWith = {}
         for w_id, w in obj['wasAssociatedWith'].iteritems():
             data = WasAssociatedWithSerializer(w).data
-            wasAssociatedWith[w_id] = self.restructure_qualifiers(data)
+            w_id = self.add_relationnamespace(w_id)
+            wasAssociatedWith[w_id] = self.restructure_relationqualifiers(data)
 
         return wasAssociatedWith
 
@@ -165,7 +254,8 @@ class ProvenanceSerializer(serializers.Serializer):
         wasAttributedTo = {}
         for w_id, w in obj['wasAttributedTo'].iteritems():
             data = WasAttributedToSerializer(w).data
-            wasAttributedTo[w_id] = self.restructure_qualifiers(data)
+            w_id = self.add_relationnamespace(w_id)
+            wasAttributedTo[w_id] = self.restructure_relationqualifiers(data)
 
         return wasAttributedTo
 
@@ -173,7 +263,8 @@ class ProvenanceSerializer(serializers.Serializer):
         hadMember = {}
         for h_id, h in obj['hadMember'].iteritems():
             data = HadMemberSerializer(h).data
-            hadMember[h_id] = self.restructure_qualifiers(data)
+            h_id = self.add_relationnamespace(h_id)
+            hadMember[h_id] = self.restructure_relationqualifiers(data)
 
         return hadMember
 
@@ -181,7 +272,8 @@ class ProvenanceSerializer(serializers.Serializer):
         wasDerivedFrom = {}
         for w_id, w in obj['wasDerivedFrom'].iteritems():
             data = WasDerivedFromSerializer(w).data
-            wasDerivedFrom[w_id] = self.restructure_qualifiers(data)
+            w_id = self.add_relationnamespace(w_id)
+            wasDerivedFrom[w_id] = self.restructure_relationqualifiers(data)
 
         return wasDerivedFrom
 
@@ -190,6 +282,7 @@ class ProvenanceSerializer(serializers.Serializer):
         # Takes a dictionary, replaces prov_ by prov: and
         # adds type to qualified values
         # Returns the modified dictionary
+        # TODO: Find a more elegant solution for this!
 
         # exclude id in serialisation
         # (since it is used as key for this class instance anyway)
@@ -197,10 +290,8 @@ class ProvenanceSerializer(serializers.Serializer):
 
         for key, value in data.iteritems():
 
-            # replace prov_by prov:
-            if key.startswith('prov_'):
-                newkey = key.replace('prov_', 'prov:')
-                data[newkey] = data.pop(key)
+            # replace prov_ by prov: -- done directly in to_represenation now, using custom_field_name
+            # could also just add the qualifier here just for specific keywords
 
             # restructure serialisation of qualified values
             if ':' in value:
@@ -209,5 +300,36 @@ class ProvenanceSerializer(serializers.Serializer):
                 val['$'] = value
                 val['type'] = "xsd:QName"
                 data[key] = val
+
+        return data
+
+    def add_relationnamespace(self, objectId):
+        ns = "_"
+        if ":" not in str(objectId):
+            objectId = ns + ":" + str(objectId)
+        return objectId
+
+    def restructure_relationqualifiers(self, data):
+        # Takes a dictionary from a relation serialization,
+        # adds "prov" namespace to the foreign key fields,
+        # because this is required by the prov-library.
+        # Do NOT split up qualified foreign key values.
+        # Returns the modified dictionary.
+        # TODO: Find a more elegant solution for this!
+
+        # exclude id in serialisation
+        # (since it is used as key for this class instance anyway)
+        data.pop('id')
+
+        for key, value in data.iteritems():
+
+            # replace prov_ by prov:
+            # TODO: how to check, if it is a foreign key or an additional attribute??
+            # For now, just put "prov:" everywhere
+            if key in ['id', 'activity', 'entity', 'collection', 'agent','generatedEntity', 'usedEntity', 'usage', 'generation', 'role']:
+                newkey = 'prov:'+ key
+                data[newkey] = data.pop(key)
+
+            # restructure serialisation of qualified values -- not needed here.
 
         return data

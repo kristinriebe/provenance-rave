@@ -1,22 +1,24 @@
+import sys # just for debugging
+import json
+from datetime import datetime
+
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 #from django.template import loader
 from django.core.urlresolvers import reverse
 from django.views import generic
-
-import json
 from django.http import JsonResponse
-from braces.views import JSONResponseMixin
 from django.db.models.fields.related import ManyToManyField
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
+
+from braces.views import JSONResponseMixin
 
 #from rest_framework.renderers import XMLRenderer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework import viewsets
 
-import sys # just for debugging
 import utils
 
 from .models import (
@@ -368,7 +370,7 @@ def provdal_form(request):
 
                 entity = Entity.objects.get(name=form.cleaned_data['observation_id'])
 
-                return HttpResponseRedirect(reverse('provapp:provdal_form')+"?ID=%s&STEP=%s&FORMAT=%s&COMPLIANCE=%s" % (str(entity.id), str(step), str(format), str(compliance)))
+                return HttpResponseRedirect(reverse('provapp:provdal')+"?ID=%s&STEP=%s&FORMAT=%s&COMPLIANCE=%s" % (str(entity.id), str(step), str(format), str(compliance)))
 
 
 #                if detail == 'basic':
@@ -507,14 +509,23 @@ def provdal(request):
     # desired format.
 
     # write provenance information in desired format:
-    if format == 'PROVN':
+    if format == 'PROV-N':
         # TODO: write a provn-renderer for this
         provstr = "document\n"
         for p_id, p in prov['prefix'].iteritems():
-            provstr = provstr + "prefix %s <%s>\n" % (p_id, p)
+            provstr = provstr + "prefix %s <%s>,\n" % (p_id, p)
 
         for a_id, a in prov['activity'].iteritems():
-            provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [voprov:type = '" + a.type + "', voprov:name = '" + a.name + "', voprov:annotation = '" + a.annotation + "']),\n"
+            date = a.startTime
+            if a.startTime:
+                startTime = a.startTime.isoformat()
+            else:
+                startTime = "-"
+            if a.endTime:
+                endTime = a.endTime.isoformat()
+            else:
+                endTime = "-"
+            provstr = provstr + "activity(" + a.id + ", " + startTime + ", " + endTime + ", [voprov:type = '" + a.type + "', voprov:name = '" + a.name + "', voprov:annotation = '" + a.annotation + "']),\n"
 
         for e_id, e in prov['entity'].iteritems():
             provstr = provstr + "entity(" + e.id + ", [voprov:type = '" + e.type + "', voprov:name = '" + e.name + "', voprov:annotation = '" + e.annotation + "']),\n"
@@ -544,14 +555,15 @@ def provdal(request):
         return HttpResponse(provstr, content_type='text/plain; charset=utf-8')
 
 
-    elif format == 'PROVJSON':
+    elif format == 'PROV-JSON':
 
         # convert querysets to serialized python objects
         serializer = ProvenanceSerializer(prov)
         data = serializer.data
+        data["prefix"] = prefix
 
         json_str = json.dumps(data,
-                sort_keys=True,
+                #sort_keys=True,
                 indent=4
                )
 #        json_str = JSONRenderer().render(serializer.data)
