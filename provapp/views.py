@@ -481,7 +481,9 @@ def provdal(request):
 
     prefix = {
         "rave": "http://www.rave-survey.org/prov/",
-        "voprov": "http://www.ivoa.net/documents/ProvenanceDM/voprov/"
+        "voprov": "http://www.ivoa.net/documents/ProvenanceDM/voprov/",
+        "org": "http://www.ivoa.net/documents/ProvenanceDM/voprov/org/",
+        "vo": "http://www.ivoa.net/documents/ProvenanceDM/voprov/vo"
     }
 
     prov = {
@@ -567,7 +569,7 @@ def provdal(request):
                 indent=4
                )
 #        json_str = JSONRenderer().render(serializer.data)
-        return HttpResponse(json_str, content_type='text/json; charset=utf-8')
+        return HttpResponse(json_str, content_type='application/json; charset=utf-8')
 
     else:
         # format is not known, return error

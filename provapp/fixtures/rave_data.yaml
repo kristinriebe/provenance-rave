@@ -187,47 +187,47 @@
     dataType: 'voprov:databaseRow', storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.Chemical_Abundances
-  fields: {name: Chemical Abundances, type: 'voprov:catalog;prov:collection', annotation: Table
-      with chemical abundances, status: 'voprov:public', dataType: 'voprov:databaseTable',
+  fields: {name: Chemical Abundances, type: 'prov:collection',
+    annotation: Table with chemical abundances, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/chemical_abundances/'}
 - model: provapp.entity
   pk: rave:DR4.Classification_Matijevic
-  fields: {name: Classification Matijevic, type: 'voprov:catalog;prov:collection',
+  fields: {name: Classification Matijevic, type: 'prov:collection',
     annotation: Table with spectral classification by Matijevic, status: 'voprov:public',
     dataType: 'voprov:databaseTable', storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/classification_matijevic/'}
 - model: provapp.entity
   pk: rave:DR4.Distances_Binney
-  fields: {name: Distances Binney, type: 'voprov:catalog;prov:collection', annotation: Table
+  fields: {name: Distances Binney, type: 'prov:collection', annotation: Table
       with Binney distances, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/distances_binney/'}
 - model: provapp.entity
   pk: rave:DR4.Distances_Zwitter
-  fields: {name: Distances Zwitter, type: 'voprov:catalog;prov:collection', annotation: The
+  fields: {name: Distances Zwitter, type: 'prov:collection', annotation: The
       Zwitter distances, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/'}
 - model: provapp.entity
   pk: rave:DR4.RAVEDR4
-  fields: {name: RAVEDR4 main, type: 'voprov:catalog;prov:collection', annotation: The
+  fields: {name: RAVEDR4 main, type: 'prov:collection', annotation: The
       main RAVE DR4 table, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/rave_dr4/'}
 - model: provapp.entity
   pk: rave:DR4.Stellar_Parameters
-  fields: {name: Stellar Parameters, type: 'voprov:catalog;prov:collection', annotation: Table
+  fields: {name: Stellar Parameters, type: 'prov:collection', annotation: Table
       with stellar_parameters, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/stellar_parameters/'}
 - model: provapp.entity
   pk: rave:DR4.rave_2MASS
-  fields: {name: RAVE Xmatch 2MASS, type: 'voprov:catalog;prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch 2MASS, type: 'prov:collection', annotation: RAVE
       crossmatch with 2MASS, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_PPMX
-  fields: {name: RAVE Xmatch PPMX, type: 'voprov:catalog;prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch PPMX, type: 'prov:collection', annotation: RAVE
       crossmatch with PPMX, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_PPMXL
-  fields: {name: RAVE Xmatch PPMXL, type: 'voprov:catalog;prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch PPMXL, type: 'prov:collection', annotation: RAVE
       crossmatch with PPMXL, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
@@ -237,7 +237,7 @@
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_SPM4
-  fields: {name: RAVE Xmatch SPM4, type: 'voprov:catalog;prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch SPM4, type: 'prov:collection', annotation: RAVE
       crossmatch with SPM4, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
@@ -247,12 +247,12 @@
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_UCAC2
-  fields: {name: RAVE Xmatch UCAC2, type: 'voprov:catalog;prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch UCAC2, type: 'prov:collection', annotation: RAVE
       crossmatch with UCAC2, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_UCAC3
-  fields: {name: RAVE Xmatch UCAC3, type: 'voprov:catalog;prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch UCAC3, type: 'prov:collection', annotation: RAVE
       crossmatch with UCAC3, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
@@ -262,7 +262,7 @@
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_USNOB1
-  fields: {name: RAVE Xmatch USNOB1, type: 'voprov:catalog;prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch USNOB1, type: 'prov:collection', annotation: RAVE
       crossmatch with USNOB1, status: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
@@ -305,47 +305,47 @@
   pk: rave:sparvProcessedData_spectra
   fields: {name: SPARV spectra data set, type: 'prov:collection', annotation: 'Spectral
       data, contains images with fitted spectra, residuals; several files per fibre',
-    status: 'voprov:public', dataType: 'voprov:databaseTable', storageLocation: ''}
+    status: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:2MASS
-  fields: {name: 2MASS, type: 'voprov:catalog;prov:collection', annotation: '...',
-    status: 'voprov:public', dataType: 'voprov:databaseTable', storageLocation: '...'}
+  fields: {name: 2MASS, type: 'prov:collection',
+    status: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:PPMX
-  fields: {name: PPMX, type: 'voprov:catalog;prov:collection', annotation: '...',
-    status: 'voprov:public', dataType: 'voprov:databaseTable', storageLocation: '...'}
+  fields: {name: PPMX, type: 'prov:collection',
+    status: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:PPMXL
-  fields: {name: PPMXL, type: 'voprov:catalog;prov:collection', annotation: '...',
-    status: 'voprov:public', dataType: 'voprov:databaseTable', storageLocation: '...'}
+  fields: {name: PPMXL, type: 'prov:collection',
+    status: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:SCS
-  fields: {name: SCS, type: 'voprov:catalog;prov:collection', annotation: '...', status: 'voprov:public',
-    dataType: 'voprov:databaseTable', storageLocation: '...'}
+  fields: {name: SCS, type: 'prov:collection', status: 'voprov:public',
+    dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:SPM4
-  fields: {name: SPM4, type: 'voprov:catalog;prov:collection', annotation: '...',
-    status: 'voprov:public', dataType: 'voprov:databaseTable', storageLocation: '...'}
+  fields: {name: SPM4, type: 'prov:collection',
+    status: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:TYCHO2
-  fields: {name: TYCHO2, type: 'voprov:catalog;prov:collection', annotation: '...',
-    status: 'voprov:public', dataType: 'voprov:databaseTable', storageLocation: '...'}
+  fields: {name: TYCHO2, type: 'prov:collection',
+    status: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:UCAC2
-  fields: {name: UCAC2, type: 'voprov:catalog;prov:collection', annotation: '...',
-    status: 'voprov:public', dataType: 'voprov:databaseTable', storageLocation: '...'}
+  fields: {name: UCAC2, type: 'prov:collection',
+    status: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:UCAC3
-  fields: {name: UCAC3, type: 'voprov:catalog;prov:collection', annotation: '...',
-    status: 'voprov:public', dataType: 'voprov:databaseTable', storageLocation: '...'}
+  fields: {name: UCAC3, type: 'prov:collection',
+    status: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:UCAC4
-  fields: {name: UCAC4, type: 'voprov:catalog;prov:collection', annotation: '...',
-    status: 'voprov:public', dataType: 'voprov:databaseTable', storageLocation: '...'}
+  fields: {name: UCAC4, type: 'prov:collection',
+    status: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:USNOB1
-  fields: {name: USNOB1, type: 'voprov:catalog;prov:collection', annotation: '...',
-    status: 'voprov:public', dataType: 'voprov:databaseTable', storageLocation: '...'}
+  fields: {name: USNOB1, type: 'prov:collection',
+    status: 'voprov:public', dataType: 'voprov:databaseTable'}
 
 # Agent
 - model: provapp.agent
@@ -354,28 +354,28 @@
       prov:url: https://www.rave-survey.org/'}
 - model: provapp.agent
   pk: rave:Alessandro_Siviero
-  fields: {name: Alessandro Siviero, type: 'prov:Person', annotation: ''}
+  fields: {name: Alessandro Siviero, type: 'prov:Person'}
 - model: provapp.agent
   pk: rave:Corrado_Boeche
-  fields: {name: Corrado Boeche, type: 'prov:Person', annotation: ''}
+  fields: {name: Corrado Boeche, type: 'prov:Person'}
 - model: provapp.agent
   pk: rave:Gal_Matijevic
-  fields: {name: Gal Matijevic, type: 'prov:Person', annotation: ''}
+  fields: {name: Gal Matijevic, type: 'prov:Person'}
 - model: provapp.agent
   pk: rave:Georges_Kordopatis
-  fields: {name: Georges Kordopatis, type: 'prov:Person', annotation: ''}
+  fields: {name: Georges Kordopatis, type: 'prov:Person'}
 - model: provapp.agent
   pk: rave:Harry_Enke
-  fields: {name: Harry Enke, type: 'prov:Person', annotation: 'voprov:contact: henke@aip.de'}
+  fields: {name: Harry Enke, type: 'prov:Person', email: 'voprov:email: henke@aip.de'}
 - model: provapp.agent
   pk: rave:James_Binney
-  fields: {name: James Binney, type: 'prov:Person', annotation: ''}
+  fields: {name: James Binney, type: 'prov:Person'}
 - model: provapp.agent
   pk: rave:Tomaz_Zwitter
-  fields: {name: Tomaz Zwitter, type: 'prov:Person', annotation: ''}
+  fields: {name: Tomaz Zwitter, type: 'prov:Person'}
 - model: provapp.agent
   pk: rave:Ulisse_Munari
-  fields: {name: Ulisse Munari, type: 'prov:Person', annotation: ''}
+  fields: {name: Ulisse Munari, type: 'prov:Person'}
 
 # Used
 - model: provapp.used

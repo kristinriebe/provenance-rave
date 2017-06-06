@@ -262,7 +262,7 @@ def find_entity(entity, prov):
     queryset = WasAttributedTo.objects.filter(entity=entity.id)
     if len(queryset) > 0:
         for wa in queryset:
-            print "**Entity " + entity.id + " WasAttributedTo agent ", wa.agent.id
+            #print "Entity " + entity.id + " WasAttributedTo agent ", wa.agent.id
 
             if wa.agent.id not in prov['agent']:
                 # add agent to prov
@@ -277,7 +277,7 @@ def find_entity(entity, prov):
         # can entities belong to more than one collection?
         # actually not, but we'll allow it here for now ...
         for h in queryset:
-            print "Entity "+ entity.id + " is member of collection: ", h.collection.id
+            #print "Entity "+ entity.id + " is member of collection: ", h.collection.id
 
             # add entity to prov-json, if not yet done
             if h.collection.id not in prov['entity']:
@@ -292,9 +292,9 @@ def find_entity(entity, prov):
 
     # do not check wasGeneratedBy and wasDerivedFrom for collections,
     # if we only want to follow the provenance path of a detailed entity;
-    # thus return here, if it is a collection
-    if "prov:collection" in entity.type.split(';'):
-        return prov
+    # thus maybe return here, if it is a collection
+    #if "prov:collection" in entity.type.split(';'):
+    #    return prov
 
     # track the provenance information backwards via WasGeneratedBy
     queryset = WasGeneratedBy.objects.filter(entity=entity.id)

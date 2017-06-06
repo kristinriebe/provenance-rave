@@ -63,6 +63,7 @@ class Agent(models.Model):
     name = models.CharField(max_length=128, null=True) # human readable label, firstname + lastname
     type = models.CharField(max_length=128, null=True, choices=AGENT_TYPE_CHOICES) # types of entities: single entity, dataset
     annotation = models.CharField(max_length=1024, null=True)
+    email = models.CharField(max_length=128, null=True)
 
     def __str__(self):
         return self.name
