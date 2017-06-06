@@ -608,60 +608,46 @@
   fields: {entity: 'rave:DR4.RAVEDR4', activity: 'rave:act_dataextraction'}
 - model: provapp.wasgeneratedby
   pk: 19
-  fields: {entity: 'rave:20121220_0752m383I00001.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143027',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m383I00001.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143027'}
 - model: provapp.wasgeneratedby
   pk: 20
-  fields: {entity: 'rave:20121220_0752m383I00002.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143220',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m383I00002.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143220'}
 - model: provapp.wasgeneratedby
   pk: 21
-  fields: {entity: 'rave:20121220_0752m383I00003.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143312',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m383I00003.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143312'}
 - model: provapp.wasgeneratedby
   pk: 22
-  fields: {entity: 'rave:20121220_0752m383I00004.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143403',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m383I00004.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143403'}
 - model: provapp.wasgeneratedby
   pk: 23
-  fields: {entity: 'rave:20121220_0752m383I00005.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143455',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m383I00005.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143455'}
 - model: provapp.wasgeneratedby
   pk: 24
-  fields: {entity: 'rave:20121220_0752m383I00006.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143546',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m383I00006.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143546'}
 - model: provapp.wasgeneratedby
   pk: 25
-  fields: {entity: 'rave:20121220_0752m383I00007.fits', activity: 'rave:act_observation:UK-SCHM.20121220.144638',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m383I00007.fits', activity: 'rave:act_observation:UK-SCHM.20121220.144638'}
 - model: provapp.wasgeneratedby
   pk: 26
-  fields: {entity: 'rave:20121220_0752m383I00008.fits', activity: 'rave:act_observation:UK-SCHM.20121220.151810',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m383I00008.fits', activity: 'rave:act_observation:UK-SCHM.20121220.151810'}
 - model: provapp.wasgeneratedby
   pk: 27
-  fields: {entity: 'rave:20121220_0752m383I00009.fits', activity: 'rave:act_observation:UK-SCHM.20121220.154846',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m383I00009.fits', activity: 'rave:act_observation:UK-SCHM.20121220.154846'}
 - model: provapp.wasgeneratedby
   pk: 28
-  fields: {entity: 'rave:20121220_0752m383I00010.fits', activity: 'rave:act_observation:UK-SCHM.20121220.161923',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m383I00010.fits', activity: 'rave:act_observation:UK-SCHM.20121220.161923'}
 - model: provapp.wasgeneratedby
   pk: 29
-  fields: {entity: 'rave:20121220_0752m38.rvsun.fts', activity: 'rave:act_irafReduction',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m38.rvsun.fts', activity: 'rave:act_irafReduction'}
 - model: provapp.wasgeneratedby
   pk: 30
-  fields: {entity: 'rave:20121220_0752m38.sky.fts', activity: 'rave:act_irafReduction',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m38.sky.fts', activity: 'rave:act_irafReduction'}
 - model: provapp.wasgeneratedby
   pk: 31
-  fields: {entity: 'rave:20121220_0752m38.rvsun.089.cont.txt', activity: 'rave:act_sparvPipeline',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m38.rvsun.089.cont.txt', activity: 'rave:act_sparvPipeline'}
 - model: provapp.wasgeneratedby
   pk: 32
-  fields: {entity: 'rave:20121220_0752m38_089', activity: 'rave:act_dataextraction',
-    role: ''}
+  fields: {entity: 'rave:20121220_0752m38_089', activity: 'rave:act_dataextraction'}
 - model: provapp.hadmember
   pk: 0
   fields: {collection: 'rave:ravedr4', entity: 'rave:DR4.RAVEDR4'}
@@ -676,8 +662,7 @@
   fields: {collection: 'rave:ravedr4', entity: 'rave:DR4.Distances_Binney'}
 - model: provapp.hadmember
   pk: 4
-  fields: {collection: 'rave:ravedr4', entity: 'rave:DR4.Classification_Matijevic',
-    role: ''}
+  fields: {collection: 'rave:ravedr4', entity: 'rave:DR4.Classification_Matijevic'}
 - model: provapp.hadmember
   pk: 5
   fields: {collection: 'rave:ravedr4', entity: 'rave:DR4.Distances_Zwitter'}
@@ -689,16 +674,13 @@
   fields: {collection: 'rave:fits_orig', entity: 'rave:1705m611I0061.fits'}
 - model: provapp.hadmember
   pk: 9
-  fields: {collection: 'rave:sparvProcessedData', entity: 'rave:sparvProcessedData_spectra',
-    role: ''}
+  fields: {collection: 'rave:sparvProcessedData', entity: 'rave:sparvProcessedData_spectra'}
 - model: provapp.hadmember
   pk: 10
-  fields: {collection: 'rave:GKStellarParameters', entity: 'rave:GKStellarParametersFiles',
-    role: ''}
+  fields: {collection: 'rave:GKStellarParameters', entity: 'rave:GKStellarParametersFiles'}
 - model: provapp.hadmember
   pk: 11
-  fields: {collection: 'rave:GKStellarParameters', entity: 'rave:DR4.Stellar_Parameters',
-    role: ''}
+  fields: {collection: 'rave:GKStellarParameters', entity: 'rave:DR4.Stellar_Parameters'}
 - model: provapp.hadmember
   pk: 12
   fields: {collection: 'rave:ravedr4', entity: 'rave:DR4.rave_SCS'}
@@ -731,8 +713,7 @@
   fields: {collection: 'rave:ravedr4', entity: 'rave:DR4.rave_USNOB1'}
 - model: provapp.hadmember
   pk: 22
-  fields: {collection: 'rave:irafReduced', entity: 'rave:0645m522I0049.wav.fits',
-    role: ''}
+  fields: {collection: 'rave:irafReduced', entity: 'rave:0645m522I0049.wav.fits'}
 - model: provapp.hadmember
   pk: 23
   fields: {collection: 'rave:DR4.RAVEDR4', entity: 'rave:20030411_1507m23_001'}
