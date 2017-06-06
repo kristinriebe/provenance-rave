@@ -57,9 +57,9 @@ class ObservationIdForm(forms.Form):
 
 class ProvDalForm(forms.Form):
     observation_id = forms.CharField(
-        label='RAVE_OBS_ID',
+        label='RAVE Observation ID',
         max_length=1024,
-        help_text="e.g. 20030411_1507m23_001, 20121220_0752m38_089; currently only these 2 are available",
+        help_text="RAVE_OBS_ID from RAVE DR4; e.g. 20030411_1507m23_001 or 20121220_0752m38_089 (currently only these 2 are available)",
     )
 
     step_flag = forms.ChoiceField(
@@ -72,10 +72,10 @@ class ProvDalForm(forms.Form):
 
     format = forms.ChoiceField(
         label="Format",
-        choices=[('PROVN', 'PROVN'), ('PROVJSON','PROVJSON')],
+        choices=[('PROV-N', 'PROV-N'), ('PROV-JSON','PROV-JSON')],
         widget=forms.RadioSelect(),
         help_text="Format of returned Provenance record",
-        initial='PROVJSON'
+        initial='PROV-JSON'
     )
 
     compliance = forms.ChoiceField(

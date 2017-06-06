@@ -73,6 +73,7 @@ class Used(models.Model):
     id = models.AutoField(primary_key=True)
     activity = models.ForeignKey(Activity, null=True) #, on_delete=models.CASCADE) # Should be required!
     entity = models.ForeignKey(Entity, null=True) #, on_delete=models.CASCADE) # Should be required!
+    time = models.DateTimeField(null=True)
     role = models.CharField(max_length=128, blank=True, null=True)
 
     def __str__(self):
@@ -83,6 +84,7 @@ class WasGeneratedBy(models.Model):
     id = models.AutoField(primary_key=True)
     entity = models.ForeignKey(Entity, null=True) #, on_delete=models.CASCADE)
     activity = models.ForeignKey(Activity, null=True) #, on_delete=models.CASCADE)
+    time = models.DateTimeField(null=True)
     role = models.CharField(max_length=128, blank=True, null=True)
 
     def __str__(self):
