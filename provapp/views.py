@@ -483,7 +483,9 @@ def provdal(request):
         "rave": "http://www.rave-survey.org/prov/",
         "voprov": "http://www.ivoa.net/documents/ProvenanceDM/voprov/",
         "org": "http://www.ivoa.net/documents/ProvenanceDM/voprov/org/",
-        "vo": "http://www.ivoa.net/documents/ProvenanceDM/voprov/vo"
+        "vo": "http://www.ivoa.net/documents/ProvenanceDM/voprov/vo",
+        "prov": "http://www.w3.org/ns/prov#",  # defined by default
+        "xsd": "http://www.w3.org/2000/10/XMLSchema#"  # defined by default
     }
 
     prov = {

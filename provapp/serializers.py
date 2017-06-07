@@ -209,8 +209,6 @@ class WasDerivedFromSerializer(NonNullCustomSerializer):
 
 class ProvenanceSerializer(serializers.Serializer):
 
-    # prefix = {}
-
     activity = serializers.SerializerMethodField()
     entity = serializers.SerializerMethodField()
     agent = serializers.SerializerMethodField()
@@ -254,7 +252,7 @@ class ProvenanceSerializer(serializers.Serializer):
         for u_id, u in obj['used'].iteritems():
             data = UsedSerializer(u).data
             u_id = self.add_relationnamespace(u_id)
-            used[u_id] = self.restructure_relationqualifiers(data)
+            used[u_id] = self.restructure_relations(data)
 
         return used
 
@@ -263,7 +261,7 @@ class ProvenanceSerializer(serializers.Serializer):
         for w_id, w in obj['wasGeneratedBy'].iteritems():
             data = WasGeneratedBySerializer(w).data
             w_id = self.add_relationnamespace(w_id)
-            wasGeneratedBy[w_id] = self.restructure_relationqualifiers(data)
+            wasGeneratedBy[w_id] = self.restructure_relations(data)
 
         return wasGeneratedBy
 
@@ -272,7 +270,7 @@ class ProvenanceSerializer(serializers.Serializer):
         for w_id, w in obj['wasAssociatedWith'].iteritems():
             data = WasAssociatedWithSerializer(w).data
             w_id = self.add_relationnamespace(w_id)
-            wasAssociatedWith[w_id] = self.restructure_relationqualifiers(data)
+            wasAssociatedWith[w_id] = self.restructure_relations(data)
 
         return wasAssociatedWith
 
@@ -281,7 +279,7 @@ class ProvenanceSerializer(serializers.Serializer):
         for w_id, w in obj['wasAttributedTo'].iteritems():
             data = WasAttributedToSerializer(w).data
             w_id = self.add_relationnamespace(w_id)
-            wasAttributedTo[w_id] = self.restructure_relationqualifiers(data)
+            wasAttributedTo[w_id] = self.restructure_relations(data)
 
         return wasAttributedTo
 
@@ -290,7 +288,7 @@ class ProvenanceSerializer(serializers.Serializer):
         for h_id, h in obj['hadMember'].iteritems():
             data = HadMemberSerializer(h).data
             h_id = self.add_relationnamespace(h_id)
-            hadMember[h_id] = self.restructure_relationqualifiers(data)
+            hadMember[h_id] = self.restructure_relations(data)
 
         return hadMember
 
@@ -299,26 +297,19 @@ class ProvenanceSerializer(serializers.Serializer):
         for w_id, w in obj['wasDerivedFrom'].iteritems():
             data = WasDerivedFromSerializer(w).data
             w_id = self.add_relationnamespace(w_id)
-            wasDerivedFrom[w_id] = self.restructure_relationqualifiers(data)
+            wasDerivedFrom[w_id] = self.restructure_relations(data)
 
         return wasDerivedFrom
 
 
     def restructure_qualifiers(self, data):
-        # Takes a dictionary, replaces prov_ by prov: and
-        # adds type to qualified values
-        # Returns the modified dictionary
-        # TODO: Find a more elegant solution for this!
+        # Restructure serialisation of qualified values
 
         # exclude id in serialisation
         # (since it is used as key for this class instance anyway)
         data.pop('id')
 
         for key, value in data.iteritems():
-
-            # replace prov_ by prov: -- done directly in to_represenation now, using custom_field_name
-            # could also just add the qualifier here just for specific keywords
-
             # restructure serialisation of qualified values
             if ':' in value:
                 # need to split up, specify that qualified string is used
@@ -326,6 +317,9 @@ class ProvenanceSerializer(serializers.Serializer):
                 val['$'] = value
                 val['type'] = "xsd:QName"
                 data[key] = val
+
+        # This can actually also be used for integers (xsd:integer), xsd:anyUri etc.
+        # Not used here for now.
 
         return data
 
@@ -335,9 +329,9 @@ class ProvenanceSerializer(serializers.Serializer):
             objectId = ns + ":" + str(objectId)
         return objectId
 
-    def restructure_relationqualifiers(self, data):
+    def restructure_relations(self, data):
         # Takes a dictionary from a relation serialization,
-        # adds "prov" namespace to the foreign key fields,
+        # adds "prov" namespace to the fields,
         # because this is required by the prov-library.
         # Do NOT split up qualified foreign key values.
         # Returns the modified dictionary.
@@ -349,13 +343,9 @@ class ProvenanceSerializer(serializers.Serializer):
 
         for key, value in data.iteritems():
 
-            # replace prov_ by prov:
-            # TODO: how to check, if it is a foreign key or an additional attribute??
-            # For now, just put "prov:" everywhere
-            if key in ['id', 'activity', 'entity', 'collection', 'agent','generatedEntity', 'usedEntity', 'usage', 'generation', 'role']:
-                newkey = 'prov:'+ key
+            # replace prov_ by prov for the given keys:
+            if key in ['activity', 'entity', 'collection', 'agent','generatedEntity', 'usedEntity', 'usage', 'generation', 'role']:
+                newkey = 'prov:' + key
                 data[newkey] = data.pop(key)
-
-            # restructure serialisation of qualified values -- not needed here.
 
         return data
