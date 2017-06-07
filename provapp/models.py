@@ -50,7 +50,7 @@ class Entity(models.Model):
     name = models.CharField(max_length=128, null=True) # human readable label
     type = models.CharField(max_length=128, null=True, choices=ENTITY_TYPE_CHOICES) # types of entities: single entity, dataset
     annotation = models.CharField(max_length=1024, null=True, blank=True)
-    status = models.CharField(max_length=128, null=True, blank=True)
+    rights = models.CharField(max_length=128, null=True, blank=True)
     dataType= models.CharField(max_length=128, null=True, blank=True)
     storageLocation = models.CharField('storage location', max_length=1024, null=True, blank=True)
 
@@ -104,7 +104,7 @@ class HadMember(models.Model):
 @python_2_unicode_compatible
 class WasDerivedFrom(models.Model):
     id = models.AutoField(primary_key=True)
-    generatedEntity = models.ForeignKey(Entity, null=True) 
+    generatedEntity = models.ForeignKey(Entity, null=True)
     usedEntity = models.ForeignKey(Entity, related_name='generatedEntity', null=True) #, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -113,7 +113,7 @@ class WasDerivedFrom(models.Model):
 @python_2_unicode_compatible
 class WasAssociatedWith(models.Model):
     id = models.AutoField(primary_key=True)
-    activity = models.ForeignKey(Activity, null=True) 
+    activity = models.ForeignKey(Activity, null=True)
     agent = models.ForeignKey(Agent, null=True) #, on_delete=models.CASCADE)
     role = models.CharField(max_length=128, blank=True, null=True)
 
@@ -123,7 +123,7 @@ class WasAssociatedWith(models.Model):
 @python_2_unicode_compatible
 class WasAttributedTo(models.Model):
     id = models.AutoField(primary_key=True)
-    entity = models.ForeignKey(Entity, null=True) 
+    entity = models.ForeignKey(Entity, null=True)
     agent = models.ForeignKey(Agent, null=True) #, on_delete=models.CASCADE)
     role = models.CharField(max_length=128, blank=True, null=True)
 
@@ -133,13 +133,13 @@ class WasAttributedTo(models.Model):
 
 @python_2_unicode_compatible
 class RaveObsids(models.Model):
-    rave_obs_id = models.TextField(db_column='RAVE_OBS_ID', blank=True, null=True)  # Field name made lowercase.
-    obsdate = models.TextField(db_column='Obsdate', blank=True, null=True)  # Field name made lowercase.
-    fieldname = models.TextField(db_column='FieldName', blank=True, null=True)  # Field name made lowercase.
-    platenumber = models.TextField(db_column='PlateNumber', blank=True, null=True)  # Field name made lowercase.
-    fibernumber = models.TextField(db_column='FiberNumber', blank=True, null=True)  # Field name made lowercase.
-    id_2mass = models.TextField(db_column='ID_2MASS', blank=True, null=True)  # Field name made lowercase.
-    id_denis = models.TextField(db_column='ID_DENIS', blank=True, null=True)  # Field name made lowercase.
+    rave_obs_id = models.TextField(db_column='RAVE_OBS_ID', blank=True, null=True)
+    obsdate = models.TextField(db_column='Obsdate', blank=True, null=True)
+    fieldname = models.TextField(db_column='FieldName', blank=True, null=True)
+    platenumber = models.TextField(db_column='PlateNumber', blank=True, null=True)
+    fibernumber = models.TextField(db_column='FiberNumber', blank=True, null=True)
+    id_2mass = models.TextField(db_column='ID_2MASS', blank=True, null=True)
+    id_denis = models.TextField(db_column='ID_DENIS', blank=True, null=True)
     obs_collection = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:

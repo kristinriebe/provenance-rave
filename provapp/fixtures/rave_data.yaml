@@ -2,7 +2,7 @@
 - model: provapp.activity
   pk: rave:act_chemicalPipeline
   fields: {name: Chemical Pipeline, type: 'calc:ChemicalPipeline', annotation: The
-      chemical pipeline of RAVE, doculink: ''}
+      chemical pipeline of RAVE}
 - model: provapp.activity
   pk: rave:act_classificationPipeline
   fields: {name: Spectral Classifications, type: 'obs:Classification', annotation: Spectral
@@ -11,12 +11,12 @@
 - model: provapp.activity
   pk: rave:act_crossmatch
   fields: {name: Crossmatch, type: 'obs:Crossmatch', annotation: Crossmatch with different
-      input catalogues, doculink: ''}
+      input catalogues}
 - model: provapp.activity
   pk: rave:act_dataextraction
   fields: {name: Data Extraction, type: 'obs:Extraction', annotation: 'RAVE observations,
       data release 4', startTime: !!timestamp '2003-04-11 14:42:16', endTime: !!timestamp '2012-05-27
-      17:05:00', doculink: 'TODO: link to RAVE DR4 paper'}
+      17:05:00', doculink: 'RAVE DR4: Kordopatis et al. 2013, AJ, 146, Issue 5, article id. 134, pp.421-451'}
 - model: provapp.activity
   pk: rave:act_distancesBinney
   fields: {name: Distance calculation (Binney), type: 'calc:Distances', annotation: Distance
@@ -24,334 +24,333 @@
 - model: provapp.activity
   pk: rave:act_distancesZwitter
   fields: {name: Distance calculation (Zwitter), type: 'calc:Distances', annotation: Distance
-      calculations by Zwitter, doculink: ''}
+      calculations by Zwitter}
 - model: provapp.activity
   pk: rave:act_irafReduction
   fields: {name: IRAF Reduction, type: 'obs:Reduction', annotation: 'Spectrum reduction
       pipeline, includes sky subtraction, merging fits-slices of one field together.
-      Performed in Italy, by Alessandro Siviero.',
-    doculink: ''}
+      Performed in Italy, by Alessandro Siviero.'}
 - model: provapp.activity
   pk: rave:act_observation:UK-SCHM.20121220.143027
   fields: {name: RAVE Observation UK-SCHM.20121220.143027, type: 'obs:Observation',
-    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:30:27', endTime: !!timestamp '2012-12-20T14:30:27', doculink: '-'}
+    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:30:27', endTime: !!timestamp '2012-12-20T14:30:27'}
 - model: provapp.activity
   pk: rave:act_observation:UK-SCHM.20121220.143220
   fields: {name: RAVE Observation UK-SCHM.20121220.143220, type: 'obs:Observation',
-    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:32:20', endTime: !!timestamp '2012-12-20T14:32:20', doculink: '-'}
+    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:32:20', endTime: !!timestamp '2012-12-20T14:32:20'}
 - model: provapp.activity
   pk: rave:act_observation:UK-SCHM.20121220.143312
   fields: {name: RAVE Observation UK-SCHM.20121220.143312, type: 'obs:Observation',
-    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:33:12', endTime: !!timestamp '2012-12-20T14:33:12', doculink: '-'}
+    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:33:12', endTime: !!timestamp '2012-12-20T14:33:12'}
 - model: provapp.activity
   pk: rave:act_observation:UK-SCHM.20121220.143403
   fields: {name: RAVE Observation UK-SCHM.20121220.143403, type: 'obs:Observation',
-    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:34:03', endTime: !!timestamp '2012-12-20T14:34:03', doculink: '-'}
+    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:34:03', endTime: !!timestamp '2012-12-20T14:34:03'}
 - model: provapp.activity
   pk: rave:act_observation:UK-SCHM.20121220.143455
   fields: {name: RAVE Observation UK-SCHM.20121220.143455, type: 'obs:Observation',
-    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:34:55', endTime: !!timestamp '2012-12-20T14:34:55', doculink: '-'}
+    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:34:55', endTime: !!timestamp '2012-12-20T14:34:55'}
 - model: provapp.activity
   pk: rave:act_observation:UK-SCHM.20121220.143546
   fields: {name: RAVE Observation UK-SCHM.20121220.143546, type: 'obs:Observation',
-    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:35:46', endTime: !!timestamp '2012-12-20T14:35:46', doculink: '-'}
+    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:35:46', endTime: !!timestamp '2012-12-20T14:35:46'}
 - model: provapp.activity
   pk: rave:act_observation:UK-SCHM.20121220.144638
   fields: {name: RAVE Observation UK-SCHM.20121220.144638, type: 'obs:Observation',
-    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:46:38', endTime: !!timestamp '2012-12-20T14:46:38', doculink: '-'}
+    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:46:38', endTime: !!timestamp '2012-12-20T14:46:38'}
 - model: provapp.activity
   pk: rave:act_observation:UK-SCHM.20121220.151810
   fields: {name: RAVE Observation UK-SCHM.20121220.151810, type: 'obs:Observation',
-    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T15:18:10', endTime: !!timestamp '2012-12-20T15:18:10', doculink: '-'}
+    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T15:18:10', endTime: !!timestamp '2012-12-20T15:18:10'}
 - model: provapp.activity
   pk: rave:act_observation:UK-SCHM.20121220.154846
   fields: {name: RAVE Observation UK-SCHM.20121220.154846, type: 'obs:Observation',
-    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T15:48:46', endTime: !!timestamp '2012-12-20T15:48:46', doculink: '-'}
+    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T15:48:46', endTime: !!timestamp '2012-12-20T15:48:46'}
 - model: provapp.activity
   pk: rave:act_observation:UK-SCHM.20121220.161923
   fields: {name: RAVE Observation UK-SCHM.20121220.161923, type: 'obs:Observation',
-    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T16:19:23', endTime: !!timestamp '2012-12-20T16:19:23', doculink: '-'}
+    annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T16:19:23', endTime: !!timestamp '2012-12-20T16:19:23'}
 - model: provapp.activity
   pk: rave:act_observations
   fields: {name: RAVE Observations, type: 'obs:Observation', annotation: 'RAVE observations,
-      data release 4', startTime: !!timestamp '2003-04-11 14:42:16', endTime: !!timestamp '2012-05-27T17:05:00', doculink: 'TODO: link to RAVE DR4 paper'}
+      data release 4', startTime: !!timestamp '2003-04-11 14:42:16', endTime: !!timestamp '2012-05-27T17:05:00', 
+      doculink: 'RAVE DR4: Kordopatis et al. 2013, AJ, 146, Issue 5, article id. 134, pp.421-451'}
 - model: provapp.activity
   pk: rave:act_sparvPipeline
-  fields: {name: SPARV-Pipeline, type: 'obs:Reduction', annotation: 'Radial velocity
-      pipeline + (first) stellar parameters; version: 5.0, code: Yorick, C, IRAF,
-      Perl, etc.'}
+  fields: {name: SPARV-Pipeline, type: 'obs:Reduction',
+    annotation: 'Radial velocity pipeline + (first) stellar parameters; version: 5.0, code: Yorick, C, IRAF, Perl, etc.'}
 - model: provapp.activity
   pk: rave:act_stellarPipeline
-  fields: {name: Stellar Pipeline, type: 'obs:Reduction', annotation: Stellar pipeline
-      as described in DR4 paper, doculink: DR4 paper}
+  fields: {name: Stellar Pipeline, type: 'obs:Reduction', annotation: Stellar pipeline as described in DR4 paper,
+      doculink: 'RAVE DR4: Kordopatis et al. 2013, AJ, 146, Issue 5, article id. 134, pp.421-451'}
 
 # Entity
 - model: provapp.entity
   pk: rave:0645m522I0049.wav.fits
   fields: {name: 0645m522I0049.wav.fits, type: 'voprov:image', annotation: A processed
-      file, status: 'voprov:restricted', dataType: 'voprov:fits', storageLocation: unknown}
+      file, rights: 'voprov:restricted', dataType: 'voprov:fits'}
 - model: provapp.entity
   pk: rave:0645m522I0049.fits
   fields: {name: 0645m522I0049.fits, type: 'voprov:image', annotation: One of the original fits files,
-      status: 'voprov:restricted', dataType: 'voprov:fits', storageLocation: unknown}
+      rights: 'voprov:restricted', dataType: 'voprov:fits', storageLocation: unknown}
 - model: provapp.entity
   pk: rave:0645m522I0056.fits
   fields: {name: 0645m522I0056.fits, type: 'voprov:image', annotation: One of the
-      original fits files, status: 'voprov:restricted', dataType: 'voprov:fits', storageLocation: unknown}
+      original fits files, rights: 'voprov:restricted', dataType: 'voprov:fits'}
 - model: provapp.entity
   pk: rave:1705m611I0061.fits
   fields: {name: 1705m611I0061.fits, type: 'voprov:image', annotation: One of the
-      original fits files, status: 'voprov:restricted', dataType: 'voprov:fits', storageLocation: unknown}
+      original fits files, rights: 'voprov:restricted', dataType: 'voprov:fits'}
 - model: provapp.entity
   pk: rave:20030411_1507m23_001
   fields: {name: 20030411_1507m23_001, type: 'voprov:dataRow', annotation: Properties
-      of observed star derived for this observation in RAVE DR4, status: 'voprov:public',
+      of observed star derived for this observation in RAVE DR4, rights: 'voprov:public',
     dataType: 'voprov:databaseRow', storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:20030411_1507m23_003
   fields: {name: 20111230_0917m15_132, type: 'voprov:dataRow', annotation: Properties
-      of observed star derived for this observation in RAVE DR4, status: 'voprov:public',
+      of observed star derived for this observation in RAVE DR4, rights: 'voprov:public',
     dataType: 'voprov:databaseRow', storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:20030411_1507m23_004
   fields: {name: 20030411_1507m23_004, type: 'voprov:dataRow', annotation: Properties
-      of observed star derived for this observation in RAVE DR4, status: 'voprov:public',
+      of observed star derived for this observation in RAVE DR4, rights: 'voprov:public',
     dataType: 'voprov:databaseRow', storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:20121220_0752m38.rvsun.089.cont.txt
   fields: {name: 20121220_0752m38.rvsun.089.cont.txt (sparv result), type: 'voprov:spectrum',
     annotation: 'result from SPARV pipeline for one fiber, continuum corrected spectrum',
-    status: 'voprov:restricted', dataType: file, storageLocation: 'corvus.aip.de:/store/01/RAVE/Processing/DR4/20121220/0752m38.rvsun.089.cont.txt'}
+    rights: 'voprov:restricted', dataType: file, storageLocation: 'corvus.aip.de:/store/01/RAVE/Processing/DR4/20121220/0752m38.rvsun.089.cont.txt'}
 - model: provapp.entity
   pk: rave:20121220_0752m38.rvsun.fts
   fields: {name: 20121220_0752m38.rvsun.fts (reduced), type: 'voprov:image', annotation: reduced
-      fits file, status: 'voprov:restricted', dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE/reduced_IRAF/2012/20121220/0752m38.rvsun.fts'}
+      fits file, rights: 'voprov:restricted', dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE/reduced_IRAF/2012/20121220/0752m38.rvsun.fts'}
 - model: provapp.entity
   pk: rave:20121220_0752m38.sky.fts
   fields: {name: 20121220_0752m38.sky.fts (reduced), type: 'voprov:image', annotation: reduced
-      fits file, status: 'voprov:restricted', dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE/reduced_IRAF/2012/20121220/0752m38.sky.fts'}
+      fits file, rights: 'voprov:restricted', dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE/reduced_IRAF/2012/20121220/0752m38.sky.fts'}
 - model: provapp.entity
   pk: rave:20121220_0752m383I00001.fits
   fields: {name: 20121220_0752m383I00001.fits (original), type: 'voprov:image', annotation: 1
-      of 17 original fits files with different exposures, status: 'voprov:restricted',
+      of 17 original fits files with different exposures, rights: 'voprov:restricted',
     dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/0752m383I00001.fits'}
 - model: provapp.entity
   pk: rave:20121220_0752m383I00002.fits
   fields: {name: 20121220_0752m383I00002.fits (original), type: 'voprov:image', annotation: 1
-      of 17 original fits files with different exposures, status: 'voprov:restricted',
+      of 17 original fits files with different exposures, rights: 'voprov:restricted',
     dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/0752m383I00002.fits'}
 - model: provapp.entity
   pk: rave:20121220_0752m383I00003.fits
   fields: {name: 20121220_0752m383I00003.fits (original), type: 'voprov:image', annotation: 1
-      of 17 original fits files with different exposures, status: 'voprov:restricted',
+      of 17 original fits files with different exposures, rights: 'voprov:restricted',
     dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/0752m383I00003.fits'}
 - model: provapp.entity
   pk: rave:20121220_0752m383I00004.fits
   fields: {name: 20121220_0752m383I00004.fits (original), type: 'voprov:image', annotation: 1
-      of 17 original fits files with different exposures, status: 'voprov:restricted',
+      of 17 original fits files with different exposures, rights: 'voprov:restricted',
     dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/0752m383I00004.fits'}
 - model: provapp.entity
   pk: rave:20121220_0752m383I00005.fits
   fields: {name: 20121220_0752m383I00005.fits (original), type: 'voprov:image', annotation: 1
-      of 17 original fits files with different exposures, status: 'voprov:restricted',
+      of 17 original fits files with different exposures, rights: 'voprov:restricted',
     dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/0752m383I00005.fits'}
 - model: provapp.entity
   pk: rave:20121220_0752m383I00006.fits
   fields: {name: 20121220_0752m383I00006.fits (original), type: 'voprov:image', annotation: 1
-      of 17 original fits files with different exposures, status: 'voprov:restricted',
+      of 17 original fits files with different exposures, rights: 'voprov:restricted',
     dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/0752m383I00006.fits'}
 - model: provapp.entity
   pk: rave:20121220_0752m383I00007.fits
   fields: {name: 20121220_0752m383I00007.fits (original), type: 'voprov:image', annotation: 1
-      of 17 original fits files with different exposures, status: 'voprov:restricted',
+      of 17 original fits files with different exposures, rights: 'voprov:restricted',
     dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/0752m383I00007.fits'}
 - model: provapp.entity
   pk: rave:20121220_0752m383I00008.fits
   fields: {name: 20121220_0752m383I00008.fits (original), type: 'voprov:image', annotation: 1
-      of 17 original fits files with different exposures, status: 'voprov:restricted',
+      of 17 original fits files with different exposures, rights: 'voprov:restricted',
     dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/0752m383I00008.fits'}
 - model: provapp.entity
   pk: rave:20121220_0752m383I00009.fits
   fields: {name: 20121220_0752m383I00009.fits (original), type: 'voprov:image', annotation: 1
-      of 17 original fits files with different exposures, status: 'voprov:restricted',
+      of 17 original fits files with different exposures, rights: 'voprov:restricted',
     dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/0752m383I00009.fits'}
 - model: provapp.entity
   pk: rave:20121220_0752m383I00010.fits
   fields: {name: 20121220_0752m383I00010.fits (original), type: 'voprov:image', annotation: 1
-      of 17 original fits files with different exposures, status: 'voprov:restricted',
+      of 17 original fits files with different exposures, rights: 'voprov:restricted',
     dataType: file, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/0752m383I00010.fits'}
 - model: provapp.entity
   pk: rave:20121220_0752m38_089
   fields: {name: 20121220_0752m38_089, type: 'voprov:dataRow', annotation: Properties
-      of observed star derived for this observation in RAVE DR4, status: 'voprov:public',
+      of observed star derived for this observation in RAVE DR4, rights: 'voprov:public',
     dataType: 'voprov:databaseRow', storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.Chemical_Abundances
   fields: {name: Chemical Abundances, type: 'prov:collection',
-    annotation: Table with chemical abundances, status: 'voprov:public', dataType: 'voprov:databaseTable',
+    annotation: Table with chemical abundances, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/chemical_abundances/'}
 - model: provapp.entity
   pk: rave:DR4.Classification_Matijevic
   fields: {name: Classification Matijevic, type: 'prov:collection',
-    annotation: Table with spectral classification by Matijevic, status: 'voprov:public',
+    annotation: Table with spectral classification by Matijevic, rights: 'voprov:public',
     dataType: 'voprov:databaseTable', storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/classification_matijevic/'}
 - model: provapp.entity
   pk: rave:DR4.Distances_Binney
   fields: {name: Distances Binney, type: 'prov:collection', annotation: Table
-      with Binney distances, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      with Binney distances, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/distances_binney/'}
 - model: provapp.entity
   pk: rave:DR4.Distances_Zwitter
   fields: {name: Distances Zwitter, type: 'prov:collection', annotation: The
-      Zwitter distances, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      Zwitter distances, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/'}
 - model: provapp.entity
   pk: rave:DR4.RAVEDR4
   fields: {name: RAVEDR4 main, type: 'prov:collection', annotation: The
-      main RAVE DR4 table, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      main RAVE DR4 table, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/rave_dr4/'}
 - model: provapp.entity
   pk: rave:DR4.Stellar_Parameters
   fields: {name: Stellar Parameters, type: 'prov:collection', annotation: Table
-      with stellar_parameters, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      with stellar_parameters, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/stellar_parameters/'}
 - model: provapp.entity
   pk: rave:DR4.rave_2MASS
   fields: {name: RAVE Xmatch 2MASS, type: 'prov:collection', annotation: RAVE
-      crossmatch with 2MASS, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      crossmatch with 2MASS, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_PPMX
   fields: {name: RAVE Xmatch PPMX, type: 'prov:collection', annotation: RAVE
-      crossmatch with PPMX, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      crossmatch with PPMX, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_PPMXL
   fields: {name: RAVE Xmatch PPMXL, type: 'prov:collection', annotation: RAVE
-      crossmatch with PPMXL, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      crossmatch with PPMXL, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_SCS
   fields: {name: RAVE Xmatch SCS, type: 'voprov:catalog;prov:collection', annotation: RAVE
-      crossmatch with SUPERCOSMOS, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      crossmatch with SUPERCOSMOS, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_SPM4
   fields: {name: RAVE Xmatch SPM4, type: 'prov:collection', annotation: RAVE
-      crossmatch with SPM4, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      crossmatch with SPM4, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_TYCHO2
   fields: {name: RAVE Xmatch TYCHO2, type: 'voprov:catalog;prov:collection', annotation: RAVE
-      crossmatch with TYCHO2, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      crossmatch with TYCHO2, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_UCAC2
   fields: {name: RAVE Xmatch UCAC2, type: 'prov:collection', annotation: RAVE
-      crossmatch with UCAC2, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      crossmatch with UCAC2, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_UCAC3
   fields: {name: RAVE Xmatch UCAC3, type: 'prov:collection', annotation: RAVE
-      crossmatch with UCAC3, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      crossmatch with UCAC3, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_UCAC4
   fields: {name: RAVE Xmatch UCAC4, type: 'voprov:catalog;prov:collection', annotation: RAVE
-      crossmatch with UCAC4, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      crossmatch with UCAC4, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4.rave_USNOB1
   fields: {name: RAVE Xmatch USNOB1, type: 'prov:collection', annotation: RAVE
-      crossmatch with USNOB1, status: 'voprov:public', dataType: 'voprov:databaseTable',
+      crossmatch with USNOB1, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:GKStellarParameters
   fields: {name: Stellar Parameters Output, type: 'prov:collection', annotation: Stellar
-      parameter output, status: 'voprov:restricted', dataType: 'voprov:directory',
+      parameter output, rights: 'voprov:restricted', dataType: 'voprov:directory',
     storageLocation: 'corvus.aip.de:/store/01/CATS/Kordopatis/first_2012'}
 - model: provapp.entity
   pk: rave:GKStellarParametersFiles
   fields: {name: Stellar Parameters Files, type: 'prov:collection', annotation: '*synth_gk.txt
       = best fitting model-spectrum, *renormobs_gk.txt = renormalized observed spectrum;
-      Cut-off included; one of each for each fibre (star)', status: 'voprov:restricted',
+      Cut-off included; one of each for each fibre (star)', rights: 'voprov:restricted',
     dataType: 'voprov:directory', storageLocation: 'corvus.aip.de:/store/01/CATS/Kordopatis/first_2012'}
 - model: provapp.entity
   pk: rave:fits_orig
   fields: {name: Original fits, type: 'prov:collection', annotation: Original RAVE
-      DR4 fits files, status: 'voprov:restricted', dataType: 'voprov:directory', storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG'}
+      DR4 fits files, rights: 'voprov:restricted', dataType: 'voprov:directory', storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG'}
 - model: provapp.entity
   pk: rave:irafReduced
   fields: {name: Iraf reduced dataset, type: 'prov:collection', annotation: 'Results
       from first reduction pipeline, using IRAF. Collection contains directories with
-      tar-balls of fits-files for each observation.', status: 'voprov:restricted',
+      tar-balls of fits-files for each observation.', rights: 'voprov:restricted',
     dataType: 'voprov:directory', storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE/reduced_IRAF/'}
 - model: provapp.entity
   pk: rave:modelSpectra
   fields: {name: Model Spectra, type: 'prov:collection', annotation: 'Model spectra,
       for fitting spectra and determining parameters; see https://ui.adsabs.harvard.edu/#abs/2005A&A...442.1127M/abstract',
-    status: 'voprov:restricted', dataType: 'voprov:directory', storageLocation: 'corvus.aip.de:/store/01/RAVE/RES/Template_Padova_1st'}
+    rights: 'voprov:restricted', dataType: 'voprov:directory', storageLocation: 'corvus.aip.de:/store/01/RAVE/RES/Template_Padova_1st'}
 - model: provapp.entity
   pk: rave:ravedr4
   fields: {name: RAVE-DR4, type: 'prov:collection', annotation: The RAVE Data Release
-      4, status: 'voprov:public', dataType: 'voprov:database', storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/rave_dr4/'}
+      4, rights: 'voprov:public', dataType: 'voprov:database', storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/rave_dr4/'}
 - model: provapp.entity
   pk: rave:sparvProcessedData
   fields: {name: SPARV processed data set, type: 'prov:collection', annotation: 'Output
       from RAVE-SPARV pipeline, contains spectral data and stellar parameters including
-      radial velocity', status: 'voprov:restricted', dataType: 'voprov:directory',
+      radial velocity', rights: 'voprov:restricted', dataType: 'voprov:directory',
     storageLocation: 'corvus.aip.de:/store/01/RAVE/RES/Template_Padova_1st'}
 - model: provapp.entity
   pk: rave:sparvProcessedData_spectra
   fields: {name: SPARV spectra data set, type: 'prov:collection', annotation: 'Spectral
       data, contains images with fitted spectra, residuals; several files per fibre',
-    status: 'voprov:public', dataType: 'voprov:databaseTable'}
+    rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:2MASS
   fields: {name: 2MASS, type: 'prov:collection',
-    status: 'voprov:public', dataType: 'voprov:databaseTable'}
+    rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:PPMX
   fields: {name: PPMX, type: 'prov:collection',
-    status: 'voprov:public', dataType: 'voprov:databaseTable'}
+    rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:PPMXL
   fields: {name: PPMXL, type: 'prov:collection',
-    status: 'voprov:public', dataType: 'voprov:databaseTable'}
+    rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:SCS
-  fields: {name: SCS, type: 'prov:collection', status: 'voprov:public',
+  fields: {name: SCS, type: 'prov:collection', rights: 'voprov:public',
     dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:SPM4
   fields: {name: SPM4, type: 'prov:collection',
-    status: 'voprov:public', dataType: 'voprov:databaseTable'}
+    rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:TYCHO2
   fields: {name: TYCHO2, type: 'prov:collection',
-    status: 'voprov:public', dataType: 'voprov:databaseTable'}
+    rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:UCAC2
   fields: {name: UCAC2, type: 'prov:collection',
-    status: 'voprov:public', dataType: 'voprov:databaseTable'}
+    rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:UCAC3
   fields: {name: UCAC3, type: 'prov:collection',
-    status: 'voprov:public', dataType: 'voprov:databaseTable'}
+    rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:UCAC4
   fields: {name: UCAC4, type: 'prov:collection',
-    status: 'voprov:public', dataType: 'voprov:databaseTable'}
+    rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:USNOB1
   fields: {name: USNOB1, type: 'prov:collection',
-    status: 'voprov:public', dataType: 'voprov:databaseTable'}
+    rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 
 # Agent
 - model: provapp.agent
   pk: org:rave
   fields: {name: RAVE, type: 'prov:Organisation', annotation: 'RAVE organisation,
-      prov:url: https://www.rave-survey.org/'}
+      https://www.rave-survey.org/'}
 - model: provapp.agent
   pk: rave:Alessandro_Siviero
   fields: {name: Alessandro Siviero, type: 'prov:Person'}
@@ -366,7 +365,7 @@
   fields: {name: Georges Kordopatis, type: 'prov:Person'}
 - model: provapp.agent
   pk: rave:Harry_Enke
-  fields: {name: Harry Enke, type: 'prov:Person', email: 'voprov:email: henke@aip.de'}
+  fields: {name: Harry Enke, type: 'prov:Person', email: 'henke@aip.de'}
 - model: provapp.agent
   pk: rave:James_Binney
   fields: {name: James Binney, type: 'prov:Person'}
@@ -392,28 +391,22 @@
   fields: {activity: 'rave:act_stellarPipeline', entity: 'rave:sparvProcessedData'}
 - model: provapp.used
   pk: 4
-  fields: {activity: 'rave:act_classificationPipeline', entity: 'rave:sparvProcessedData',
-    role: '-'}
+  fields: {activity: 'rave:act_classificationPipeline', entity: 'rave:sparvProcessedData'}
 - model: provapp.used
   pk: 5
-  fields: {activity: 'rave:act_chemicalPipeline', entity: 'rave:sparvProcessedData',
-    role: '-'}
+  fields: {activity: 'rave:act_chemicalPipeline', entity: 'rave:sparvProcessedData'}
 - model: provapp.used
   pk: 6
-  fields: {activity: 'rave:act_chemicalPipeline', entity: 'rave:GKStellarParameters',
-    role: '-'}
+  fields: {activity: 'rave:act_chemicalPipeline', entity: 'rave:GKStellarParameters'}
 - model: provapp.used
   pk: 7
-  fields: {activity: 'rave:act_distancesBinney', entity: 'rave:GKStellarParameters',
-    role: '-'}
+  fields: {activity: 'rave:act_distancesBinney', entity: 'rave:GKStellarParameters'}
 - model: provapp.used
   pk: 8
-  fields: {activity: 'rave:act_distancesBinney', entity: 'rave:sparvProcessedData',
-    role: '-'}
+  fields: {activity: 'rave:act_distancesBinney', entity: 'rave:sparvProcessedData'}
 - model: provapp.used
   pk: 9
-  fields: {activity: 'rave:act_distancesZwitter', entity: 'rave:sparvProcessedData',
-    role: '-'}
+  fields: {activity: 'rave:act_distancesZwitter', entity: 'rave:sparvProcessedData'}
 - model: provapp.used
   pk: 10
   fields: {activity: 'rave:act_crossmatch', entity: 'rave:sparvProcessedData'}
@@ -761,8 +754,7 @@
   fields: {activity: 'rave:act_sparvPipeline', agent: 'rave:Harry_Enke'}
 - model: provapp.wasassociatedwith
   pk: 3
-  fields: {activity: 'rave:act_stellarPipeline', agent: 'rave:Georges_Kordopatis',
-    role: '-'}
+  fields: {activity: 'rave:act_stellarPipeline', agent: 'rave:Georges_Kordopatis'}
 - model: provapp.wasassociatedwith
   pk: 4
   fields: {activity: 'rave:act_classificationPipeline', agent: 'rave:Gal_Matijevic',

@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from rest_framework import serializers
-from rest_framework.fields import SkipField
+from rest_framework.fields import SkipField, empty
 from rest_framework.relations import PKOnlyObject
 
 from .models import (
@@ -16,7 +16,7 @@ from .models import (
     WasDerivedFrom
 )
 
-# Define custom CharField to add attribute custom field name
+# Define custom CharField to add attribute custom_field_name
 class CustomCharField(serializers.CharField):
 
     def __init__(self, **kwargs):
@@ -24,8 +24,8 @@ class CustomCharField(serializers.CharField):
         self.trim_whitespace = kwargs.pop('trim_whitespace', True)
         self.max_length = kwargs.pop('max_length', None)
         self.min_length = kwargs.pop('min_length', None)
+
         self.custom_field_name = kwargs.pop('custom_field_name', None)
-        # print "custom: ", self.custom_field_name
 
         super(CustomCharField, self).__init__(**kwargs)
         if self.max_length is not None:
@@ -34,6 +34,22 @@ class CustomCharField(serializers.CharField):
         if self.min_length is not None:
             message = self.error_messages['min_length'].format(min_length=self.min_length)
             self.validators.append(MinLengthValidator(self.min_length, message=message))
+
+
+# Define custom DateTimeField to add attribute custom_field_name
+class CustomDateTimeField(serializers.DateTimeField):
+
+    def __init__(self, format=empty, input_formats=None, default_timezone=None, *args, **kwargs):
+        if format is not empty:
+            self.format = format
+        if input_formats is not None:
+            self.input_formats = input_formats
+        if default_timezone is not None:
+            self.timezone = default_timezone
+
+        self.custom_field_name = kwargs.pop('custom_field_name', None)
+
+        super(CustomDateTimeField, self).__init__(*args, **kwargs)
 
 
 # Define custom serializer class with some modifications
@@ -92,10 +108,13 @@ class ActivitySerializer(NonNullCustomSerializer):
     prov_label = CustomCharField(source='name', custom_field_name='prov:label')
     prov_type = CustomCharField(source='type', custom_field_name='prov:type')
     prov_description = CustomCharField(source='annotation', custom_field_name='prov:description')
+    prov_startTime = CustomDateTimeField(source='startTime', custom_field_name='prov:startTime')
+    prov_endTime = CustomDateTimeField(source='endTime', custom_field_name='prov:endTime')
+    voprov_doculink = CustomCharField(source='doculink', custom_field_name='voprov:doculink')
 
     class Meta:
         model = Activity
-        fields = ('prov_id', 'prov_label', 'prov_type', 'prov_description')
+        fields = ('prov_id', 'prov_label', 'prov_type', 'prov_description', 'prov_startTime', 'prov_endTime', 'voprov_doculink')
         # exclude id later on, when it will be used as key in the dictionary anyway
         # but still keep it here in the serializer
 
@@ -114,43 +133,50 @@ class EntitySerializer(NonNullCustomSerializer):
     prov_label = CustomCharField(source='name', custom_field_name='prov:label')
     prov_type = CustomCharField(source='type', custom_field_name='prov:type')
     prov_description = CustomCharField(source='annotation', custom_field_name='prov:description')
+    voprov_rights = CustomCharField(source='rights', custom_field_name='voprov:rights')
+    voprov_dataType = CustomCharField(source='dataType', custom_field_name='voprov:dataType')
+    voprov_storageLocation = CustomCharField(source='storageLocation', custom_field_name='voprov:storageLocation')
 
     class Meta:
         model = Entity
-        fields = ('prov_id', 'prov_label', 'prov_type', 'prov_description')
+        fields = ('prov_id', 'prov_label', 'prov_type', 'prov_description', 'voprov_rights', 'voprov_dataType', 'voprov_storageLocation')
 
 
 class AgentSerializer(NonNullCustomSerializer):
 
     prov_id = CustomCharField(source='id', custom_field_name='prov:id')
-    voprov_name = CustomCharField(source='name', custom_field_name='voprov:name')
     prov_type = CustomCharField(source='type', custom_field_name='prov:type')
+    voprov_name = CustomCharField(source='name', custom_field_name='voprov:name')
+    voprov_email = CustomCharField(source='email', custom_field_name='voprov:email')
+    prov_description = CustomCharField(source='annotation', custom_field_name='prov:description')
 
     class Meta:
         model = Agent
-        fields = ('prov_id', 'voprov_name', 'prov_type')
+        fields = ('prov_id', 'voprov_name', 'prov_type', 'voprov_email', 'prov_description')
 
 
 class UsedSerializer(NonNullCustomSerializer):
 
     prov_activity = CustomCharField(source='activity_id', custom_field_name='prov:activity')
     prov_entity = CustomCharField(source='entity_id', custom_field_name='prov:entity')
+    prov_time = CustomDateTimeField(source='time', custom_field_name='prov:time')
     prov_role = CustomCharField(source='role', custom_field_name='prov:role')
 
     class Meta:
         model = Used
-        fields = ('id', 'prov_activity', 'prov_entity', 'prov_role')
+        fields = ('id', 'prov_activity', 'prov_entity', 'prov_time', 'prov_role')
 
 
 class WasGeneratedBySerializer(NonNullCustomSerializer):
 
     prov_entity = CustomCharField(source='entity_id', custom_field_name='prov:entity')
     prov_activity = CustomCharField(source='activity_id', custom_field_name='prov:activity')
+    prov_time = CustomDateTimeField(source='time', custom_field_name='prov:time')
     prov_role = CustomCharField(source='role', custom_field_name='prov:role')
 
     class Meta:
         model = WasGeneratedBy
-        fields = ('id', 'prov_entity', 'prov_activity', 'prov_role')
+        fields = ('id', 'prov_entity', 'prov_activity', 'prov_time', 'prov_role')
 
 
 class WasAssociatedWithSerializer(NonNullCustomSerializer):
