@@ -6,8 +6,7 @@
 - model: provapp.activity
   pk: rave:act_classificationPipeline
   fields: {name: Spectral Classifications, type: 'obs:Classification', annotation: Spectral
-      type classification, doculink: 'ApJ 200, 14,
-      Matijevic et al. 2012'}
+      type classification, doculink: 'ApJ 200, 14, Matijevic et al. 2012'}
 - model: provapp.activity
   pk: rave:act_crossmatch
   fields: {name: Crossmatch, type: 'obs:Crossmatch', annotation: Crossmatch with different
@@ -31,43 +30,43 @@
       pipeline, includes sky subtraction, merging fits-slices of one field together.
       Performed in Italy, by Alessandro Siviero.'}
 - model: provapp.activity
-  pk: rave:act_observation:UK-SCHM.20121220.143027
+  pk: rave:act_observation_UK-SCHM.20121220.143027
   fields: {name: RAVE Observation UK-SCHM.20121220.143027, type: 'obs:Observation',
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:30:27', endTime: !!timestamp '2012-12-20T14:30:27'}
 - model: provapp.activity
-  pk: rave:act_observation:UK-SCHM.20121220.143220
+  pk: rave:act_observation_UK-SCHM.20121220.143220
   fields: {name: RAVE Observation UK-SCHM.20121220.143220, type: 'obs:Observation',
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:32:20', endTime: !!timestamp '2012-12-20T14:32:20'}
 - model: provapp.activity
-  pk: rave:act_observation:UK-SCHM.20121220.143312
+  pk: rave:act_observation_UK-SCHM.20121220.143312
   fields: {name: RAVE Observation UK-SCHM.20121220.143312, type: 'obs:Observation',
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:33:12', endTime: !!timestamp '2012-12-20T14:33:12'}
 - model: provapp.activity
-  pk: rave:act_observation:UK-SCHM.20121220.143403
+  pk: rave:act_observation_UK-SCHM.20121220.143403
   fields: {name: RAVE Observation UK-SCHM.20121220.143403, type: 'obs:Observation',
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:34:03', endTime: !!timestamp '2012-12-20T14:34:03'}
 - model: provapp.activity
-  pk: rave:act_observation:UK-SCHM.20121220.143455
+  pk: rave:act_observation_UK-SCHM.20121220.143455
   fields: {name: RAVE Observation UK-SCHM.20121220.143455, type: 'obs:Observation',
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:34:55', endTime: !!timestamp '2012-12-20T14:34:55'}
 - model: provapp.activity
-  pk: rave:act_observation:UK-SCHM.20121220.143546
+  pk: rave:act_observation_UK-SCHM.20121220.143546
   fields: {name: RAVE Observation UK-SCHM.20121220.143546, type: 'obs:Observation',
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:35:46', endTime: !!timestamp '2012-12-20T14:35:46'}
 - model: provapp.activity
-  pk: rave:act_observation:UK-SCHM.20121220.144638
+  pk: rave:act_observation_UK-SCHM.20121220.144638
   fields: {name: RAVE Observation UK-SCHM.20121220.144638, type: 'obs:Observation',
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T14:46:38', endTime: !!timestamp '2012-12-20T14:46:38'}
 - model: provapp.activity
-  pk: rave:act_observation:UK-SCHM.20121220.151810
+  pk: rave:act_observation_UK-SCHM.20121220.151810
   fields: {name: RAVE Observation UK-SCHM.20121220.151810, type: 'obs:Observation',
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T15:18:10', endTime: !!timestamp '2012-12-20T15:18:10'}
 - model: provapp.activity
-  pk: rave:act_observation:UK-SCHM.20121220.154846
+  pk: rave:act_observation_UK-SCHM.20121220.154846
   fields: {name: RAVE Observation UK-SCHM.20121220.154846, type: 'obs:Observation',
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T15:48:46', endTime: !!timestamp '2012-12-20T15:48:46'}
 - model: provapp.activity
-  pk: rave:act_observation:UK-SCHM.20121220.161923
+  pk: rave:act_observation_UK-SCHM.20121220.161923
   fields: {name: RAVE Observation UK-SCHM.20121220.161923, type: 'obs:Observation',
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T16:19:23', endTime: !!timestamp '2012-12-20T16:19:23'}
 - model: provapp.activity
@@ -601,34 +600,34 @@
   fields: {entity: 'rave:DR4.RAVEDR4', activity: 'rave:act_dataextraction'}
 - model: provapp.wasgeneratedby
   pk: 19
-  fields: {entity: 'rave:20121220_0752m383I00001.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143027'}
+  fields: {entity: 'rave:20121220_0752m383I00001.fits', activity: 'rave:act_observation_UK-SCHM.20121220.143027'}
 - model: provapp.wasgeneratedby
   pk: 20
-  fields: {entity: 'rave:20121220_0752m383I00002.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143220'}
+  fields: {entity: 'rave:20121220_0752m383I00002.fits', activity: 'rave:act_observation_UK-SCHM.20121220.143220'}
 - model: provapp.wasgeneratedby
   pk: 21
-  fields: {entity: 'rave:20121220_0752m383I00003.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143312'}
+  fields: {entity: 'rave:20121220_0752m383I00003.fits', activity: 'rave:act_observation_UK-SCHM.20121220.143312'}
 - model: provapp.wasgeneratedby
   pk: 22
-  fields: {entity: 'rave:20121220_0752m383I00004.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143403'}
+  fields: {entity: 'rave:20121220_0752m383I00004.fits', activity: 'rave:act_observation_UK-SCHM.20121220.143403'}
 - model: provapp.wasgeneratedby
   pk: 23
-  fields: {entity: 'rave:20121220_0752m383I00005.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143455'}
+  fields: {entity: 'rave:20121220_0752m383I00005.fits', activity: 'rave:act_observation_UK-SCHM.20121220.143455'}
 - model: provapp.wasgeneratedby
   pk: 24
-  fields: {entity: 'rave:20121220_0752m383I00006.fits', activity: 'rave:act_observation:UK-SCHM.20121220.143546'}
+  fields: {entity: 'rave:20121220_0752m383I00006.fits', activity: 'rave:act_observation_UK-SCHM.20121220.143546'}
 - model: provapp.wasgeneratedby
   pk: 25
-  fields: {entity: 'rave:20121220_0752m383I00007.fits', activity: 'rave:act_observation:UK-SCHM.20121220.144638'}
+  fields: {entity: 'rave:20121220_0752m383I00007.fits', activity: 'rave:act_observation_UK-SCHM.20121220.144638'}
 - model: provapp.wasgeneratedby
   pk: 26
-  fields: {entity: 'rave:20121220_0752m383I00008.fits', activity: 'rave:act_observation:UK-SCHM.20121220.151810'}
+  fields: {entity: 'rave:20121220_0752m383I00008.fits', activity: 'rave:act_observation_UK-SCHM.20121220.151810'}
 - model: provapp.wasgeneratedby
   pk: 27
-  fields: {entity: 'rave:20121220_0752m383I00009.fits', activity: 'rave:act_observation:UK-SCHM.20121220.154846'}
+  fields: {entity: 'rave:20121220_0752m383I00009.fits', activity: 'rave:act_observation_UK-SCHM.20121220.154846'}
 - model: provapp.wasgeneratedby
   pk: 28
-  fields: {entity: 'rave:20121220_0752m383I00010.fits', activity: 'rave:act_observation:UK-SCHM.20121220.161923'}
+  fields: {entity: 'rave:20121220_0752m383I00010.fits', activity: 'rave:act_observation_UK-SCHM.20121220.161923'}
 - model: provapp.wasgeneratedby
   pk: 29
   fields: {entity: 'rave:20121220_0752m38.rvsun.fts', activity: 'rave:act_irafReduction'}

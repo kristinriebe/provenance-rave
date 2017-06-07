@@ -188,9 +188,11 @@ class WasAssociatedWithSerializer(NonNullCustomSerializer):
 
 class WasAttributedToSerializer(NonNullCustomSerializer):
 
+    voprov_role = CustomCharField(source='role', custom_field_name='voprov:role')
+
     class Meta:
         model = WasAttributedTo
-        fields = '__all__'
+        fields = ('id', 'entity', 'agent', 'voprov_role')
 
 
 class HadMemberSerializer(NonNullCustomSerializer):
@@ -337,14 +339,14 @@ class ProvenanceSerializer(serializers.Serializer):
         # Returns the modified dictionary.
         # TODO: Find a more elegant solution for this!
 
-        # exclude id in serialisation
+        # exclude id in serialisation?
         # (since it is used as key for this class instance anyway)
-        data.pop('id')
+        #data.pop('id')
 
         for key, value in data.iteritems():
 
             # replace prov_ by prov for the given keys:
-            if key in ['activity', 'entity', 'collection', 'agent','generatedEntity', 'usedEntity', 'usage', 'generation', 'role']:
+            if key in ['id', 'activity', 'entity', 'collection', 'agent','generatedEntity', 'usedEntity', 'usage', 'generation', 'role']:
                 newkey = 'prov:' + key
                 data[newkey] = data.pop(key)
 

@@ -47,6 +47,8 @@ from .serializers import (
     ProvenanceSerializer
 )
 
+from .renderers import PROVNRenderer
+
 from .forms import ObservationIdForm, ProvDalForm
 
 
@@ -512,9 +514,17 @@ def provdal(request):
     # in the form of querysets. First serialize them, then render in the
     # desired format.
 
+    serializer = ProvenanceSerializer(prov)
+    data = serializer.data
+    data["prefix"] = prefix
+
     # write provenance information in desired format:
     if format == 'PROV-N':
         # TODO: write a provn-renderer for this
+        provstr = PROVNRenderer().render(data)
+        return HttpResponse(provstr, content_type='text/plain; charset=utf-8')
+
+
         provstr = "document\n"
         for p_id, p in prov['prefix'].iteritems():
             provstr = provstr + "prefix %s <%s>,\n" % (p_id, p)
@@ -561,10 +571,6 @@ def provdal(request):
 
     elif format == 'PROV-JSON':
 
-        # convert querysets to serialized python objects
-        serializer = ProvenanceSerializer(prov)
-        data = serializer.data
-        data["prefix"] = prefix
 
         json_str = json.dumps(data,
                 #sort_keys=True,

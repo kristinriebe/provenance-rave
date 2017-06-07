@@ -96,7 +96,6 @@ class HadMember(models.Model):
     id = models.AutoField(primary_key=True)
     collection = models.ForeignKey(Entity, null=True) #, on_delete=models.CASCADE) # enforce prov-type: collection
     entity = models.ForeignKey(Entity, related_name='collection', null=True) #, on_delete=models.CASCADE)
-    role = models.CharField(max_length=128, blank=True, null=True)
 
     def __str__(self):
         return "id=%s; collection=%s; entity=%s; role=%s" % (str(self.id), self.collection, self.entity, self.role)
@@ -125,7 +124,7 @@ class WasAttributedTo(models.Model):
     id = models.AutoField(primary_key=True)
     entity = models.ForeignKey(Entity, null=True)
     agent = models.ForeignKey(Agent, null=True) #, on_delete=models.CASCADE)
-    role = models.CharField(max_length=128, blank=True, null=True)
+    role = models.CharField(max_length=128, blank=True, null=True)  # not allowed by W3C!!
 
     def __str__(self):
         return "id=%s; entity=%s; agent=%s; role=%s" % (str(self.id), self.entity, self.agent, self.role)
