@@ -63,7 +63,7 @@ class ProvDalForm(forms.Form):
     )
 
     step_flag = forms.ChoiceField(
-        label="Steps",
+        label="Step flag",
         choices=[('LAST', 'last'), ('ALL','all')],
         widget=forms.RadioSelect(),
         help_text="Specify if just one or all previous steps shall be retrieved",
@@ -74,7 +74,7 @@ class ProvDalForm(forms.Form):
         label="Format",
         choices=[('PROV-N', 'PROV-N'), ('PROV-JSON','PROV-JSON')],
         widget=forms.RadioSelect(),
-        help_text="Format of returned Provenance record",
+        help_text="Format of returned provenance record",
         initial='PROV-JSON'
     )
 
@@ -83,7 +83,7 @@ class ProvDalForm(forms.Form):
         choices=[('IVOA','IVOA'), ('W3C', 'W3C')],
         widget=forms.RadioSelect(),
         help_text="Choose W3C if you need W3C Prov-DM compliant serialization",
-        initial='IVOA'
+        initial='W3C'
     )
 
     def clean_observation_id(self):

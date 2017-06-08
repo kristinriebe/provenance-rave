@@ -469,10 +469,9 @@ def provdetailjson(request, observation_id):
 
 def provdal(request):
 
-    # TODO: use &format=... in url!
     observation_id = request.GET.get('ID') #default: None
-    step = request.GET.get('STEP', 'LAST') # can be LAST or FIRST
-    format = request.GET.get('FORMAT', 'PROVN') # can be PROVN, PROVJSON, VOTABLE
+    step_flag = request.GET.get('STEP', 'LAST') # can be LAST or ALL
+    format = request.GET.get('FORMAT', 'PROV-N') # can be PROV-N, PROV-JSON, VOTABLE
     model = request.GET.get('COMPLIANCE', 'IVOA')  # one of IVOA, W3C (or None?)
 
     try:
@@ -507,8 +506,18 @@ def provdal(request):
     if entity is not None:
         prov['entity'][entity.id] = entity
 
-        # search for further provenance:
-        prov = utils.find_entity(entity, prov)
+        if step_flag == "ALL":
+            # search for further provenance, recursively
+            prov = utils.find_entity(entity, prov, follow=True)
+        elif step_flag == "LAST":
+            # just go back one step (to the next entity)
+            pass
+            prov = utils.find_entity(entity, prov, follow=False)
+        else:
+            # raise error: not supported
+            pass
+
+
 
     # The prov dictionary now contains the complete provenance information,
     # in the form of querysets. First serialize them, then render in the

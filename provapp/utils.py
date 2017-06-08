@@ -254,8 +254,12 @@ def find_activity_detail_graph(activity, prov):
     return prov
 
 
-
-def find_entity(entity, prov):
+def find_entity(entity, prov, follow=True):
+    # Look for entity in all possible relations,
+    # follow these relations further recursively.
+    # If follow is False, then do not follow the relations any futher,
+    # except for wasGeneratedBy-activity: here one more step is done
+    # in order to findand record the used entities.
 
 
     # check agent relation (attribution)
@@ -271,7 +275,7 @@ def find_entity(entity, prov):
             # add wasAttributedto relationship
             prov['wasAttributedTo'][wa.id] = wa
 
-    # check membership to collection and (maybe) follow the collection's provenance
+    # check membership to collection
     queryset = HadMember.objects.filter(entity=entity.id)
     if len(queryset) > 0:
         # can entities belong to more than one collection?
@@ -284,19 +288,14 @@ def find_entity(entity, prov):
                 prov['entity'][h.collection.id] = h.collection
 
                 # follow this collection's provenance (if it was not recorded before)
-                prov = find_entity(h.collection, prov)
+                if follow:
+                    prov = find_entity(h.collection, prov, follow=True)
 
             # add hadMember-link:
             prov['hadMember'][h.id] = h
 
 
-    # do not check wasGeneratedBy and wasDerivedFrom for collections,
-    # if we only want to follow the provenance path of a detailed entity;
-    # thus maybe return here, if it is a collection
-    #if "prov:collection" in entity.type.split(';'):
-    #    return prov
-
-    # track the provenance information backwards via WasGeneratedBy
+    # track the provenance information backwards via WasGeneratedBy, but only 1 step
     queryset = WasGeneratedBy.objects.filter(entity=entity.id)
     if len(queryset) > 0:
         for wg in queryset:
@@ -306,8 +305,11 @@ def find_entity(entity, prov):
             if wg.activity.id not in prov['activity']:
                 prov['activity'][wg.activity.id] = wg.activity
 
-                # follow provenance along this activity
-                prov = find_activity(wg.activity, prov)
+                # follow provenance along this activity, but only for one step
+                if follow:
+                    prov = find_activity(wg.activity, prov, follow=True)
+                else:
+                    prov = find_activity(wg.activity, prov, follow=False)
 
             # add wasGeneratedBy-link
             prov['wasGeneratedBy'][wg.id] = wg
@@ -323,17 +325,17 @@ def find_entity(entity, prov):
                 prov['entity'][wd.usedEntity.id] = wd.usedEntity
 
                 # continue with pre-decessor
-                prov = find_entity(wd.usedEntity, prov)
+                if follow:
+                    prov = find_entity(wd.usedEntity, prov, follow=True)
 
             # add wasDerivedFrom-link (in any case)
             prov['wasDerivedFrom'][wd.id] = wd
 
     # if nothing found until now, then I have reached an endpoint in the graph
-    print "Giving up, no more provenance for entity %s found." % entity.id
     return prov
 
 
-def find_activity(activity, prov):
+def find_activity(activity, prov, follow=True):
 
     queryset = Used.objects.filter(activity=activity.id)
 
@@ -350,11 +352,12 @@ def find_activity(activity, prov):
                 prov['entity'][u.entity.id] = u.entity
 
                 # follow this entity's provenance
-                prov = find_entity(u.entity, prov)
+                if follow:
+                    prov = find_entity(u.entity, prov, follow=True)
 
             # add used-link:
             prov['used'][u.id] = u
-    print "Giving up, no more provenance for activity %s found." % activity.id
+    #print "Giving up, no more provenance for activity %s found." % activity.id
 
     # check agent relation (association)
     queryset = WasAssociatedWith.objects.filter(activity=activity.id)
@@ -370,4 +373,3 @@ def find_activity(activity, prov):
             prov['wasAssociatedWith'][wa.id] = wa
 
     return prov
-

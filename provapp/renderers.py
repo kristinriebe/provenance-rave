@@ -219,7 +219,6 @@ class PROVNRenderer(PROVNBaseRenderer):
 
         for a_id, a in data['agent'].iteritems():
             string += AgentPROVNRenderer().render(a) + "\n"
-        #     provstr = provstr + "entity(" + e.id + ", [voprov:type = '" + e.type + "', voprov:name = '" + e.name + "', voprov:annotation = '" + e.annotation + "']),\n"
 
         for u_id, u in data['used'].iteritems():
             string += UsedPROVNRenderer().render(u) + "\n"
@@ -238,8 +237,6 @@ class PROVNRenderer(PROVNBaseRenderer):
 
         for w_id, w in data['wasDerivedFrom'].iteritems():
             string += WasDerivedFromPROVNRenderer().render(w) + "\n"
-
-        # remove final comma?
 
         string += "endDocument"
 
