@@ -16,18 +16,23 @@ class PROVNBaseRenderer(BaseRenderer):
         else:
             return marker
 
-    def get_id(self, obj):
-        marker = "-"
-        namespace = "r"
+    def add_relation_id(self, string, obj):
 
+        value = None
         if "prov:id" in obj:
             value = str(obj.pop("prov:id"))
             if ":" not in value:
-                # add a blank as identifier namespace
-                value = "%s:%s" % (namespace, value)
-            return value
-        else:
-            return marker
+                # Then this id is just an internal id here,
+                # skip it in PROV-N serialization.
+                # (Adding a blank as identifier namespace will not validate in ProvStore, thus don't use it)
+                # value = "%s:%s" % (namespace, value)
+                value = None
+
+        if value is not None:
+            string += "%s; " % value
+        # else: return original string
+
+        return string
 
     def add_optional_attributes(self, string, obj):
         # construct string for optional attributes,
@@ -83,7 +88,7 @@ class UsedPROVNRenderer(PROVNBaseRenderer):
         string = "used("
 
         # id is optional, but we have an id in the database, thus include it
-        string += self.get_id(used) + "; "
+        string = self.add_relation_id(string, used)
 
         # activity is mandatory:
         string += self.get_value(used, "prov:activity") + ", "
@@ -105,8 +110,8 @@ class WasGeneratedByPROVNRenderer(PROVNBaseRenderer):
     def render(self, wasGeneratedBy):
         string = "wasGeneratedBy("
 
-        # id is optional, but we have an id in the database, thus include it
-        string += self.get_id(wasGeneratedBy) + "; "
+        # id is optional
+        string = self.add_relation_id(string, wasGeneratedBy)
 
         # entity is mandatory:
         string += self.get_value(wasGeneratedBy, "prov:entity") + ", "
@@ -129,8 +134,8 @@ class WasAssociatedWithPROVNRenderer(PROVNBaseRenderer):
     def render(self, wasAssociatedWith):
         string = "wasAssociatedWith("
 
-        # id is optional, but I have an id in the database, thus include it
-        string += self.get_id(wasAssociatedWith) + "; "
+        # id is optional
+        string = self.add_relation_id(string, wasAssociatedWith)
         string += self.get_value(wasAssociatedWith, "prov:activity") + ", "
         string += self.get_value(wasAssociatedWith, "prov:agent") + ", "
         string += self.get_value(wasAssociatedWith, "prov:plan")
@@ -148,7 +153,7 @@ class WasAttributedToPROVNRenderer(PROVNBaseRenderer):
         string = "wasAttributedTo("
 
         # id is optional, but I have an id in the database, thus include it
-        string += self.get_id(wasAttributedTo) + "; "
+        string = self.add_relation_id(string, wasAttributedTo)
         string += self.get_value(wasAttributedTo, "prov:entity") + ", "
         string += self.get_value(wasAttributedTo, "prov:agent")
         string += ")"
@@ -179,7 +184,7 @@ class WasDerivedFromPROVNRenderer(PROVNBaseRenderer):
         string = "wasDerivedFrom("
 
         # does not have an id nor optional attributes in W3C
-        string += self.get_id(wasDerivedFrom) + "; "
+        string = self.add_relation_id(string, wasDerivedFrom)
         string += self.get_value(wasDerivedFrom, "prov:generatedEntity") + ", "
         string += self.get_value(wasDerivedFrom, "prov:usedEntity") + ", "
         string += self.get_value(wasDerivedFrom, "prov:activity") + ", "

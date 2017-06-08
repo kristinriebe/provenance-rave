@@ -486,7 +486,6 @@ def provdal(request):
         "voprov": "http://www.ivoa.net/documents/ProvenanceDM/voprov/",
         "org": "http://www.ivoa.net/documents/ProvenanceDM/voprov/org/",
         "vo": "http://www.ivoa.net/documents/ProvenanceDM/voprov/vo",
-        "r": "http://www.ivoa.net/documents/ProvenanceDM/voprov/r", # namespace for relationships, because blank "_" not accepted by Validator from ProvToolbox
         "prov": "http://www.w3.org/ns/prov#",  # defined by default
         "xsd": "http://www.w3.org/2000/10/XMLSchema#"  # defined by default
     }
