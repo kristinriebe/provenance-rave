@@ -47,7 +47,7 @@ from .serializers import (
     ProvenanceSerializer
 )
 
-from .renderers import PROVNRenderer
+from .renderers import PROVNRenderer, PROVJSONRenderer
 
 from .forms import ObservationIdForm, ProvDalForm
 
@@ -520,62 +520,16 @@ def provdal(request):
 
     # write provenance information in desired format:
     if format == 'PROV-N':
-        # TODO: write a provn-renderer for this
         provstr = PROVNRenderer().render(data)
         return HttpResponse(provstr, content_type='text/plain; charset=utf-8')
 
-
-        provstr = "document\n"
-        for p_id, p in prov['prefix'].iteritems():
-            provstr = provstr + "prefix %s <%s>,\n" % (p_id, p)
-
-        for a_id, a in prov['activity'].iteritems():
-            date = a.startTime
-            if a.startTime:
-                startTime = a.startTime.isoformat()
-            else:
-                startTime = "-"
-            if a.endTime:
-                endTime = a.endTime.isoformat()
-            else:
-                endTime = "-"
-            provstr = provstr + "activity(" + a.id + ", " + startTime + ", " + endTime + ", [voprov:type = '" + a.type + "', voprov:name = '" + a.name + "', voprov:annotation = '" + a.annotation + "']),\n"
-
-        for e_id, e in prov['entity'].iteritems():
-            provstr = provstr + "entity(" + e.id + ", [voprov:type = '" + e.type + "', voprov:name = '" + e.name + "', voprov:annotation = '" + e.annotation + "']),\n"
-
-        for ag_id, ag in prov['agent'].iteritems():
-            provstr = provstr + "agent(" + ag.id + ", [voprov:type = '" + ag.type + "', voprov:name = '" + ag.name + "', voprov:annotation = '" + ag.annotation + "']),\n"
-
-        for u_id, u in prov['used'].iteritems():
-            provstr = provstr + "used(" + u.activity.id + ", " + u.entity.id + ", [id = '" + str(u.id) + "', voprov:role = '" + u.role + "']),\n"
-
-        for wg_id, wg in prov['wasGeneratedBy'].iteritems():
-            provstr = provstr + "wasGeneratedBy(" + wg.entity.id + ", " + wg.activity.id + ", [id = '" + str(wg.id) + "', voprov:role = '" + wg.role + "']),\n"
-
-        for wa_id, wa in prov['wasAssociatedWith'].iteritems():
-            provstr = provstr + "wasAssociatedWith(" + wa.activity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', voprov:role = '" + wa.role + "']),\n"
-
-        for wa_id, wa in prov['wasAttributedTo'].iteritems():
-            provstr = provstr + "wasAttributedTo(" + wa.entity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', voprov:role = '" + wa.role + "']),\n"
-
-        for h_id, h in prov['hadMember'].iteritems():
-            provstr = provstr + "hadMember(" + h.entity.id + ", " + h.entity.id + ", [id = '" + str(h.id) + "']),\n"
-
-        for wd_id, wd in prov['wasDerivedFrom'].iteritems():
-            provstr = provstr + "wasDerivedFrom(" + wd.entity.id + ", " + wd.entity.id + ", [id = '" + str(wd.id) + "']),\n"
-
-        provstr += "endDocument"
-        return HttpResponse(provstr, content_type='text/plain; charset=utf-8')
-
-
     elif format == 'PROV-JSON':
 
-
-        json_str = json.dumps(data,
-                #sort_keys=True,
-                indent=4
-               )
+        json_str = PROVJSONRenderer().render(data)
+        #json.dumps(data,
+        #        #sort_keys=True,
+        #        indent=4
+        #       )
 #        json_str = JSONRenderer().render(serializer.data)
         return HttpResponse(json_str, content_type='application/json; charset=utf-8')
 

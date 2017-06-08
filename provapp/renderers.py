@@ -1,9 +1,26 @@
 from __future__ import unicode_literals
 
+import json
+
 from django.utils.encoding import smart_text
 from django.utils.encoding import smart_unicode
-from rest_framework.renderers import BaseRenderer
 from django.utils import timezone
+from rest_framework.renderers import BaseRenderer
+
+
+class PROVJSONRenderer(BaseRenderer):
+    def render(self, data):
+        # remove empty dicts
+        for key, value in data.iteritems():
+            if len(value) == 0:
+                data.pop(key)
+
+        string = json.dumps(data,
+                #sort_keys=True,
+                indent=4
+            )
+
+        return string
 
 
 class PROVNBaseRenderer(BaseRenderer):
