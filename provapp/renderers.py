@@ -16,6 +16,33 @@ class PROVNBaseRenderer(BaseRenderer):
         else:
             return marker
 
+    def get_id(self, obj):
+        marker = "-"
+        namespace = "r"
+
+        if "prov:id" in obj:
+            value = str(obj.pop("prov:id"))
+            if ":" not in value:
+                # add a blank as identifier namespace
+                value = "%s:%s" % (namespace, value)
+            return value
+        else:
+            return marker
+
+    def add_optional_attributes(self, string, obj):
+        # construct string for optional attributes,
+        # and add to provn-string (just before final closing ")" )
+        attributes = ""
+        for key, val in obj.iteritems():
+            attributes += '%s="%s", ' % (key, val)
+
+        # add to string (and remove final comma)
+        print attributes
+        if attributes:
+            print "replace", string
+            string = string.replace(")", ", [%s])" % attributes.rstrip(', '))
+
+        return string
 
 
 class ActivityPROVNRenderer(PROVNBaseRenderer):
@@ -24,17 +51,10 @@ class ActivityPROVNRenderer(PROVNBaseRenderer):
         string = "activity("\
             + self.get_value(activity, "prov:id") + ", "\
             + self.get_value(activity, "prov:startTime") + ", "\
-            + self.get_value(activity, "prov:endTime")
+            + self.get_value(activity, "prov:endTime")\
+            + ")"
 
-        # all other optional attributes need to be enclosed with []
-        attributes = ""
-        for key, val in activity.iteritems():
-            attributes += '%s="%s", ' % (key, val)
-
-        if attributes:
-            string += ", [" + attributes.rstrip(', ') + "]"
-
-        string += ")"
+        string = self.add_optional_attributes(string, activity)
 
         return string
 
@@ -42,17 +62,8 @@ class ActivityPROVNRenderer(PROVNBaseRenderer):
 class EntityPROVNRenderer(PROVNBaseRenderer):
 
     def render(self, entity):
-        string = "entity(" + self.get_value(entity, "prov:id")
-
-        # all other optional attributes need to be enclosed with []
-        attributes = ""
-        for key, val in entity.iteritems():
-            attributes += '%s="%s", ' % (key, val)
-
-        if attributes:
-            string += ", [" + attributes.rstrip(', ') + "]"
-
-        string += ")"
+        string = "entity(" + self.get_value(entity, "prov:id") + ")"
+        string = self.add_optional_attributes(string, entity)
 
         return string
 
@@ -60,17 +71,8 @@ class EntityPROVNRenderer(PROVNBaseRenderer):
 class AgentPROVNRenderer(PROVNBaseRenderer):
 
     def render(self, agent):
-        string = "agent(" + self.get_value(agent, "prov:id")
-
-        # all other optional attributes need to be enclosed with []
-        attributes = ""
-        for key, val in agent.iteritems():
-            attributes += '%s="%s", ' % (key, val)
-
-        if attributes:
-            string += ", [" + attributes.rstrip(', ') + "]"
-
-        string += ")"
+        string = "agent(" + self.get_value(agent, "prov:id") + ")"
+        string = self.add_optional_attributes(string, agent)
 
         return string
 
@@ -81,26 +83,19 @@ class UsedPROVNRenderer(PROVNBaseRenderer):
         string = "used("
 
         # id is optional, but we have an id in the database, thus include it
-        string += self.get_value(used, "prov:id") + ";"
+        string += self.get_id(used) + "; "
 
         # activity is mandatory:
-        string += self.get_value(used, "prov:activity") + ","
+        string += self.get_value(used, "prov:activity") + ", "
 
         # entity is optional in W3C, but it's a positional argument
-        string += self.get_value(used, "prov:entity") + ","
+        string += self.get_value(used, "prov:entity") + ", "
 
         # time is optional in W3C, but it's a positional argument
-        string += self.get_value(used, "prov:time")
+        string += self.get_value(used, "prov:time") + ")"
 
-        # all other optional attributes need to be enclosed with []
-        attributes = ""
-        for key, val in used.iteritems():
-            attributes += '%s="%s", ' % (key, val)
-
-        if attributes:
-            string += ", [" + attributes.rstrip(', ') + "]"
-
-        string += ")"
+        # add all other optional attributes in []
+        string = self.add_optional_attributes(string, used)
 
         return string
 
@@ -111,26 +106,20 @@ class WasGeneratedByPROVNRenderer(PROVNBaseRenderer):
         string = "wasGeneratedBy("
 
         # id is optional, but we have an id in the database, thus include it
-        string += self.get_value(wasGeneratedBy, "prov:id") + ";"
+        string += self.get_id(wasGeneratedBy) + "; "
 
         # entity is mandatory:
-        string += self.get_value(wasGeneratedBy, "prov:entity") + ","
+        string += self.get_value(wasGeneratedBy, "prov:entity") + ", "
 
         # activity is optional in W3C, but it's a positional argument
-        string += self.get_value(wasGeneratedBy, "prov:activity") + ","
+        string += self.get_value(wasGeneratedBy, "prov:activity") + ", "
 
         # time is optional in W3C, but it's a positional argument
         string += self.get_value(wasGeneratedBy, "prov:time")
-
-        # all other optional attributes need to be enclosed with []
-        attributes = ""
-        for key, val in wasGeneratedBy.iteritems():
-            attributes += '%s="%s", ' % (key, val)
-
-        if attributes:
-            string += ", [" + attributes.rstrip(', ') + "]"
-
         string += ")"
+
+        # add all other optional attributes in []
+        string = self.add_optional_attributes(string, wasGeneratedBy)
 
         return string
 
@@ -141,20 +130,14 @@ class WasAssociatedWithPROVNRenderer(PROVNBaseRenderer):
         string = "wasAssociatedWith("
 
         # id is optional, but I have an id in the database, thus include it
-        string += self.get_value(wasAssociatedWith, "prov:id") + ";"
-        string += self.get_value(wasAssociatedWith, "prov:activity") + ","
-        string += self.get_value(wasAssociatedWith, "prov:agent") + ","
+        string += self.get_id(wasAssociatedWith) + "; "
+        string += self.get_value(wasAssociatedWith, "prov:activity") + ", "
+        string += self.get_value(wasAssociatedWith, "prov:agent") + ", "
         string += self.get_value(wasAssociatedWith, "prov:plan")
-
-        # all other optional attributes need to be enclosed with []
-        attributes = ""
-        for key, val in wasAssociatedWith.iteritems():
-            attributes += '%s="%s", ' % (key, val)
-
-        if attributes:
-            string += ", [" + attributes.rstrip(', ') + "]"
-
         string += ")"
+
+        # add all other optional attributes in []
+        string = self.add_optional_attributes(string, wasAssociatedWith)
 
         return string
 
@@ -165,19 +148,13 @@ class WasAttributedToPROVNRenderer(PROVNBaseRenderer):
         string = "wasAttributedTo("
 
         # id is optional, but I have an id in the database, thus include it
-        string += self.get_value(wasAttributedTo, "prov:id") + ";"
-        string += self.get_value(wasAttributedTo, "prov:entity") + ","
+        string += self.get_id(wasAttributedTo) + "; "
+        string += self.get_value(wasAttributedTo, "prov:entity") + ", "
         string += self.get_value(wasAttributedTo, "prov:agent")
-
-        # all other optional attributes need to be enclosed with []
-        attributes = ""
-        for key, val in wasAttributedTo.iteritems():
-            attributes += '%s="%s", ' % (key, val)
-
-        if attributes:
-            string += ", [" + attributes.rstrip(', ') + "]"
-
         string += ")"
+
+        # add all other optional attributes in []
+        string = self.add_optional_attributes(string, wasAttributedTo)
 
         return string
 
@@ -188,7 +165,7 @@ class HadMemberPROVNRenderer(PROVNBaseRenderer):
         string = "hadMember("
 
         # does not have an id nor optional attributes in W3C
-        string += self.get_value(hadMember, "prov:collection") + ","
+        string += self.get_value(hadMember, "prov:collection") + ", "
         string += self.get_value(hadMember, "prov:entity")
 
         string += ")"
@@ -202,22 +179,16 @@ class WasDerivedFromPROVNRenderer(PROVNBaseRenderer):
         string = "wasDerivedFrom("
 
         # does not have an id nor optional attributes in W3C
-        string += self.get_value(wasDerivedFrom, "prov:id") + ";"
-        string += self.get_value(wasDerivedFrom, "prov:generatedEntity") + ","
-        string += self.get_value(wasDerivedFrom, "prov:usedEntity") + ","
-        string += self.get_value(wasDerivedFrom, "prov:activity") + ","
-        string += self.get_value(wasDerivedFrom, "prov:generation") + ","
+        string += self.get_id(wasDerivedFrom) + "; "
+        string += self.get_value(wasDerivedFrom, "prov:generatedEntity") + ", "
+        string += self.get_value(wasDerivedFrom, "prov:usedEntity") + ", "
+        string += self.get_value(wasDerivedFrom, "prov:activity") + ", "
+        string += self.get_value(wasDerivedFrom, "prov:generation") + ", "
         string += self.get_value(wasDerivedFrom, "prov:usage")
-
-        # all other optional attributes need to be enclosed with []
-        attributes = ""
-        for key, val in wasDerivedFrom.iteritems():
-            attributes += '%s="%s", ' % (key, val)
-
-        if attributes:
-            string += ", [" + attributes.rstrip(', ') + "]"
-
         string += ")"
+
+        # add all other optional attributes in []
+        string = self.add_optional_attributes(string, wasDerivedFrom)
 
         return string
 
@@ -232,40 +203,39 @@ class PROVNRenderer(PROVNBaseRenderer):
 
         string = "document\n"
         for p_id, p in data['prefix'].iteritems():
-            string += "prefix %s <%s>,\n" % (p_id, p)
+            string += "prefix %s <%s>\n" % (p_id, p)
+        string += "\n"
 
         for a_id, a in data['activity'].iteritems():
-            string += ActivityPROVNRenderer().render(a) + ",\n"
+            string += ActivityPROVNRenderer().render(a) + "\n"
 
         for e_id, e in data['entity'].iteritems():
-            string += EntityPROVNRenderer().render(e) + ",\n"
+            string += EntityPROVNRenderer().render(e) + "\n"
 
         for a_id, a in data['agent'].iteritems():
-            string += AgentPROVNRenderer().render(a) + ",\n"
+            string += AgentPROVNRenderer().render(a) + "\n"
         #     provstr = provstr + "entity(" + e.id + ", [voprov:type = '" + e.type + "', voprov:name = '" + e.name + "', voprov:annotation = '" + e.annotation + "']),\n"
 
         for u_id, u in data['used'].iteritems():
-            string += UsedPROVNRenderer().render(u) + ",\n"
+            string += UsedPROVNRenderer().render(u) + "\n"
 
         for w_id, w in data['wasGeneratedBy'].iteritems():
-            string += WasGeneratedByPROVNRenderer().render(w) + ",\n"
+            string += WasGeneratedByPROVNRenderer().render(w) + "\n"
 
         for w_id, w in data['wasAssociatedWith'].iteritems():
-            string += WasAssociatedWithPROVNRenderer().render(w) + ",\n"
+            string += WasAssociatedWithPROVNRenderer().render(w) + "\n"
 
         for w_id, w in data['wasAttributedTo'].iteritems():
-            string += WasAttributedToPROVNRenderer().render(w) + ",\n"
+            string += WasAttributedToPROVNRenderer().render(w) + "\n"
 
         for h_id, h in data['hadMember'].iteritems():
-            string += HadMemberPROVNRenderer().render(h) + ",\n"
+            string += HadMemberPROVNRenderer().render(h) + "\n"
 
         for w_id, w in data['wasDerivedFrom'].iteritems():
-            string += WasDerivedFromPROVNRenderer().render(w) + ",\n"
+            string += WasDerivedFromPROVNRenderer().render(w) + "\n"
 
-        # remove final comma:
-        string.rstrip(",\n") + "--\n"
+        # remove final comma?
 
         string += "endDocument"
-
 
         return string
