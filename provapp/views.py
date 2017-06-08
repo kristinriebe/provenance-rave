@@ -365,20 +365,12 @@ def provdal_form(request):
         if form.is_valid():
         # process the data in form.cleaned_data as required
             try:
-                obsid = RaveObsids.objects.get(rave_obs_id=form.cleaned_data['observation_id'])
+                entity_id = form.cleaned_data['entity_id']
                 step = form.cleaned_data['step_flag']
                 format = form.cleaned_data['format']
                 compliance = form.cleaned_data['compliance']
 
-                entity = Entity.objects.get(name=form.cleaned_data['observation_id'])
-
-                return HttpResponseRedirect(reverse('provapp:provdal')+"?ID=%s&STEP=%s&FORMAT=%s&COMPLIANCE=%s" % (str(entity.id), str(step), str(format), str(compliance)))
-
-
-#                if detail == 'basic':
-#                    return HttpResponseRedirect('/provapp/' + str(entity.id) + '/basic')
-#                else:
-#                    return HttpResponseRedirect('/provapp/' + str(entity.id) + '/detail')
+                return HttpResponseRedirect(reverse('provapp:provdal')+"?ID=%s&STEP=%s&FORMAT=%s&COMPLIANCE=%s" % (str(entity_id), str(step), str(format), str(compliance)))
 
             except ValueError:
                 form = ProvDalForm(request.POST)
@@ -396,6 +388,7 @@ def provdal_form(request):
 def provbasic(request, observation_id):
     entity = get_object_or_404(Entity, pk=observation_id)
     return render(request, 'provapp/provdetail.html', {'entity': entity})
+
 
 def provbasicjson(request, observation_id):
 
@@ -469,13 +462,13 @@ def provdetailjson(request, observation_id):
 
 def provdal(request):
 
-    observation_id = request.GET.get('ID') #default: None
+    entity_id = request.GET.get('ID') #default: None
     step_flag = request.GET.get('STEP', 'LAST') # can be LAST or ALL
     format = request.GET.get('FORMAT', 'PROV-N') # can be PROV-N, PROV-JSON, VOTABLE
     model = request.GET.get('COMPLIANCE', 'IVOA')  # one of IVOA, W3C (or None?)
 
     try:
-        entity = Entity.objects.get(id=observation_id)
+        entity = Entity.objects.get(id=entity_id)
     except Entity.DoesNotExist:
         entity = None
         #return HttpResponse(provstr, content_type='text/plain')
@@ -511,12 +504,10 @@ def provdal(request):
             prov = utils.find_entity(entity, prov, follow=True)
         elif step_flag == "LAST":
             # just go back one step (to the next entity)
-            pass
             prov = utils.find_entity(entity, prov, follow=False)
         else:
             # raise error: not supported
             pass
-
 
 
     # The prov dictionary now contains the complete provenance information,

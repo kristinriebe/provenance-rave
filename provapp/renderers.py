@@ -42,9 +42,7 @@ class PROVNBaseRenderer(BaseRenderer):
             attributes += '%s="%s", ' % (key, val)
 
         # add to string (and remove final comma)
-        print attributes
         if attributes:
-            print "replace", string
             string = string.replace(")", ", [%s])" % attributes.rstrip(', '))
 
         return string

@@ -56,10 +56,10 @@ class ObservationIdForm(forms.Form):
         return desired_obs #{'rave_obsid': desired_obs, 'detail_flag': desired_detail}
 
 class ProvDalForm(forms.Form):
-    observation_id = forms.CharField(
-        label='RAVE Observation ID',
+    entity_id = forms.CharField(
+        label='Entity ID',
         max_length=1024,
-        help_text="RAVE_OBS_ID from RAVE DR4; e.g. 20030411_1507m23_001 or 20121220_0752m38_089 (currently only these 2 are available)",
+        help_text="Please enter the identifier for an entity, e.g. rave:20030411_1507m23_001 or rave:20121220_0752m38_089",
     )
 
     step_flag = forms.ChoiceField(
@@ -79,26 +79,9 @@ class ProvDalForm(forms.Form):
     )
 
     compliance = forms.ChoiceField(
-        label="Compliance",
+        label="Data model",
         choices=[('IVOA','IVOA'), ('W3C', 'W3C')],
         widget=forms.RadioSelect(),
         help_text="Choose W3C if you need W3C Prov-DM compliant serialization",
         initial='W3C'
     )
-
-    def clean_observation_id(self):
-        desired_obs = self.cleaned_data['observation_id']
-        queryset = RaveObsids.objects.filter(rave_obs_id=desired_obs)
-        if not queryset.exists():
-        #if desired_obs not in [e.label for e in self.entity_list]:
-            raise ValidationError(
-                _('Invalid value: %(value)s is not a valid RAVE_OBS_ID or it cannot be found.'),
-                code='invalid',
-                params={'value': desired_obs},
-            )
-
-        #desired_detail = self.cleaned_data['detail_flag']
-
-        # always return the data!
-        return desired_obs #{'rave_obsid': desired_obs, 'detail_flag': desired_detail}
-
