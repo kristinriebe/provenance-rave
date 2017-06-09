@@ -68,26 +68,30 @@ This webapp allows to:
 * Retrieve information on activities, entities or agents from the database
 * Display a graphical representation of the (full) provenance graph (sankey, force-directed graph)
 * Get a PROVN-representation of the (full) provenance information (main path, using collections)
-* First attempt of having detailed or basic provenance for a given RAVE_OBS_ID works (implemented for just one RAVE_OBS_ID right now).
+* Get detailed (no collections) or basic (only collections) provenance graphs for a given `RAVE_OBS_ID` (but there are just 2 `RAVE_OBS_ID` included in data right now).
+* Get provenance record in PROV-JSON or PROV-N format for any given entity id
+
+* Uses Django REST Framework for automatic list and detail views
+* Uses renderer for PROV-N
 
 
 ## TODO:
-* Write tests for checking all the functionality (i.e. all the views, BEFORE cleaning up everything)
+* Proper error handling
+* Write tests for checking all the functionality
+
 * Clean up javascript for activity-graph (use same as in observation_id-view)
 * Clean up, remove unnecessary parts
-* Adjust internal data model to currently discussed data model (attributes!)
 * Use prov-json and provjs from W3C model and Southhamption Provenance tools instead of custom made json and javascript
 * Use functions for detailed views, instead of loading everything into database?
 * Use MySQL database/remote database instead of Sqlite3
-* Use migrations and fixtures for properly dealing with database
-* ...
 
-* Finish provdal implementation: step, ivoa compliance
+* Finish provdal implementation:
+  * ivoa compliance
     - should use a different serializer for each class for VO,
     or can I serialize differently depending on a parameter?
     - or use a basic ActivitySerializer class (abstract?) and then
       make the switch there (or in another class? (In the ProvenanceSerializer_VO?))
-* use Serializer + renderer for prov-n
+  * multiple ids?
 * implement ActivityFlow, maybe also use Description-side?
 * connect with real data from the real database
 * write implementation report, including nice overview on used classes (graphical?)

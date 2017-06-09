@@ -35,8 +35,9 @@ class ObservationIdForm(forms.Form):
 
     detail_flag = forms.ChoiceField(
         label="Level of detail",
-        choices=[('basic', 'basic'), ('detailed','detailed')],
-        widget=forms.RadioSelect()
+        choices=[('basic', 'basic'), ('detailed','detailed'), ('all', 'all')],
+        widget=forms.RadioSelect(),
+        help_text="basic: only entity-collections, detailed: exclude entity-collections, all: include entities and collections"
     )
 
     def clean_observation_id(self):

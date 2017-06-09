@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 #from django.template import loader
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
 from django.views import generic
 from django.http import JsonResponse
 from django.db.models.fields.related import ManyToManyField
@@ -341,8 +342,10 @@ def get_observationId(request):
 
                 if detail == 'basic':
                     return HttpResponseRedirect('/provapp/' + str(entity.id) + '/basic')
-                else:
+                elif detail == 'detailed':
                     return HttpResponseRedirect('/provapp/' + str(entity.id) + '/detail')
+                else:
+                    return HttpResponseRedirect('/provapp/' + str(entity.id) + '/all')
 
             except ValueError:
                 form = ObservationIdForm(request.POST)
@@ -385,12 +388,14 @@ def provdal_form(request):
     return render(request, 'provapp/provdalform.html', {'form': form})
 
 
-def provbasic(request, observation_id):
+
+def observationid_detail(request, observation_id, detail_flag):
     entity = get_object_or_404(Entity, pk=observation_id)
-    return render(request, 'provapp/provdetail.html', {'entity': entity})
+
+    return render(request, 'provapp/observationid_detail.html', {'entity': entity})
 
 
-def provbasicjson(request, observation_id):
+def observationid_detailjson(request, observation_id, detail_flag):
 
     entity = get_object_or_404(Entity, pk=observation_id)
 
@@ -413,47 +418,23 @@ def provbasicjson(request, observation_id):
     prov['map_nodes_ids'][entity.id] = prov['count_nodes']
     prov['count_nodes'] = prov['count_nodes'] + 1
 
-    prov = utils.find_entity_basic_graph(entity, prov)
+    if detail_flag == "basic":
+        collection = "only"
+    elif detail_flag == "detail":
+        collection = "exclude"
+    elif detail_flag == "all":
+        collection = "include"
+    else:
+        # raise error: not supported
+        raise ValidationError(
+                'Invalid value: %(value)s is not supported',
+                code='invalid',
+                params={'value': detail_flag},
+            )
 
-    #print "prov: ", prov
+    # else: not defined
 
-    prov_dict = {"nodes": prov['nodes_dict'], "links": prov['links_dict']}
-
-    return JsonResponse(prov_dict)
-
-
-def provdetail(request, observation_id):
-    entity = get_object_or_404(Entity, pk=observation_id)
-
-    return render(request, 'provapp/provdetail.html', {'entity': entity})
-
-
-def provdetailjson(request, observation_id):
-
-    entity = get_object_or_404(Entity, pk=observation_id)
-    #print "entity: ", entity
-    nodes_dict = []
-    count_nodes = 0
-    links_dict = []
-    count_link = 0
-
-    map_nodes_ids = {}
-    prov = {
-        'nodes_dict': nodes_dict,
-        'links_dict': links_dict,
-        'map_nodes_ids': map_nodes_ids,
-        'count_nodes': count_nodes,
-        'count_link': count_link
-    }
-
-    # put first entity into json:
-    prov['nodes_dict'].append({'name': entity.name, 'type': 'entity'})
-    prov['map_nodes_ids'][entity.id] = prov['count_nodes']
-    prov['count_nodes'] = prov['count_nodes'] + 1
-
-    prov = utils.find_entity_detail_graph(entity, prov)
-
-    #print "prov: ", prov
+    prov = utils.find_entity_graph(entity, prov, collection=collection)
 
     prov_dict = {"nodes": prov['nodes_dict'], "links": prov['links_dict']}
 
@@ -507,7 +488,11 @@ def provdal(request):
             prov = utils.find_entity(entity, prov, follow=False)
         else:
             # raise error: not supported
-            pass
+            raise ValidationError(
+                'Invalid value: %(value)s is not supported',
+                code='invalid',
+                params={'value': step_flag},
+            )
 
 
     # The prov dictionary now contains the complete provenance information,
