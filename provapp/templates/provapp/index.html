@@ -12,8 +12,24 @@
     This is a prototype webapp for displaying provenance information of RAVE data, using the <a href="https://www.djangoproject.com/">Django framework</a>. It uses the data model currently discussed in the IVOA, which is based on the W3C ProvDM data model.
 </p>
 
+
+<h4>Forms</h4>
+<ul>
+    <li>Detail/basic provenance, with graph output: <a href="{% url 'provapp:get_observationId' %}">Form for RAVE_OBS_IDs</a></li>
+    <li>ProvenanceDM Data Access Layer: <a href="{% url 'provapp:provdal_form' %}">Form for ProvDAL</a></li>
+</ul>
+
+<h4>Complete provenance (overview)</h4>
+<ul>
+    <li>Overview: <a href="{% url 'provapp:graph' %}">Graph</a> of the main workflow</li>
+    <li>Overview: <a href="{% url 'provapp:allprov' 'PROV-N' %}">PROV-N</a> or <a href="{% url 'provapp:allprov' 'PROV-JSON' %}">PROV-JSON</a> representation</li>
+    <li>Overview: <a href="{% url 'provapp:prettyprovn' %}">Pretty Provn</a> representation (with clickable links, not complete)</li>
+</ul>
+
+
+<h4>REST API</h4>
 <p>
-    Pick one of the classes below to show the available data using the REST api.
+    Pick one of the classes below to show the available data using the REST <a href="/provapp/api">api</a>.
 </p>
 <ul>
     <li><a href="{% url 'provapp:activity-list' %}">Activity</a></li>
@@ -21,16 +37,16 @@
     <li><a href="{% url 'provapp:agent-list' %}">Agent</a></li>
 </ul>
 
-
 <p>
-    Append the id of a specific record to get its details. You can also add new records and update or delete existing ones.
+    Append the id of a specific record to get its details.
+    (In principle one can also add new records and update or delete existing ones, but this is not tested, yet.)
 </p>
 <ul>
     <li>details: <a href="{% url 'provapp:activity-detail' 'rave:act_dataextraction' %}">{% url 'provapp:activity-detail' 'rave:act_dataextraction' %}</a></li>
 </ul>
 
 <p>
-    For one activity, the json representation is shown by appending
+    For one activity, a normal json representation is shown by appending
     <code>?format=json</code> to the existing detail url, e.g.:
     <ul>
          <li>json: <a href="/provapp/activities/rave:act_dataextraction/?format=json">/provapp/activities/rave:act_dataextraction/?format=json/</a></li>
@@ -38,20 +54,9 @@
     xml and provn serialisations still need to be defined, e.g. like this <code>?format=xml</code>
 </p>
 
-<p>
-    Forms:
-</p>
-<ul>
-    <li>Detail/basic provenance, with graph output: <a href="{% url 'provapp:get_observationId' %}">Form for RAVE_OBS_IDs</a></li>
-    <li>ProvenanceDM Data Access Layer: <a href="{% url 'provapp:provdal_form' %}">Form for ProvDAL</a></li>
-</ul>
 
+<h4>Sources</h4>
 <p>
-    Complete provenance (overview):
+    The sources for this web application are available at <a href="https://github.com/kristinriebe/provenance-rave/">GitHub</a>.
 </p>
-<ul>
-    <li>Overview: <a href="{% url 'provapp:graph' %}">Graph</a> of the main workflow</li>
-    <li>Overview: <a href="{% url 'provapp:provn' %}">Provn</a> representation</li>
-    <li>Overview: <a href="{% url 'provapp:prettyprovn' %}">Pretty Provn</a> representation (with clickable links)</li>
-</ul>
 {% endblock %}

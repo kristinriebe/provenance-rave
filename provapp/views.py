@@ -100,7 +100,7 @@ class WasDerivedFromViewSet(viewsets.ModelViewSet):
     queryset = WasDerivedFrom.objects.all()
 
 
-def graphjson(request, activity_id):
+def activitygraphjson(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
     #return HttpResponse(json.dumps(data), content_type='application/json')
     #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'annotation': activity.annotation}
@@ -171,51 +171,63 @@ class ActivityDetailXmlView(generic.DetailView):
         return HttpResponse(data, content_type="application/xml")
 
 
-class GraphView(generic.ListView):
-    """ Create the full provenance-graph needed for d3js or similar here """
-    pass
+def convert_to_dict_querysets(listqueryset):
 
-    def get_queryset(self):
-        return Activity.objects.order_by('-id')
+    objdict = {}
+    for q in listqueryset:
+        objdict[q.id] = q
+
+    return objdict
 
 
-# simple prov-n view, using just a function:
-def provn(request):
-    activity_list = Activity.objects.order_by('-startTime')[:]
-    entity_list = Entity.objects.order_by('-name')[:]
-    agent_list = Agent.objects.order_by('-name')[:]
-    used_list = Used.objects.order_by('-id')[:]
-    wasGeneratedBy_list = WasGeneratedBy.objects.order_by('-id')[:]
-    wasAssociatedWith_list = WasAssociatedWith.objects.order_by('-id')[:]
-    wasAttributedTo_list = WasAttributedTo.objects.order_by('-id')[:]
+# simple prov-n view of everything
+def allprov(request, format):
+
+    # first store everything in a prov-dictionary
+    prefix = {
+        "rave": "http://www.rave-survey.org/prov/",
+        "voprov": "http://www.ivoa.net/documents/ProvenanceDM/voprov/",
+        "org": "http://www.ivoa.net/documents/ProvenanceDM/voprov/org/",
+        "vo": "http://www.ivoa.net/documents/ProvenanceDM/voprov/vo",
+        "prov": "http://www.w3.org/ns/prov#",  # defined by default
+        "xsd": "http://www.w3.org/2000/10/XMLSchema#"  # defined by default
+    }
+
+    prov = {
+        'prefix': prefix,
+        'activity': convert_to_dict_querysets(Activity.objects.all()),
+        'entity': convert_to_dict_querysets(Entity.objects.all()),
+        'agent': convert_to_dict_querysets(Agent.objects.all()),
+        'used': convert_to_dict_querysets(Used.objects.all()),
+        'wasGeneratedBy': convert_to_dict_querysets(WasGeneratedBy.objects.all()),
+        'wasAssociatedWith': convert_to_dict_querysets(WasAssociatedWith.objects.all()),
+        'wasAttributedTo': convert_to_dict_querysets(WasAttributedTo.objects.all()),
+        'hadMember': convert_to_dict_querysets(HadMember.objects.all()),
+        'wasDerivedFrom': convert_to_dict_querysets(WasDerivedFrom.objects.all())
+    }
+
     #return JsonResponse(activity_dict)
     #return render(request, 'provapp/activities.html', {'activity_list': activity_list})
 
-    provstr = "document\n"
-    for a in activity_list:
-        provstr = provstr + "activity(" + a.id + ", " + str(a.startTime) + ", " + str(a.endTime) + ", [prov:type = '" + a.type + "', prov:name = '" + a.name + "', prov:annotation = '" + a.annotation + "']),\n"
+    # serialize it (W3C):
+    serializer = ProvenanceSerializer(prov)
+    data = serializer.data
 
-    for e in entity_list:
-        provstr = provstr + "entity(" + e.id + ", [prov:type = '" + e.type + "', prov:name = '" + e.name + "', prov:annotation = '" + e.annotation + "']),\n"
+    # write provenance information in desired format:
+    if format == 'PROV-N':
+        provstr = PROVNRenderer().render(data)
+        return HttpResponse(provstr, content_type='text/plain; charset=utf-8')
 
-    for ag in agent_list:
-        provstr = provstr + "agent(" + ag.id + ", [prov:type = '" + ag.type + "', prov:name = '" + ag.name + "', prov:annotation = '" + ag.annotation + "']),\n"
+    elif format == 'PROV-JSON':
+        json_str = PROVJSONRenderer().render(data)
+        return HttpResponse(json_str, content_type='application/json; charset=utf-8')
 
-    for u in used_list:
-        provstr = provstr + "used(" + u.activity.id + ", " + u.entity.id + ", [id = '" + str(u.id) + "', prov:role = '" + u.role + "']),\n"
+    else:
+        # format is not known, return error
+        provstr = "Sorry, unknown format %s was requested, cannot handle this." % format
 
-    for wg in wasGeneratedBy_list:
-        provstr = provstr + "wasGeneratedBy(" + wg.entity.id + ", " + wg.activity.id + ", [id = '" + str(wg.id) + "', prov:role = '" + wg.role + "']),\n"
+    return HttpResponse(provstr, content_type='text/plain; charset=utf-8')
 
-    for wa in wasAssociatedWith_list:
-        provstr = provstr + "wasAssociatedWith(" + wa.activity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', prov:role = '" + wa.role + "']),\n"
-
-    for wa in wasAttributedTo_list:
-        provstr = provstr + "wasAttributedTo(" + wa.entity.id + ", " + wa.agent.id + ", [id = '" + str(wa.id) + "', prov:role = '" + wa.role + "']),\n"
-
-    provstr += "endDocument"
-
-    return HttpResponse(provstr, content_type='text/plain')
 
 def prettyprovn(request):
     activity_list = Activity.objects.order_by('-startTime')[:]
@@ -226,8 +238,8 @@ def prettyprovn(request):
     wasAssociatedWith_list = WasAssociatedWith.objects.order_by('-id')[:]
     wasAttributedTo_list = WasAttributedTo.objects.order_by('-id')[:]
     #return JsonResponse(activity_dict)
-    return render(request, 'provapp/provn.html', 
-                 {'activity_list': activity_list, 
+    return render(request, 'provapp/provn.html',
+                 {'activity_list': activity_list,
                   'entity_list': entity_list,
                   'agent_list': agent_list,
                   'used_list': used_list,
@@ -360,35 +372,6 @@ def get_observationId(request):
     return render(request, 'provapp/observationId.html', {'form': form})
 
 
-def provdal_form(request):
-
-    if request.method == 'POST':
-        form = ProvDalForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-        # process the data in form.cleaned_data as required
-            try:
-                entity_id = form.cleaned_data['entity_id']
-                step = form.cleaned_data['step_flag']
-                format = form.cleaned_data['format']
-                compliance = form.cleaned_data['compliance']
-
-                return HttpResponseRedirect(reverse('provapp:provdal')+"?ID=%s&STEP=%s&FORMAT=%s&COMPLIANCE=%s" % (str(entity_id), str(step), str(format), str(compliance)))
-
-            except ValueError:
-                form = ProvDalForm(request.POST)
-        else:
-            #print form.errors # or add_error??
-            pass
-
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = ProvDalForm()
-
-    return render(request, 'provapp/provdalform.html', {'form': form})
-
-
-
 def observationid_detail(request, observation_id, detail_flag):
     entity = get_object_or_404(Entity, pk=observation_id)
 
@@ -439,6 +422,34 @@ def observationid_detailjson(request, observation_id, detail_flag):
     prov_dict = {"nodes": prov['nodes_dict'], "links": prov['links_dict']}
 
     return JsonResponse(prov_dict)
+
+
+def provdal_form(request):
+
+    if request.method == 'POST':
+        form = ProvDalForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+        # process the data in form.cleaned_data as required
+            try:
+                entity_id = form.cleaned_data['entity_id']
+                step = form.cleaned_data['step_flag']
+                format = form.cleaned_data['format']
+                compliance = form.cleaned_data['compliance']
+
+                return HttpResponseRedirect(reverse('provapp:provdal')+"?ID=%s&STEP=%s&FORMAT=%s&COMPLIANCE=%s" % (str(entity_id), str(step), str(format), str(compliance)))
+
+            except ValueError:
+                form = ProvDalForm(request.POST)
+        else:
+            #print form.errors # or add_error??
+            pass
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = ProvDalForm()
+
+    return render(request, 'provapp/provdalform.html', {'form': form})
 
 
 def provdal(request):
@@ -501,7 +512,6 @@ def provdal(request):
 
     serializer = ProvenanceSerializer(prov)
     data = serializer.data
-    data["prefix"] = prefix
 
     # write provenance information in desired format:
     if format == 'PROV-N':

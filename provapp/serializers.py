@@ -220,11 +220,15 @@ class ProvenanceSerializer(serializers.Serializer):
     wasAttributedTo = serializers.SerializerMethodField()
     hadMember = serializers.SerializerMethodField()
     wasDerivedFrom = serializers.SerializerMethodField()
+    prefix = serializers.SerializerMethodField()
+
+
+    def get_prefix(self, obj):
+        return obj['prefix']
 
     # get all the class instances serialized by their
     # corresponding serializer;
     # adjust the serialization, where necessary, for each item
-
     def get_activity(self, obj):
         activity = {}
         for a_id, a in obj['activity'].iteritems():

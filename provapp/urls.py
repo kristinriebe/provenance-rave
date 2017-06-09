@@ -22,11 +22,11 @@ urlpatterns = [
     # index view:
     url(r'^$', views.IndexView.as_view(), name='index'),
 
-    # inlcude automatica rest api urls for models
+    # include automatic rest api urls for models
     url(r'^api/', include(router.urls, namespace='api')),
 
     # provn of everything:
-    url(r'^provn/$', views.provn, name='provn'),
+    url(r'^allprov/(?P<format>[a-zA-Z-]+)$', views.allprov, name='allprov'),
     url(r'^prettyprovn/$', views.prettyprovn, name='prettyprovn'),
 
     # form for observation id, basic or details:

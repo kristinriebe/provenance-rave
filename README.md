@@ -38,7 +38,7 @@ python manage.py runserver
 
 and point a web browser to `localhost:8000`. Note that you can also provide a different port as additional argument to manage.py and point your web browser to the other port.
 
-The webapp should be visible in the browser and it should even work offline, since all libraries are stored in the directory: `provsite/provapp/static`.
+The webapp should be visible in the browser and it should even work offline, since all libraries are stored in the directory: `provenance-rave/provapp/static`.
 
 
 ## Running tests
@@ -59,13 +59,13 @@ python manage.py graph_models provapp -o test.png
 ```
 
 This produces a file `test.png` for all models from provapp.
-However, it only works, if the graphviz library is installed additionally, see above.
+This requires that the graphviz library is installed additionally, see above.
 
 
 ## Features
 This webapp allows to:
 
-* Retrieve information on activities, entities or agents from the database
+* Retrieve information on activities, entities or agents from the database (list/detail view, using REST api)
 * Display a graphical representation of the (full) provenance graph (sankey, force-directed graph)
 * Get a PROVN-representation of the (full) provenance information (main path, using collections)
 * Get detailed (no collections) or basic (only collections) provenance graphs for a given `RAVE_OBS_ID` (but there are just 2 `RAVE_OBS_ID` included in data right now).
@@ -79,6 +79,7 @@ This webapp allows to:
 * Proper error handling
 * Write tests for checking all the functionality
 
+* Implement xml serialization, votable serialization
 * Clean up javascript for activity-graph (use same as in observation_id-view)
 * Clean up, remove unnecessary parts
 * Use prov-json and provjs from W3C model and Southhamption Provenance tools instead of custom made json and javascript
