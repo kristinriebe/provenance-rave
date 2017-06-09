@@ -45,7 +45,8 @@ from .serializers import (
     WasAttributedToSerializer,
     HadMemberSerializer,
     WasDerivedFromSerializer,
-    ProvenanceSerializer
+    ProvenanceSerializer,
+    VOProvenanceSerializer
 )
 
 from .renderers import PROVNRenderer, PROVJSONRenderer
@@ -435,9 +436,9 @@ def provdal_form(request):
                 entity_id = form.cleaned_data['entity_id']
                 step = form.cleaned_data['step_flag']
                 format = form.cleaned_data['format']
-                compliance = form.cleaned_data['compliance']
+                compliance = form.cleaned_data['model']
 
-                return HttpResponseRedirect(reverse('provapp:provdal')+"?ID=%s&STEP=%s&FORMAT=%s&COMPLIANCE=%s" % (str(entity_id), str(step), str(format), str(compliance)))
+                return HttpResponseRedirect(reverse('provapp:provdal')+"?ID=%s&STEP=%s&FORMAT=%s&MODEL=%s" % (str(entity_id), str(step), str(format), str(compliance)))
 
             except ValueError:
                 form = ProvDalForm(request.POST)
@@ -454,16 +455,12 @@ def provdal_form(request):
 
 def provdal(request):
 
-    entity_id = request.GET.get('ID') #default: None
+    # entity_id = request.GET.get('ID') #default: None
+    # There can be more than one ID given, so:
+    entity_list = request.GET.getlist('ID')
     step_flag = request.GET.get('STEP', 'LAST') # can be LAST or ALL
     format = request.GET.get('FORMAT', 'PROV-N') # can be PROV-N, PROV-JSON, VOTABLE
-    model = request.GET.get('COMPLIANCE', 'IVOA')  # one of IVOA, W3C (or None?)
-
-    try:
-        entity = Entity.objects.get(id=entity_id)
-    except Entity.DoesNotExist:
-        entity = None
-        #return HttpResponse(provstr, content_type='text/plain')
+    model = request.GET.get('MODEL', 'IVOA')  # one of IVOA, W3C (or None?)
 
     prefix = {
         "rave": "http://www.rave-survey.org/prov/",
@@ -487,33 +484,51 @@ def provdal(request):
         'wasDerivedFrom': {}
     }
 
-    # store current entity in dict:
-    if entity is not None:
-        prov['entity'][entity.id] = entity
 
-        if step_flag == "ALL":
-            # search for further provenance, recursively
-            prov = utils.find_entity(entity, prov, follow=True)
-        elif step_flag == "LAST":
-            # just go back one step (to the next entity)
-            prov = utils.find_entity(entity, prov, follow=False)
-        else:
-            # raise error: not supported
-            raise ValidationError(
-                'Invalid value: %(value)s is not supported',
-                code='invalid',
-                params={'value': step_flag},
-            )
+    for entity_id in entity_list:
+        try:
+            entity = Entity.objects.get(id=entity_id)
+        except Entity.DoesNotExist:
+            entity = None
+            #return HttpResponse(provstr, content_type='text/plain')
 
+        # store current entity in dict:
+        if entity is not None:
+            prov['entity'][entity.id] = entity
+
+            if step_flag == "ALL":
+                # search for further provenance, recursively
+                prov = utils.find_entity(entity, prov, follow=True)
+            elif step_flag == "LAST":
+                # just go back one step (to the next entity)
+                prov = utils.find_entity(entity, prov, follow=False)
+            else:
+                # raise error: not supported
+                raise ValidationError(
+                    'Invalid value: %(value)s is not supported',
+                    code='invalid',
+                    params={'value': step_flag},
+                )
 
     # The prov dictionary now contains the complete provenance information,
-    # in the form of querysets. First serialize them, then render in the
-    # desired format.
+    # for all given entity ids,
+    # in the form of a dictionary of querysets. First serialize them according to
+    # the specified model.
+    if model == "W3C":
+        serializer = ProvenanceSerializer(prov)
+    elif model == "IVOA":
+        serializer = VOProvenanceSerializer(prov)
+    else:
+        # raise error: not supported
+        raise ValidationError(
+           'Invalid value: %(value)s is not supported',
+            code='invalid',
+            params={'value': model},
+        )
 
-    serializer = ProvenanceSerializer(prov)
     data = serializer.data
 
-    # write provenance information in desired format:
+    # Render provenance information in desired format:
     if format == 'PROV-N':
         provstr = PROVNRenderer().render(data)
         return HttpResponse(provstr, content_type='text/plain; charset=utf-8')
@@ -521,33 +536,9 @@ def provdal(request):
     elif format == 'PROV-JSON':
 
         json_str = PROVJSONRenderer().render(data)
-        #json.dumps(data,
-        #        #sort_keys=True,
-        #        indent=4
-        #       )
-#        json_str = JSONRenderer().render(serializer.data)
         return HttpResponse(json_str, content_type='application/json; charset=utf-8')
 
     else:
         # format is not known, return error
         provstr = "Sorry, unknown format %s was requested, cannot handle this." % format
-    return HttpResponse(provstr, content_type='text/plain; charset=utf-8')
-
-
-#def detail(request, activity_id):
-#    activity = get_object_or_404(Activity, pk=activity_id)
-#    return render(request, 'provapp/detail.html', {'activity': activity})
-
-#def activities(request):
-#    #activity_list = get_object_or_404(Activity.objects.order_by('-startTime')[:]
-#    #return render(request, 'provapp/activities.html', {'activity_list': activity_list})
-#    activity_list = Activity.objects.order_by('-startTime')[:]
-#    return render(request, 'provapp/activities.html', {'activity_list': activity_list})
-
-#def entities(request):
-#    entity_list = Entity.objects.order_by('-label')[:]
-#    return render(request, 'provapp/entities.html', {'entity_list': entity_list})
-
-#def agents(request):
-#    agent_list = Agent.objects.order_by('-label')[:]
-#    return render(request, 'provapp/agents.html', {'agent_list': agent_list})
+        return HttpResponse(provstr, content_type='text/plain; charset=utf-8')

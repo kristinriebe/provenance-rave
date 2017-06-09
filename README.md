@@ -1,5 +1,5 @@
-# Provenance webapp in Django
-This webapp is used as a testing environment for implementing the current IVOA Provenance Data Model/W3C model. 
+# Provenance webapp for RAVE using Django
+This webapp is used as a testing environment for implementing the current IVOA Provenance Data Model/W3C model.
 
 **Warning: This is at a very preliminary state, used only for testing purposes and object to many changes! No guarantees for anything!**
 
@@ -69,32 +69,30 @@ This webapp allows to:
 * Display a graphical representation of the (full) provenance graph (sankey, force-directed graph)
 * Get a PROVN-representation of the (full) provenance information (main path, using collections)
 * Get detailed (no collections) or basic (only collections) provenance graphs for a given `RAVE_OBS_ID` (but there are just 2 `RAVE_OBS_ID` included in data right now).
-* Get provenance record in PROV-JSON or PROV-N format for any given entity id
+* Prov-DAL endpoint: 
+    - Get provenance record in PROV-JSON or PROV-N format for any given entity id
+    - specify ID, STEP, FORMAT and also MODEL (IVOA or W3C) for serializations
+    - also allows multiple (entity) ids, e.g. via:
+      `http://localhost:8002/provapp/provdal/?ID=vo:UCAC4&ID=rave:20121220_0752m383I00009_fits&STEP=ALL&FORMAT=PROV-N&MODEL=W3C`
 
 * Uses Django REST Framework for automatic list and detail views
-* Uses renderer for PROV-N
+* Uses serializers for different model serialization (W3C/IVOA)
+* Use renderer for PROV-N
 
 
 ## TODO:
 * Proper error handling
 * Write tests for checking all the functionality
+* Use MySQL database/remote database instead of Sqlite3
 
 * Implement xml serialization, votable serialization
-* Clean up javascript for activity-graph (use same as in observation_id-view)
 * Clean up, remove unnecessary parts
 * Use prov-json and provjs from W3C model and Southhamption Provenance tools instead of custom made json and javascript
 * Use functions for detailed views, instead of loading everything into database?
-* Use MySQL database/remote database instead of Sqlite3
 
-* Finish provdal implementation:
-  * ivoa compliance
-    - should use a different serializer for each class for VO,
-    or can I serialize differently depending on a parameter?
-    - or use a basic ActivitySerializer class (abstract?) and then
-      make the switch there (or in another class? (In the ProvenanceSerializer_VO?))
-  * multiple ids?
-* implement ActivityFlow, maybe also use Description-side?
-* connect with real data from the real database
+* implement ActivityFlow
+* implement Description side
+* connect with real data from the real RAVE database
 * write implementation report, including nice overview on used classes (graphical?)
 
 

@@ -28,8 +28,16 @@ class PROVNBaseRenderer(BaseRenderer):
     def get_value(self, obj, key):
         marker = "-"
 
-        if key in obj:
-            return str(obj.pop(key))
+        # check, if the key exists with prov or voprov namespace;
+        # if yes: return value, if not: return marker
+        # only needed for positional arguments
+        prov_key = "prov:%s" % key
+        voprov_key = "voprov:%s" % key
+
+        if prov_key in obj:
+            return str(obj.pop(prov_key))
+        elif voprov_key in obj:
+            return str(obj.pop(voprov_key))
         else:
             return marker
 
@@ -69,9 +77,9 @@ class ActivityPROVNRenderer(PROVNBaseRenderer):
 
     def render(self, activity):
         string = "activity("\
-            + self.get_value(activity, "prov:id") + ", "\
-            + self.get_value(activity, "prov:startTime") + ", "\
-            + self.get_value(activity, "prov:endTime")\
+            + self.get_value(activity, "id") + ", "\
+            + self.get_value(activity, "startTime") + ", "\
+            + self.get_value(activity, "endTime")\
             + ")"
 
         string = self.add_optional_attributes(string, activity)
@@ -82,7 +90,7 @@ class ActivityPROVNRenderer(PROVNBaseRenderer):
 class EntityPROVNRenderer(PROVNBaseRenderer):
 
     def render(self, entity):
-        string = "entity(" + self.get_value(entity, "prov:id") + ")"
+        string = "entity(" + self.get_value(entity, "id") + ")"
         string = self.add_optional_attributes(string, entity)
 
         return string
@@ -91,7 +99,7 @@ class EntityPROVNRenderer(PROVNBaseRenderer):
 class AgentPROVNRenderer(PROVNBaseRenderer):
 
     def render(self, agent):
-        string = "agent(" + self.get_value(agent, "prov:id") + ")"
+        string = "agent(" + self.get_value(agent, "id") + ")"
         string = self.add_optional_attributes(string, agent)
 
         return string
@@ -106,13 +114,13 @@ class UsedPROVNRenderer(PROVNBaseRenderer):
         string = self.add_relation_id(string, used)
 
         # activity is mandatory:
-        string += self.get_value(used, "prov:activity") + ", "
+        string += self.get_value(used, "activity") + ", "
 
         # entity is optional in W3C, but it's a positional argument
-        string += self.get_value(used, "prov:entity") + ", "
+        string += self.get_value(used, "entity") + ", "
 
         # time is optional in W3C, but it's a positional argument
-        string += self.get_value(used, "prov:time") + ")"
+        string += self.get_value(used, "time") + ")"
 
         # add all other optional attributes in []
         string = self.add_optional_attributes(string, used)
@@ -129,13 +137,13 @@ class WasGeneratedByPROVNRenderer(PROVNBaseRenderer):
         string = self.add_relation_id(string, wasGeneratedBy)
 
         # entity is mandatory:
-        string += self.get_value(wasGeneratedBy, "prov:entity") + ", "
+        string += self.get_value(wasGeneratedBy, "entity") + ", "
 
         # activity is optional in W3C, but it's a positional argument
-        string += self.get_value(wasGeneratedBy, "prov:activity") + ", "
+        string += self.get_value(wasGeneratedBy, "activity") + ", "
 
         # time is optional in W3C, but it's a positional argument
-        string += self.get_value(wasGeneratedBy, "prov:time")
+        string += self.get_value(wasGeneratedBy, "time")
         string += ")"
 
         # add all other optional attributes in []
@@ -151,9 +159,9 @@ class WasAssociatedWithPROVNRenderer(PROVNBaseRenderer):
 
         # id is optional
         string = self.add_relation_id(string, wasAssociatedWith)
-        string += self.get_value(wasAssociatedWith, "prov:activity") + ", "
-        string += self.get_value(wasAssociatedWith, "prov:agent") + ", "
-        string += self.get_value(wasAssociatedWith, "prov:plan")
+        string += self.get_value(wasAssociatedWith, "activity") + ", "
+        string += self.get_value(wasAssociatedWith, "agent") + ", "
+        string += self.get_value(wasAssociatedWith, "plan")
         string += ")"
 
         # add all other optional attributes in []
@@ -169,8 +177,8 @@ class WasAttributedToPROVNRenderer(PROVNBaseRenderer):
 
         # id is optional, but I have an id in the database, thus include it
         string = self.add_relation_id(string, wasAttributedTo)
-        string += self.get_value(wasAttributedTo, "prov:entity") + ", "
-        string += self.get_value(wasAttributedTo, "prov:agent")
+        string += self.get_value(wasAttributedTo, "entity") + ", "
+        string += self.get_value(wasAttributedTo, "agent")
         string += ")"
 
         # add all other optional attributes in []
@@ -185,8 +193,8 @@ class HadMemberPROVNRenderer(PROVNBaseRenderer):
         string = "hadMember("
 
         # does not have an id nor optional attributes in W3C
-        string += self.get_value(hadMember, "prov:collection") + ", "
-        string += self.get_value(hadMember, "prov:entity")
+        string += self.get_value(hadMember, "collection") + ", "
+        string += self.get_value(hadMember, "entity")
 
         string += ")"
 
@@ -200,11 +208,11 @@ class WasDerivedFromPROVNRenderer(PROVNBaseRenderer):
 
         # does not have an id nor optional attributes in W3C
         string = self.add_relation_id(string, wasDerivedFrom)
-        string += self.get_value(wasDerivedFrom, "prov:generatedEntity") + ", "
-        string += self.get_value(wasDerivedFrom, "prov:usedEntity") + ", "
-        string += self.get_value(wasDerivedFrom, "prov:activity") + ", "
-        string += self.get_value(wasDerivedFrom, "prov:generation") + ", "
-        string += self.get_value(wasDerivedFrom, "prov:usage")
+        string += self.get_value(wasDerivedFrom, "generatedEntity") + ", "
+        string += self.get_value(wasDerivedFrom, "usedEntity") + ", "
+        string += self.get_value(wasDerivedFrom, "activity") + ", "
+        string += self.get_value(wasDerivedFrom, "generation") + ", "
+        string += self.get_value(wasDerivedFrom, "usage")
         string += ")"
 
         # add all other optional attributes in []

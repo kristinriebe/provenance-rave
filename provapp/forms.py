@@ -79,10 +79,10 @@ class ProvDalForm(forms.Form):
         initial='PROV-JSON'
     )
 
-    compliance = forms.ChoiceField(
+    model = forms.ChoiceField(
         label="Data model",
         choices=[('IVOA','IVOA'), ('W3C', 'W3C')],
         widget=forms.RadioSelect(),
-        help_text="Choose W3C if you need W3C Prov-DM compliant serialization",
+        help_text="Choose W3C for W3C Prov-DM compliant serialization",
         initial='W3C'
     )

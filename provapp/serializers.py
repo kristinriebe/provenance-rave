@@ -119,14 +119,6 @@ class ActivitySerializer(NonNullCustomSerializer):
         # but still keep it here in the serializer
 
 
-# IVOA specific serializer
-class ActivitySerializerVO(NonNullCustomSerializer):
-
-    class Meta:
-        model = Activity
-        fields = ('id', 'name', 'type', 'description')
-
-
 class EntitySerializer(NonNullCustomSerializer):
 
     prov_id = CustomCharField(source='id', custom_field_name='prov:id')
@@ -355,3 +347,231 @@ class ProvenanceSerializer(serializers.Serializer):
                 data[newkey] = data.pop(key)
 
         return data
+
+
+# IVOA specific serializers
+class VOActivitySerializer(NonNullCustomSerializer):
+
+    voprov_id = CustomCharField(source='id', custom_field_name='voprov:id')
+    voprov_name = CustomCharField(source='name', custom_field_name='voprov:name')
+    voprov_type = CustomCharField(source='type', custom_field_name='voprov:type')
+    voprov_annotation = CustomCharField(source='annotation', custom_field_name='voprov:annotation')
+    voprov_startTime = CustomDateTimeField(source='startTime', custom_field_name='voprov:startTime')
+    voprov_endTime = CustomDateTimeField(source='endTime', custom_field_name='voprov:endTime')
+    voprov_doculink = CustomCharField(source='doculink', custom_field_name='voprov:doculink')
+
+    class Meta:
+        model = Activity
+        fields = ('voprov_id', 'voprov_name', 'voprov_type', 'voprov_annotation', 'voprov_startTime', 'voprov_endTime', 'voprov_doculink')
+
+
+class VOEntitySerializer(NonNullCustomSerializer):
+
+    voprov_id = CustomCharField(source='id', custom_field_name='voprov:id')
+    voprov_name = CustomCharField(source='name', custom_field_name='voprov:name')
+    voprov_type = CustomCharField(source='type', custom_field_name='voprov:type')
+    voprov_annotation = CustomCharField(source='annotation', custom_field_name='voprov:annotation')
+    voprov_rights = CustomCharField(source='rights', custom_field_name='voprov:rights')
+    voprov_dataType = CustomCharField(source='dataType', custom_field_name='voprov:dataType')
+    voprov_storageLocation = CustomCharField(source='storageLocation', custom_field_name='voprov:storageLocation')
+
+    class Meta:
+        model = Entity
+        fields = ('voprov_id', 'voprov_name', 'voprov_type', 'voprov_annotation', 'voprov_rights', 'voprov_dataType', 'voprov_storageLocation')
+
+
+class VOAgentSerializer(NonNullCustomSerializer):
+
+    voprov_id = CustomCharField(source='id', custom_field_name='voprov:id')
+    voprov_type = CustomCharField(source='type', custom_field_name='voprov:type')
+    voprov_name = CustomCharField(source='name', custom_field_name='voprov:name')
+    voprov_email = CustomCharField(source='email', custom_field_name='voprov:email')
+    voprov_annotation = CustomCharField(source='annotation', custom_field_name='voprov:annotation')
+
+    class Meta:
+        model = Agent
+        fields = ('voprov_id', 'voprov_name', 'voprov_type', 'voprov_email', 'voprov_annotation')
+
+
+class VOUsedSerializer(NonNullCustomSerializer):
+
+#    voprov_activity = CustomCharField(source='activity_id', custom_field_name='voprov:activity')
+#    voprov_entity = CustomCharField(source='entity_id', custom_field_name='voprov:entity')
+#    voprov_time = CustomDateTimeField(source='time', custom_field_name='voprov:time')
+#    voprov_role = CustomCharField(source='role', custom_field_name='voprov:role')
+
+    class Meta:
+        model = Used
+        fields = '__all__'
+#        fields = ('id', 'voprov_activity', 'voprov_entity', 'voprov_time', 'voprov_role')
+
+
+class VOWasGeneratedBySerializer(NonNullCustomSerializer):
+
+    #voprov_entity = CustomCharField(source='entity_id', custom_field_name='voprov:entity')
+    #voprov_activity = CustomCharField(source='activity_id', custom_field_name='voprov:activity')
+    #voprov_time = CustomDateTimeField(source='time', custom_field_name='voprov:time')
+    #voprov_role = CustomCharField(source='role', custom_field_name='voprov:role')
+
+    class Meta:
+        model = WasGeneratedBy
+        fields = '__all__'
+        #fields = ('id', 'voprov_entity', 'voprov_activity', 'voprov_time', 'voprov_role')
+
+
+class VOWasAssociatedWithSerializer(NonNullCustomSerializer):
+
+    class Meta:
+        model = WasAssociatedWith
+        fields = '__all__'
+
+
+class VOWasAttributedToSerializer(NonNullCustomSerializer):
+
+    voprov_role = CustomCharField(source='role', custom_field_name='voprov:role')
+
+    class Meta:
+        model = WasAttributedTo
+        fields = ('id', 'entity', 'agent', 'voprov_role')
+
+
+class VOHadMemberSerializer(NonNullCustomSerializer):
+
+    class Meta:
+        model = HadMember
+        fields = '__all__'
+
+
+class VOWasDerivedFromSerializer(NonNullCustomSerializer):
+
+    class Meta:
+        model = WasDerivedFrom
+        fields = '__all__'
+
+
+class VOProvenanceSerializer(serializers.Serializer):
+
+    activity = serializers.SerializerMethodField()
+    entity = serializers.SerializerMethodField()
+    agent = serializers.SerializerMethodField()
+    used = serializers.SerializerMethodField()
+    wasGeneratedBy = serializers.SerializerMethodField()
+    wasAssociatedWith = serializers.SerializerMethodField()
+    wasAttributedTo = serializers.SerializerMethodField()
+    hadMember = serializers.SerializerMethodField()
+    wasDerivedFrom = serializers.SerializerMethodField()
+    prefix = serializers.SerializerMethodField()
+
+
+    def get_prefix(self, obj):
+        return obj['prefix']
+
+    # get all the class instances serialized by their
+    # corresponding serializer;
+    # adjust the serialization, where necessary, for each item
+    def get_activity(self, obj):
+        activity = {}
+        for a_id, a in obj['activity'].iteritems():
+            data = VOActivitySerializer(a).data
+            activity[a_id] = data #self.restructure_qualifiers(data)
+
+        return activity
+
+    def get_entity(self, obj):
+        entity = {}
+        for e_id, e in obj['entity'].iteritems():
+            data = VOEntitySerializer(e).data
+            entity[e_id] = (data)
+
+        return entity
+
+    def get_agent(self, obj):
+        agent = {}
+        for a_id, a in obj['agent'].iteritems():
+            data = VOAgentSerializer(a).data
+            agent[a_id] = data
+
+        return agent
+
+    def get_used(self, obj):
+        used = {}
+        for u_id, u in obj['used'].iteritems():
+            data = VOUsedSerializer(u).data
+            u_id = self.add_relationnamespace(u_id)
+            used[u_id] = self.restructure_relations(data)
+
+        return used
+
+    def get_wasGeneratedBy(self, obj):
+        wasGeneratedBy = {}
+        for w_id, w in obj['wasGeneratedBy'].iteritems():
+            data = VOWasGeneratedBySerializer(w).data
+            w_id = self.add_relationnamespace(w_id)
+            wasGeneratedBy[w_id] = self.restructure_relations(data)
+
+        return wasGeneratedBy
+
+    def get_wasAssociatedWith(self, obj):
+        wasAssociatedWith = {}
+        for w_id, w in obj['wasAssociatedWith'].iteritems():
+            data = VOWasAssociatedWithSerializer(w).data
+            w_id = self.add_relationnamespace(w_id)
+            wasAssociatedWith[w_id] = self.restructure_relations(data)
+
+        return wasAssociatedWith
+
+    def get_wasAttributedTo(self, obj):
+        wasAttributedTo = {}
+        for w_id, w in obj['wasAttributedTo'].iteritems():
+            data = VOWasAttributedToSerializer(w).data
+            w_id = self.add_relationnamespace(w_id)
+            wasAttributedTo[w_id] = self.restructure_relations(data)
+
+        return wasAttributedTo
+
+    def get_hadMember(self, obj):
+        hadMember = {}
+        for h_id, h in obj['hadMember'].iteritems():
+            data = VOHadMemberSerializer(h).data
+            h_id = self.add_relationnamespace(h_id)
+            hadMember[h_id] = self.restructure_relations(data)
+
+        return hadMember
+
+    def get_wasDerivedFrom(self, obj):
+        wasDerivedFrom = {}
+        for w_id, w in obj['wasDerivedFrom'].iteritems():
+            data = VOWasDerivedFromSerializer(w).data
+            w_id = self.add_relationnamespace(w_id)
+            wasDerivedFrom[w_id] = self.restructure_relations(data)
+
+        return wasDerivedFrom
+
+
+    def add_relationnamespace(self, objectId):
+        ns = "_"
+        if ":" not in str(objectId):
+            objectId = ns + ":" + str(objectId)
+        return objectId
+
+    def restructure_relations(self, data):
+        # Takes a dictionary from a relation serialization,
+        # adds "prov" namespace to the fields,
+        # because this is required by the prov-library.
+        # Do NOT split up qualified foreign key values.
+        # Returns the modified dictionary.
+        # TODO: Find a more elegant solution for this!
+
+        # exclude id in serialisation of relations
+        # (since it is used as key for this class instance anyway)
+        data.pop('id')
+
+        for key, value in data.iteritems():
+
+            # replace prov_ by prov for the given keys:
+            if key in ['activity', 'entity', 'collection', 'agent', 'generatedEntity', 'usedEntity', 'usage', 'generation', 'role']:
+                newkey = 'voprov:' + key
+                data[newkey] = data.pop(key)
+
+        return data
+
