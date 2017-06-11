@@ -322,6 +322,8 @@ class ProvenanceSerializer(serializers.Serializer):
         return data
 
     def add_relationnamespace(self, objectId):
+        # Add blank namespace '_' to relation ids, if there is no namespace yet,
+        # because in W3C ids must be qualified strings; will be needed for json format
         ns = "_"
         if ":" not in str(objectId):
             objectId = ns + ":" + str(objectId)
@@ -575,3 +577,106 @@ class VOProvenanceSerializer(serializers.Serializer):
 
         return data
 
+
+class ProvenanceGraphSerializer(serializers.Serializer):
+    # Create a serialization for usage with d3.js library or similar
+    # for graphical representation of the provenance record
+
+    nodes = serializers.SerializerMethodField()
+    links = serializers.SerializerMethodField()
+
+    _map_nodes_ids = {}    # maps ids of nodes to integers, for use in links-list
+
+    def get_nodes(self, obj): # is a list
+
+        nodes = []
+        count_nodes = 0
+        map_nodes_ids = {}
+
+        # nodes
+        for key in ['activity', 'entity', 'agent', 'activityFlow', 'collection']:
+            if key in obj:
+                for n_id, n in obj[key].iteritems():
+                    nodes.append({'name': n.name, 'type': key})
+                    map_nodes_ids[n.id] = count_nodes
+                    count_nodes += 1
+        self._map_nodes_ids = map_nodes_ids
+        return nodes
+
+    def get_links(self, obj):
+        # relations
+        map_nodes_ids = self._map_nodes_ids
+        links = []
+        count_links = 0
+
+        for r_id, r in obj['used'].iteritems():
+            value = 0.2
+            links.append({
+                'source': map_nodes_ids[r.activity.id],
+                'target': map_nodes_ids[r.entity.id],
+                'value': value,
+                'type': 'used'
+            })
+            count_links += 1
+
+        for r_id, r in obj['wasGeneratedBy'].iteritems():
+            value = 0.2
+            links.append({
+                'source': map_nodes_ids[r.entity.id],
+                'target': map_nodes_ids[r.activity.id],
+                'value': value,
+                'type': 'wasGeneratedBy'
+            })
+            count_links += 1
+
+        for r_id, r in obj['wasAssociatedWith'].iteritems():
+            value = 0.2
+            links.append({
+                'source': map_nodes_ids[r.agent.id],
+                'target': map_nodes_ids[r.activity.id],
+                'value': value,
+                'type': 'wasAssociatedWith'
+            })
+            count_links += 1
+
+        for r_id, r in obj['wasAttributedTo'].iteritems():
+            value = 0.2
+            links.append({
+                'source': map_nodes_ids[r.agent.id],
+                'target': map_nodes_ids[r.entity.id],
+                'value': value,
+                'type': 'wasAttributedTo'
+            })
+            count_links += 1
+
+        for r_id, r in obj['hadMember'].iteritems():
+            value = 0.2
+            links.append({
+                'source': map_nodes_ids[r.collection.id],
+                'target': map_nodes_ids[r.entity.id],
+                'value': value,
+                'type': 'hadMember'
+            })
+            count_links += 1
+
+        for r_id, r in obj['wasDerivedFrom'].iteritems():
+            value = 0.2
+            links.append({
+                'source': map_nodes_ids[r.generatedEntity.id],
+                'target': map_nodes_ids[r.usedEntity.id],
+                'value': value,
+                'type': 'wasDerivedFrom'
+            })
+            count_links += 1
+
+        # for r_id, r in obj['wasInformedBy'].iteritems():
+        #     value = 0.2
+        #     links.append({
+        #         'source': map_nodes_ids[r.informed.id],
+        #         'target': map_nodes_ids[r.informant.id],
+        #         'value': value,
+        #         'type': 'wasDerivedFrom'
+        #     })
+        #     count_links += 1
+
+        return links

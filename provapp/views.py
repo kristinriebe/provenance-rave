@@ -46,7 +46,8 @@ from .serializers import (
     HadMemberSerializer,
     WasDerivedFromSerializer,
     ProvenanceSerializer,
-    VOProvenanceSerializer
+    VOProvenanceSerializer,
+    ProvenanceGraphSerializer
 )
 
 from .renderers import PROVNRenderer, PROVJSONRenderer
@@ -251,7 +252,7 @@ def prettyprovn(request):
 
 
 def graph(request):
-    return render(request, 'provapp/graph.html', {})
+    return render(request, 'provapp/graph.html', {'url': 'graphjson'})
 
 
 def fullgraphjson(request):
@@ -376,7 +377,7 @@ def get_observationId(request):
 def observationid_detail(request, observation_id, detail_flag):
     entity = get_object_or_404(Entity, pk=observation_id)
 
-    return render(request, 'provapp/observationid_detail.html', {'entity': entity})
+    return render(request, 'provapp/observationid_detail.html', {'entity': entity, 'url': 'graphjson'})
 
 
 def observationid_detailjson(request, observation_id, detail_flag):
@@ -415,8 +416,6 @@ def observationid_detailjson(request, observation_id, detail_flag):
                 code='invalid',
                 params={'value': detail_flag},
             )
-
-    # else: not defined
 
     prov = utils.find_entity_graph(entity, prov, collection=collection)
 
@@ -461,6 +460,11 @@ def provdal(request):
     step_flag = request.GET.get('STEP', 'LAST') # can be LAST or ALL
     format = request.GET.get('FORMAT', 'PROV-N') # can be PROV-N, PROV-JSON, VOTABLE
     model = request.GET.get('MODEL', 'IVOA')  # one of IVOA, W3C (or None?)
+
+    if format == 'GRAPH':
+        return render(request, 'provapp/provdal_graph.html', {'url': 'http://localhost:8003/provapp/provdal/?ID=rave:20030411_1507m23_001&STEP=LAST&FORMAT=GRAPH-JSON&COMPLIANCE=W3C'})
+        # {'prov_dict': prov_dict})
+
 
     prefix = {
         "rave": "http://www.rave-survey.org/prov/",
@@ -537,6 +541,12 @@ def provdal(request):
 
         json_str = PROVJSONRenderer().render(data)
         return HttpResponse(json_str, content_type='application/json; charset=utf-8')
+
+    elif format == "GRAPH-JSON":
+        # need to re-structure the serialized data
+        serializer = ProvenanceGraphSerializer(prov) ## should use W3C or IVOA formatted data-structure here!!
+        prov_dict = serializer.data
+        return JsonResponse(prov_dict)
 
     else:
         # format is not known, return error

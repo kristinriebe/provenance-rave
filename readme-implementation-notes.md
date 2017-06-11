@@ -97,16 +97,19 @@ Uploading to ProvStore works for rave.json
 => working for json and provn
 
 ## TODO
-* maybe use a proper namespace-solution after all?
-
-* write serializer/post-serializer/renderer to get the graph-json from prov-dictionary-queryset or the finished prov-dict (or json or provn)
-=> add option "SVG" or javascript or so to provdal-form
+* use description-classes
+* use collection class in IVOA ProvenanceDM explicitly!!
+* make a difference between graph for W3C/IVOA model!
+* find a better solution for providing a dynamic url for graphjson?
+* make use of ProvenanceGraphSerializer for overview graph, observationId form etc. as well
+* merge find_entity_graph with find_entity etc. to avoid code repetition
 
 * ProvDAL:
     * Allow to enter an activity id as well
 
 ###  At some point later in the future
-- add datatypes ($, type) where needed for json and provn serialization
+* maybe use a proper namespace-solution after all?
+* add datatypes ($, type) where needed for json and provn serialization
 
 
 

@@ -74,6 +74,8 @@ This webapp allows to:
     - specify ID, STEP, FORMAT and also MODEL (IVOA or W3C) for serializations
     - also allows multiple (entity) ids, e.g. via:
       `http://localhost:8002/provapp/provdal/?ID=vo:UCAC4&ID=rave:20121220_0752m383I00009_fits&STEP=ALL&FORMAT=PROV-N&MODEL=W3C`
+    - additionally provides option to display retrieved data as interactive
+      graphical representation using javascript (d3.js)
 
 * Uses Django REST Framework for automatic list and detail views
 * Uses serializers for different model serialization (W3C/IVOA)
@@ -87,12 +89,12 @@ This webapp allows to:
 
 * Implement xml serialization, votable serialization
 * Clean up, remove unnecessary parts
-* Use prov-json and provjs from W3C model and Southhamption Provenance tools instead of custom made json and javascript
+* Use prov-json and provjs from W3C model and Southhamption Provenance tools instead of custom made json and javascript (?)
 * Use functions for detailed views, instead of loading everything into database?
 
-* implement ActivityFlow
-* implement Description side
-* connect with real data from the real RAVE database
-* write implementation report, including nice overview on used classes (graphical?)
+* Implement ActivityFlow
+* Implement Description side
+* Connect with real data from the real RAVE database
+* Write implementation report, including nice overview on used classes (graphical?), also see readme-implementation-notes.txt
 
 

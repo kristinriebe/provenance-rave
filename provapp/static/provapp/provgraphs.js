@@ -25,7 +25,11 @@ var sankey = d3.sankey()
 var path = sankey.link();
 
 // load the data
-var jsonurl = 'graphjson' // append graphjson to the path to get json representation of data
+//var jsonurl = 'graphjson' // append graphjson to the path to get json representation of data
+
+var url_graphjson = d3.select("#url_graphjson").text();
+var jsonurl = url_graphjson;
+
 d3.json(jsonurl, function(prov) {
   sankey
       .nodes(prov.nodes)
@@ -141,7 +145,7 @@ var svg2 = d3.select("#force-graph").append("svg")
 
 var defs = svg2.append("svg:defs");
 
-var jsonurl = 'graphjson';
+var jsonurl = url_graphjson;
 d3.json(jsonurl, function(prov) {
 
   var force = d3.layout.force()
@@ -174,7 +178,7 @@ d3.json(jsonurl, function(prov) {
       .attr("class", function(d) { return "link " + d.type; })
       //.attr("marker-end", marker('#0000ff'));
       .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
-  
+
   var shapes = svg2.append("g").selectAll(".shapes")
       .data(force.nodes())
     .enter();

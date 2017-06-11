@@ -129,6 +129,16 @@ class WasAttributedTo(models.Model):
     def __str__(self):
         return "id=%s; entity=%s; agent=%s; role=%s" % (str(self.id), self.entity, self.agent, self.role)
 
+@python_2_unicode_compatible
+class WasInformedBy(models.Model):
+    id = models.AutoField(primary_key=True)
+    informed = models.ForeignKey(Activity, null=True)
+    informant = models.ForeignKey(Activity, related_name='informed', null=True)
+#    role = models.CharField(max_length=128, blank=True, null=True)
+
+    def __str__(self):
+        return "id=%s; entity=%s; agent=%s; role=%s" % (str(self.id), self.entity, self.agent, self.role)
+
 
 @python_2_unicode_compatible
 class RaveObsids(models.Model):
