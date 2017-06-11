@@ -462,9 +462,11 @@ def provdal(request):
     model = request.GET.get('MODEL', 'IVOA')  # one of IVOA, W3C (or None?)
 
     if format == 'GRAPH':
-        return render(request, 'provapp/provdal_graph.html', {'url': 'http://localhost:8003/provapp/provdal/?ID=rave:20030411_1507m23_001&STEP=LAST&FORMAT=GRAPH-JSON&COMPLIANCE=W3C'})
-        # {'prov_dict': prov_dict})
-
+        ids = ''
+        for e in entity_list:
+            ids += 'ID=%s&' % e
+        return render(request, 'provapp/provdal_graph.html',
+            {'url': reverse('provapp:provdal') + "?%sSTEP=%s&FORMAT=GRAPH-JSON&MODEL=%s" % (ids, str(step_flag), str(model))})
 
     prefix = {
         "rave": "http://www.rave-survey.org/prov/",

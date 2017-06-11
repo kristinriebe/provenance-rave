@@ -610,7 +610,7 @@ class ProvenanceGraphSerializer(serializers.Serializer):
         count_links = 0
 
         for r_id, r in obj['used'].iteritems():
-            value = 0.2
+            value = 0.5
             links.append({
                 'source': map_nodes_ids[r.activity.id],
                 'target': map_nodes_ids[r.entity.id],
@@ -620,7 +620,7 @@ class ProvenanceGraphSerializer(serializers.Serializer):
             count_links += 1
 
         for r_id, r in obj['wasGeneratedBy'].iteritems():
-            value = 0.2
+            value = 0.5
             links.append({
                 'source': map_nodes_ids[r.entity.id],
                 'target': map_nodes_ids[r.activity.id],
