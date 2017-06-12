@@ -82,6 +82,79 @@
   pk: rave:act_stellarPipeline
   fields: {name: Stellar Pipeline, type: 'obs:Reduction', annotation: Stellar pipeline as described in DR4 paper,
       doculink: 'RAVE DR4: Kordopatis et al. 2013, AJ, 146, Issue 5, article id. 134, pp.421-451'}
+- model: provapp.activity
+  pk: rave:rave_pipeline
+  fields:
+    name: RAVE Pipeline
+    type: 'voprov:ActivityFlow'
+    annotation: 'includes the main steps from observation to data release'
+
+
+# ActivityFlow
+- model: provapp.activityflow
+  pk: rave:rave_pipeline
+  fields:
+      activity_ptr: rave:rave_pipeline
+
+# HadStep
+- model: provapp.hadstep
+  pk: 0
+  fields:
+    activityFlow: 'rave:rave_pipeline'
+    activity: 'rave:act_sparvPipeline'
+- model: provapp.hadstep
+  pk: 1
+  fields:
+    activityFlow: 'rave:rave_pipeline'
+    activity: rave:act_irafReduction
+- model: provapp.hadstep
+  pk: 2
+  fields:
+    activityFlow: 'rave:rave_pipeline'
+    activity: rave:act_chemicalPipeline
+- model: provapp.hadstep
+  pk: 3
+  fields:
+    activityFlow: 'rave:rave_pipeline'
+    activity: rave:act_stellarPipeline
+- model: provapp.hadstep
+  pk: 4
+  fields:
+    activityFlow: 'rave:rave_pipeline'
+    activity: rave:act_distancesZwitter
+- model: provapp.hadstep
+  pk: 5
+  fields:
+    activityFlow: 'rave:rave_pipeline'
+    activity: rave:act_distancesBinney
+- model: provapp.hadstep
+  pk: 6
+  fields:
+    activityFlow: 'rave:rave_pipeline'
+    activity: rave:act_dataextraction
+- model: provapp.hadstep
+  pk: 7
+  fields:
+    activityFlow: 'rave:rave_pipeline'
+    activity: rave:act_classificationPipeline
+
+# WasInformedBy
+- model: provapp.wasinformedby
+  pk: 0
+  fields:
+    informed: rave:act_sparvPipeline
+    informant: rave:act_irafReduction
+- model: provapp.wasinformedby
+  pk: 1
+  fields:
+    informed: rave:act_chemicalPipeline
+    informant: rave:act_sparvPipeline
+- model: provapp.wasinformedby
+  pk: 1
+  fields:
+    informed: rave:act_stellarPipeline
+    informant: rave:act_sparvPipeline
+
 
 # Entity
 - model: provapp.entity
@@ -403,6 +476,7 @@
     pk: rave:sparvProcessedData_spectra
     fields:
         entity_ptr: rave:sparvProcessedData_spectra
+
 
 
 # Agent

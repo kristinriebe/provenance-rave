@@ -492,6 +492,7 @@ def provdal(request):
     prov = {
         'prefix': prefix,
         'activity': {},
+        'activityFlow': {},
         'entity': {},
         'collection': {},  # not used, yet
         'agent': {},
@@ -500,7 +501,9 @@ def provdal(request):
         'wasAssociatedWith': {},
         'wasAttributedTo': {},
         'hadMember': {},
-        'wasDerivedFrom': {}
+        'wasDerivedFrom': {},
+        'hadStep': {},
+        'wasInformedBy': {}
     }
 
     # Note: even if collection class used, Entity.objects.all() still contains all entities

@@ -224,6 +224,7 @@ class ProvenanceSerializer(serializers.Serializer):
     wasAttributedTo = serializers.SerializerMethodField()
     hadMember = serializers.SerializerMethodField()
     wasDerivedFrom = serializers.SerializerMethodField()
+    wasInformedBy = serializers.SerializerMethodField()
     prefix = serializers.SerializerMethodField()
 
 
@@ -239,6 +240,15 @@ class ProvenanceSerializer(serializers.Serializer):
             data = ActivitySerializer(a).data
             activity[a_id] = data #self.restructure_qualifiers(data)
 
+        # add activities that are stored as activityFlow to
+        # activities for W3C serialisation
+        for a_id, a in obj['activityFlow'].iteritems():
+            data = ActivitySerializer(a).data
+            data['voprov:type'] = 'activityFlow'
+            activity[a_id] = data #self.restructure_qualifiers(data)
+        # TODO: create a prov-bundle for the wasInformedBy-relations and
+        # attach it to this activity as input entity of prov:type="Bundle"
+        # or try to define a plan
         return activity
 
     def get_entity(self, obj):
@@ -317,6 +327,15 @@ class ProvenanceSerializer(serializers.Serializer):
 
         return wasDerivedFrom
 
+    def get_wasInformedBy(self, obj):
+        wasInformedBy = {}
+        for w_id, w in obj['wasInformedBy'].iteritems():
+            data = WasInformedBySerializer(w).data
+            w_id = self.add_relationnamespace(w_id)
+            wasInformedBy[w_id] = self.restructure_relations(data)
+
+        return wasInformedBy
+
 
     def restructure_qualifiers(self, data):
         # Restructure serialisation of qualified values
@@ -382,6 +401,13 @@ class VOActivitySerializer(NonNullCustomSerializer):
 
     class Meta:
         model = Activity
+        fields = ('voprov_id', 'voprov_name', 'voprov_type', 'voprov_annotation', 'voprov_startTime', 'voprov_endTime', 'voprov_doculink')
+
+
+class VOActivityFlowSerializer(VOActivitySerializer):
+
+    class Meta:
+        model = ActivityFlow
         fields = ('voprov_id', 'voprov_name', 'voprov_type', 'voprov_annotation', 'voprov_startTime', 'voprov_endTime', 'voprov_doculink')
 
 
@@ -475,6 +501,19 @@ class VOWasDerivedFromSerializer(NonNullCustomSerializer):
         model = WasDerivedFrom
         fields = '__all__'
 
+class VOHadStepSerializer(NonNullCustomSerializer):
+
+    class Meta:
+        model = HadStep
+        fields = '__all__'
+
+
+class VOWasInformedBySerializer(NonNullCustomSerializer):
+
+    class Meta:
+        model = WasInformedBy
+        fields = '__all__'
+
 
 class VOProvenanceSerializer(serializers.Serializer):
 
@@ -488,6 +527,9 @@ class VOProvenanceSerializer(serializers.Serializer):
     wasAttributedTo = serializers.SerializerMethodField()
     hadMember = serializers.SerializerMethodField()
     wasDerivedFrom = serializers.SerializerMethodField()
+    wasInformedBy = serializers.SerializerMethodField()
+    hadStep = serializers.SerializerMethodField()
+    activityFlow = serializers.SerializerMethodField()
     prefix = serializers.SerializerMethodField()
 
     def get_prefix(self, obj):
@@ -504,11 +546,20 @@ class VOProvenanceSerializer(serializers.Serializer):
 
         return activity
 
+    def get_activityFlow(self, obj):
+        activityFlow = {}
+        for a_id, a in obj['activityFlow'].iteritems():
+            data = VOActivityFlowSerializer(a).data
+            activityFlow[a_id] = data
+
+        return activityFlow
+
+
     def get_entity(self, obj):
         entity = {}
         for e_id, e in obj['entity'].iteritems():
             data = VOEntitySerializer(e).data
-            entity[e_id] = (data)
+            entity[e_id] = data
 
         return entity
 
@@ -516,7 +567,7 @@ class VOProvenanceSerializer(serializers.Serializer):
         collection = {}
         for c_id, c in obj['collection'].iteritems():
             data = VOCollectionSerializer(c).data
-            collection[c_id] = (data)
+            collection[c_id] = data
 
         return collection
 
@@ -582,6 +633,23 @@ class VOProvenanceSerializer(serializers.Serializer):
 
         return wasDerivedFrom
 
+    def get_hadStep(self, obj):
+        hadStep = {}
+        for h_id, h in obj['hadStep'].iteritems():
+            data = VOHadStepSerializer(h).data
+            h_id = self.add_relationnamespace(h_id)
+            hadStep[h_id] = self.restructure_relations(data)
+
+        return hadStep
+
+    def get_wasInformedBy(self, obj):
+        wasInformedBy = {}
+        for w_id, w in obj['wasInformedBy'].iteritems():
+            data = VOWasInformedBySerializer(w).data
+            w_id = self.add_relationnamespace(w_id)
+            wasInformedBy[w_id] = self.restructure_relations(data)
+
+        return wasInformedBy
 
     def add_relationnamespace(self, objectId):
         ns = "_"
@@ -604,7 +672,7 @@ class VOProvenanceSerializer(serializers.Serializer):
         for key, value in data.iteritems():
 
             # replace prov_ by prov for the given keys:
-            if key in ['activity', 'entity', 'collection', 'agent', 'generatedEntity', 'usedEntity', 'usage', 'generation', 'role']:
+            if key in ['activity', 'activityFlow', 'entity', 'collection', 'agent', 'generatedEntity', 'usedEntity', 'usage', 'generation', 'role', 'informed', 'informant']:
                 newkey = 'voprov:' + key
                 data[newkey] = data.pop(key)
 
@@ -702,14 +770,24 @@ class ProvenanceGraphSerializer(serializers.Serializer):
             })
             count_links += 1
 
-        # for r_id, r in obj['wasInformedBy'].iteritems():
-        #     value = 0.2
-        #     links.append({
-        #         'source': map_nodes_ids[r.informed.id],
-        #         'target': map_nodes_ids[r.informant.id],
-        #         'value': value,
-        #         'type': 'wasDerivedFrom'
-        #     })
-        #     count_links += 1
+        for r_id, r in obj['hadStep'].iteritems():
+            value = 0.2
+            links.append({
+                'source': map_nodes_ids[r.activityFlow.id],
+                'target': map_nodes_ids[r.activity.id],
+                'value': value,
+                'type': 'hadStep'
+            })
+            count_links += 1
+
+        for r_id, r in obj['wasInformedBy'].iteritems():
+            value = 0.2
+            links.append({
+                'source': map_nodes_ids[r.informed.id],
+                'target': map_nodes_ids[r.informant.id],
+                'value': value,
+                'type': 'wasInformedBy'
+            })
+            count_links += 1
 
         return links

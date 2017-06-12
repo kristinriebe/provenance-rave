@@ -1,5 +1,8 @@
-from .models import Activity, Entity, Agent, Used, WasGeneratedBy
-from .models import WasAssociatedWith, WasAttributedTo, HadMember, WasDerivedFrom
+from .models import (
+    Activity, Entity, Agent, Used, WasGeneratedBy,
+    WasAssociatedWith, WasAttributedTo, HadMember, WasDerivedFrom,
+    WasInformedBy, HadStep, ActivityFlow, Collection
+)
 from .models import RaveObsids
 
 
@@ -141,11 +144,12 @@ def find_entity(entity, prov, follow=True):
     for wg in queryset:
         print "Entity "+ entity.id + " wasGeneratedBy activity: ", wg.activity.id
 
-        # add activity to prov-list, IF not existing there already
-        if wg.activity.id not in prov['activity']:
-            prov['activity'][wg.activity.id] = wg.activity
+        # add activity(flow) to prov-list, IF not existing there already
+        activity_type = get_activity_type(wg.activity.id)
+        if wg.activity.id not in prov[activity_type]:
+            prov[activity_type][wg.activity.id] = wg.activity
 
-            # follow provenance along this activity
+            # follow provenance along this activity(flow)
             if follow:
                 prov = find_activity(wg.activity, prov, follow=True)
             #else:
@@ -175,6 +179,7 @@ def find_entity(entity, prov, follow=True):
 
     # check membership to collection
     queryset = HadMember.objects.filter(entity=entity.id)
+    # TODO: the entity could also be the collection!! I.e. need to check also: collection=entity.id
     # actually, entities cannot belong to more than one collection,
     # but we'll allow it here for now ...
     for h in queryset:
@@ -218,7 +223,7 @@ def find_activity(activity, prov, follow=True):
 
     queryset = Used.objects.filter(activity=activity.id)
 
-    # There definitely can be more than one used-relation
+    # used relations
     for u in queryset:
         # because only want details, no collection, return if it is a collection
         #if "prov:collection" in u.entity.type.split(';'):
@@ -249,4 +254,70 @@ def find_activity(activity, prov, follow=True):
         # add relationship to prov
         prov['wasAssociatedWith'][wa.id] = wa
 
+    # wasInformedBy
+    queryset = WasInformedBy.objects.filter(informed=activity.id)
+    for wi in queryset:
+        print "Activity " + wi.informed.id + " WasInformedBy activity ", wi.informant.id
+
+        # check, if it is an activityFlow or not, add to prov
+        # add activity(flow) to prov
+        activity_type = get_activity_type(wi.informant.id)
+        if wi.informant.id not in prov[activity_type]:
+            prov[activity_type][wi.informant.id] = wi.informant
+
+            # follow provenance along this activity(flow)
+            if follow:
+                prov = find_activity(wi.informant, prov, follow=True)
+
+        # add relationship to prov
+        prov['wasInformedBy'][wi.id] = wi
+    # we won't check backwards direction, i.e. do not check, if this activity
+    # has informed other activities (no future tracking)
+
+    # hadStep
+    queryset = HadStep.objects.filter(activity=activity.id)
+    for h in queryset:
+        print "ActivityFlow " + h.activityFlow.id + " hadStep activity ", activity.id
+
+        # add activityFlow, if not yet done
+        if h.activityFlow.id not in prov['activityFlow']:
+            prov['activityFlow'][h.activityFlow.id] = h.activityFlow
+
+            # follow provenance along this activity(flow)
+            if follow:
+                prov = find_activity(h.activityFlow, prov, follow=True)
+
+        # add relationship to prov
+        prov['hadStep'][h.id] = h
+
+    # hadStep, other direction
+    queryset = HadStep.objects.filter(activityFlow=activity.id)
+    for h in queryset:
+        print "ActivityFlow " + h.activityFlow.id + " hadStep activity ", h.activity.id
+
+        # add activity, if not yet done
+        activity_type = get_activity_type(h.activity.id)
+        if h.activity.id not in prov[activity_type]:
+            prov[activity_type][h.activity.id] = h.activity
+
+            # follow provenance along this activity(flow)
+            if follow:
+                prov = find_activity(h.activity, prov, follow=True)
+
+        # add relationship to prov
+        prov['hadStep'][h.id] = h
+
+
+
     return prov
+
+def get_activity_type(activity_id):
+    # check if it is an activityFlow or activity,
+    # return string (what it is)
+    afset = ActivityFlow.objects.filter(id=activity_id)
+    if len(afset) > 0:
+        activity_type = 'activityFlow'
+    else:
+        activity_type = 'activity'
+
+    return activity_type
