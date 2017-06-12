@@ -31,7 +31,11 @@ from .models import (
     WasAssociatedWith,
     WasAttributedTo,
     HadMember,
+    HadStep,
     WasDerivedFrom,
+    WasInformedBy,
+    ActivityFlow,
+    Collection,
     RaveObsids
 )
 
@@ -45,6 +49,8 @@ from .serializers import (
     WasAttributedToSerializer,
     HadMemberSerializer,
     WasDerivedFromSerializer,
+    # ActivityFlowSerializer,
+    CollectionSerializer,
     ProvenanceSerializer,
     VOProvenanceSerializer,
     ProvenanceGraphSerializer
@@ -67,7 +73,6 @@ class IndexView(generic.ListView):
 class ActivityViewSet(viewsets.ModelViewSet):
     serializer_class = ActivitySerializer
     queryset = Activity.objects.all()
-
 
 class EntityViewSet(viewsets.ModelViewSet):
     serializer_class = EntitySerializer
@@ -101,6 +106,13 @@ class WasDerivedFromViewSet(viewsets.ModelViewSet):
     serializer_class = WasDerivedFromSerializer
     queryset = WasDerivedFrom.objects.all()
 
+# class ActivityFlowViewSet(viewsets.ModelViewSet):
+#     serializer_class = ActivityFlowSerializer
+#     queryset = ActivityFlow.objects.all()
+
+class CollectionViewSet(viewsets.ModelViewSet):
+    serializer_class = CollectionSerializer
+    queryset = Collection.objects.all()
 
 def activitygraphjson(request, activity_id):
     activity = get_object_or_404(Activity, pk=activity_id)
@@ -481,6 +493,7 @@ def provdal(request):
         'prefix': prefix,
         'activity': {},
         'entity': {},
+        'collection': {},  # not used, yet
         'agent': {},
         'used': {},
         'wasGeneratedBy': {},
@@ -490,8 +503,9 @@ def provdal(request):
         'wasDerivedFrom': {}
     }
 
-
+    # Note: even if collection class used, Entity.objects.all() still contains all entities
     for entity_id in entity_list:
+
         try:
             entity = Entity.objects.get(id=entity_id)
         except Entity.DoesNotExist:
@@ -501,7 +515,6 @@ def provdal(request):
         # store current entity in dict:
         if entity is not None:
             prov['entity'][entity.id] = entity
-
             if step_flag == "ALL":
                 # search for further provenance, recursively
                 prov = utils.find_entity(entity, prov, follow=True)

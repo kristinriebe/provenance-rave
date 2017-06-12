@@ -54,12 +54,13 @@ testing the model.
 
 
 ## Get a model graph
+If the `graphviz` library is installed additionally, an image of the models and their relations can be created automatically with:
+
 ```shell
-python manage.py graph_models provapp -o test.png
+python manage.py graph_models provapp -o provenance-models.png
 ```
 
-This produces a file `test.png` for all models from provapp.
-This requires that the graphviz library is installed additionally, see above.
+This produces an image file `provenance-models.png`, which shows all models from provapp with their attributes and relations. Other output formats like `pdf` or `svg` are also supported.
 
 
 ## Features

@@ -17,6 +17,7 @@ router.register(r'wasassociatedwith', views.WasAssociatedWithViewSet)
 router.register(r'wasattributedto', views.WasAttributedToViewSet)
 router.register(r'hadmember', views.HadMemberViewSet)
 router.register(r'wasderivedfrom', views.WasDerivedFromViewSet)
+router.register(r'collection', views.CollectionViewSet)
 
 urlpatterns = [
     # index view:

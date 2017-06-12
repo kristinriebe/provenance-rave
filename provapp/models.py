@@ -29,7 +29,7 @@ AGENT_TYPE_CHOICES = (
 )
 
 
-# main ProvDM classes:
+# main ProvenanceDM classes:
 @python_2_unicode_compatible
 class Activity(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
@@ -42,7 +42,6 @@ class Activity(models.Model):
 
     def __str__(self):
         return self.name
-
 
 @python_2_unicode_compatible
 class Entity(models.Model):
@@ -62,8 +61,21 @@ class Agent(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     name = models.CharField(max_length=128, null=True) # human readable label, firstname + lastname
     type = models.CharField(max_length=128, null=True, choices=AGENT_TYPE_CHOICES) # types of entities: single entity, dataset
-    annotation = models.CharField(max_length=1024, null=True)
-    email = models.CharField(max_length=128, null=True)
+    annotation = models.CharField(max_length=1024, null=True, blank=True)
+    email = models.CharField(max_length=128, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+# collection classes
+@python_2_unicode_compatible
+class ActivityFlow(Activity):
+
+    def __str__(self):
+        return self.name
+
+@python_2_unicode_compatible
+class Collection(Entity):
 
     def __str__(self):
         return self.name
@@ -92,15 +104,6 @@ class WasGeneratedBy(models.Model):
         return "id=%s; entity=%s; activity=%s; role=%s" % (str(self.id), self.entity, self.activity, self.role)
 
 @python_2_unicode_compatible
-class HadMember(models.Model):
-    id = models.AutoField(primary_key=True)
-    collection = models.ForeignKey(Entity, null=True) #, on_delete=models.CASCADE) # enforce prov-type: collection
-    entity = models.ForeignKey(Entity, related_name='collection', null=True) #, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return "id=%s; collection=%s; entity=%s; role=%s" % (str(self.id), self.collection, self.entity, self.role)
-
-@python_2_unicode_compatible
 class WasDerivedFrom(models.Model):
     id = models.AutoField(primary_key=True)
     generatedEntity = models.ForeignKey(Entity, null=True)
@@ -108,6 +111,16 @@ class WasDerivedFrom(models.Model):
 
     def __str__(self):
         return "id=%s; generatedEntity=%s; usedEntity=%s" % (str(self.id), self.generatedEntity, self.usedEntity)
+
+@python_2_unicode_compatible
+class WasInformedBy(models.Model):
+    id = models.AutoField(primary_key=True)
+    informed = models.ForeignKey(Activity, null=True)
+    informant = models.ForeignKey(Activity, related_name='informed', null=True)
+#    role = models.CharField(max_length=128, blank=True, null=True)
+
+    def __str__(self):
+        return "id=%s; entity=%s; agent=%s; role=%s" % (str(self.id), self.entity, self.agent, self.role)
 
 @python_2_unicode_compatible
 class WasAssociatedWith(models.Model):
@@ -129,15 +142,24 @@ class WasAttributedTo(models.Model):
     def __str__(self):
         return "id=%s; entity=%s; agent=%s; role=%s" % (str(self.id), self.entity, self.agent, self.role)
 
+# collection relations
 @python_2_unicode_compatible
-class WasInformedBy(models.Model):
+class HadMember(models.Model):
     id = models.AutoField(primary_key=True)
-    informed = models.ForeignKey(Activity, null=True)
-    informant = models.ForeignKey(Activity, related_name='informed', null=True)
-#    role = models.CharField(max_length=128, blank=True, null=True)
+    collection = models.ForeignKey(Collection, null=True)  # enforce prov-type: collection
+    entity = models.ForeignKey(Entity, related_name='ecollection', null=True) # related_name = 'collection' throws error!
 
     def __str__(self):
-        return "id=%s; entity=%s; agent=%s; role=%s" % (str(self.id), self.entity, self.agent, self.role)
+        return "id=%s; collection=%s; entity=%s; role=%s" % (str(self.id), self.collection, self.entity, self.role)
+
+@python_2_unicode_compatible
+class HadStep(models.Model):
+    id = models.AutoField(primary_key=True)
+    activityFlow = models.ForeignKey(ActivityFlow, null=True) #, on_delete=models.CASCADE)
+    activity = models.ForeignKey(Activity, related_name='activityFlow', null=True)
+
+    def __str__(self):
+        return "id=%s; collection=%s; entity=%s; role=%s" % (str(self.id), self.collection, self.entity, self.role)
 
 
 @python_2_unicode_compatible

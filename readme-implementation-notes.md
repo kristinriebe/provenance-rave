@@ -18,6 +18,20 @@ I defined two main functions: `find_entity` and `find_activity`.
 ## Prov-DAL
 If a user asks for the provenance record of an entity with option "STEP=LAST", then I interprete it as one step *backwards in time*. I have cases where the backwards provenance of a data item is not recorded, only for the collection to which it belongs. With STEP=LAST I originally returned only 1 provenance relation for the data item, which did not include any "backwards" information (just the hadMember link). Now, in such a case, I track the collection's relations further until at least one wasGeneratedBy or one wasDerivedFrom link is found.
 
+## Implementing Collection
+Entity's that are collections and can have members are stored as Collection, 
+which is an inherited class from Entity. So far, the attributes are not different, thus when serializing/displaying a collection, it has the same attributes as an entity. Also, when loading collection data into the database, collections are stored in the entity-table and only additionally linked from the collection-table. I.e. when looking for an entity or a collection, it's still enough to do the lookup with the entity-table. But if one needs to make sure that something is a collection, then one should look it up in the collection-table.
+
+In W3C serialization, Collections are Entities with type "prov:collection". In IVOA we can serialize them explicitly as collections.
+(Having the same attributes as entity + hadMember relationship.)
+
+Advantage of collection as class:
+- in HadMember, the collection-attribute must link to a colelction, which is a straight-forward constraint if collection is an extra class
+- can check very clearly, if something is a collection or not (even if metadata are incomplete) by checking if the entity occurs in Collection table as well
+
+Advantage of collection as entity with type 'prov:collection':
+- less models (classes) need to be implemented, i.e. also less serializers etc.
+
 ## Serialization
 
 ### Trouble with qualified attributes (prov:type etc.)
@@ -103,6 +117,7 @@ Uploading to ProvStore works for rave.json
 * find a better solution for providing a dynamic url for graphjson?
 * make use of ProvenanceGraphSerializer for overview graph, observationId form etc. as well
 * merge find_entity_graph with find_entity etc. to avoid code repetition
+* use different api-root for W3C and IVOA (rest framework)
 
 * ProvDAL:
     * Allow to enter an activity id as well

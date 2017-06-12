@@ -13,7 +13,11 @@ from .models import (
     WasAssociatedWith,
     WasAttributedTo,
     HadMember,
-    WasDerivedFrom
+    WasDerivedFrom,
+    ActivityFlow,
+    Collection,
+    WasInformedBy,
+    HadStep
 )
 
 # Define custom CharField to add attribute custom_field_name
@@ -201,6 +205,14 @@ class WasDerivedFromSerializer(NonNullCustomSerializer):
         fields = '__all__'
 
 
+class CollectionSerializer(EntitySerializer):
+
+    class Meta:
+        model = Collection
+        fields = ('prov_id', 'prov_label', 'prov_type', 'prov_description', 'voprov_rights', 'voprov_dataType', 'voprov_storageLocation')
+
+
+
 class ProvenanceSerializer(serializers.Serializer):
 
     activity = serializers.SerializerMethodField()
@@ -233,6 +245,12 @@ class ProvenanceSerializer(serializers.Serializer):
         entity = {}
         for e_id, e in obj['entity'].iteritems():
             data = EntitySerializer(e).data
+            entity[e_id] = (data)
+
+        return entity
+
+        for e_id, e in obj['collection'].iteritems():
+            data = CollectionSerializer(e).data
             entity[e_id] = (data)
 
         return entity
@@ -382,6 +400,13 @@ class VOEntitySerializer(NonNullCustomSerializer):
         fields = ('voprov_id', 'voprov_name', 'voprov_type', 'voprov_annotation', 'voprov_rights', 'voprov_dataType', 'voprov_storageLocation')
 
 
+class VOCollectionSerializer(VOEntitySerializer):
+
+    class Meta:
+        model = Collection
+        fields = ('voprov_id', 'voprov_name', 'voprov_type', 'voprov_annotation', 'voprov_rights', 'voprov_dataType', 'voprov_storageLocation')
+
+
 class VOAgentSerializer(NonNullCustomSerializer):
 
     voprov_id = CustomCharField(source='id', custom_field_name='voprov:id')
@@ -455,6 +480,7 @@ class VOProvenanceSerializer(serializers.Serializer):
 
     activity = serializers.SerializerMethodField()
     entity = serializers.SerializerMethodField()
+    collection = serializers.SerializerMethodField()
     agent = serializers.SerializerMethodField()
     used = serializers.SerializerMethodField()
     wasGeneratedBy = serializers.SerializerMethodField()
@@ -463,7 +489,6 @@ class VOProvenanceSerializer(serializers.Serializer):
     hadMember = serializers.SerializerMethodField()
     wasDerivedFrom = serializers.SerializerMethodField()
     prefix = serializers.SerializerMethodField()
-
 
     def get_prefix(self, obj):
         return obj['prefix']
@@ -486,6 +511,14 @@ class VOProvenanceSerializer(serializers.Serializer):
             entity[e_id] = (data)
 
         return entity
+
+    def get_collection(self, obj):
+        collection = {}
+        for c_id, c in obj['collection'].iteritems():
+            data = VOCollectionSerializer(c).data
+            collection[c_id] = (data)
+
+        return collection
 
     def get_agent(self, obj):
         agent = {}

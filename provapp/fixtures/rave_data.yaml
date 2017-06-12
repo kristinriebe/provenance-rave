@@ -215,52 +215,52 @@
     storageLocation: 'https://www.rave-survey.org/project/documentation/dr4/stellar_parameters/'}
 - model: provapp.entity
   pk: rave:DR4_rave_2MASS
-  fields: {name: RAVE Xmatch 2MASS, type: 'prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch 2MASS, type: 'voprov:catalog', annotation: RAVE
       crossmatch with 2MASS, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4_rave_PPMX
-  fields: {name: RAVE Xmatch PPMX, type: 'prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch PPMX, type: 'voprov:catalog', annotation: RAVE
       crossmatch with PPMX, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4_rave_PPMXL
-  fields: {name: RAVE Xmatch PPMXL, type: 'prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch PPMXL, type: 'voprov:catalog', annotation: RAVE
       crossmatch with PPMXL, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4_rave_SCS
-  fields: {name: RAVE Xmatch SCS, type: 'prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch SCS, type: 'voprov:catalog', annotation: RAVE
       crossmatch with SUPERCOSMOS, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4_rave_SPM4
-  fields: {name: RAVE Xmatch SPM4, type: 'prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch SPM4, type: 'voprov:catalog', annotation: RAVE
       crossmatch with SPM4, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4_rave_TYCHO2
-  fields: {name: RAVE Xmatch TYCHO2, type: 'prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch TYCHO2, type: 'voprov:catalog', annotation: RAVE
       crossmatch with TYCHO2, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4_rave_UCAC2
-  fields: {name: RAVE Xmatch UCAC2, type: 'prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch UCAC2, type: 'voprov:catalog', annotation: RAVE
       crossmatch with UCAC2, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4_rave_UCAC3
-  fields: {name: RAVE Xmatch UCAC3, type: 'prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch UCAC3, type: 'voprov:catalog', annotation: RAVE
       crossmatch with UCAC3, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4_rave_UCAC4
-  fields: {name: RAVE Xmatch UCAC4, type: 'prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch UCAC4, type: 'voprov:catalog', annotation: RAVE
       crossmatch with UCAC4, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
   pk: rave:DR4_rave_USNOB1
-  fields: {name: RAVE Xmatch USNOB1, type: 'prov:collection', annotation: RAVE
+  fields: {name: RAVE Xmatch USNOB1, type: 'voprov:catalog', annotation: RAVE
       crossmatch with USNOB1, rights: 'voprov:public', dataType: 'voprov:databaseTable',
     storageLocation: 'https://www.rave-surve.org/query/'}
 - model: provapp.entity
@@ -306,44 +306,104 @@
     rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:2MASS
-  fields: {name: 2MASS, type: 'prov:collection',
+  fields: {name: 2MASS, type: 'voprov:catalog',
     rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:PPMX
-  fields: {name: PPMX, type: 'prov:collection',
+  fields: {name: PPMX, type: 'voprov:catalog',
     rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:PPMXL
-  fields: {name: PPMXL, type: 'prov:collection',
+  fields: {name: PPMXL, type: 'voprov:catalog',
     rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:SCS
-  fields: {name: SCS, type: 'prov:collection', rights: 'voprov:public',
+  fields: {name: SCS, type: 'voprov:catalog', rights: 'voprov:public',
     dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:SPM4
-  fields: {name: SPM4, type: 'prov:collection',
+  fields: {name: SPM4, type: 'voprov:catalog',
     rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:TYCHO2
-  fields: {name: TYCHO2, type: 'prov:collection',
+  fields: {name: TYCHO2, type: 'voprov:catalog',
     rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:UCAC2
-  fields: {name: UCAC2, type: 'prov:collection',
+  fields: {name: UCAC2, type: 'voprov:catalog',
     rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:UCAC3
-  fields: {name: UCAC3, type: 'prov:collection',
+  fields: {name: UCAC3, type: 'voprov:catalog',
     rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:UCAC4
-  fields: {name: UCAC4, type: 'prov:collection',
+  fields: {name: UCAC4, type: 'voprov:catalog',
     rights: 'voprov:public', dataType: 'voprov:databaseTable'}
 - model: provapp.entity
   pk: vo:USNOB1
-  fields: {name: USNOB1, type: 'prov:collection',
+  fields: {name: USNOB1, type: 'voprov:catalog',
     rights: 'voprov:public', dataType: 'voprov:databaseTable'}
+
+
+# Collection
+-   model: provapp.collection
+    pk: rave:ravedr4
+    fields:
+        entity_ptr: rave:ravedr4
+-   model: provapp.collection
+    pk: rave:fits_orig
+    fields:
+        entity_ptr: rave:fits_orig
+-   model: provapp.collection
+    pk: rave:sparvProcessedData
+    fields:
+        entity_ptr: rave:sparvProcessedData
+-   model: provapp.collection
+    pk: rave:GKStellarParameters
+    fields:
+        entity_ptr: rave:GKStellarParameters
+-   model: provapp.collection
+    pk: rave:DR4_Chemical_Abundances
+    fields:
+        entity_ptr: rave:DR4_Chemical_Abundances
+-   model: provapp.collection
+    pk: rave:DR4_Classification_Matijevic
+    fields:
+        entity_ptr: rave:DR4_Classification_Matijevic
+-   model: provapp.collection
+    pk: rave:DR4_Distances_Binney
+    fields:
+        entity_ptr: rave:DR4_Distances_Binney
+-   model: provapp.collection
+    pk: rave:DR4_Distances_Zwitter
+    fields:
+        entity_ptr: rave:DR4_Distances_Zwitter
+-   model: provapp.collection
+    pk: rave:DR4_RAVEDR4
+    fields:
+        entity_ptr: rave:DR4_RAVEDR4
+-   model: provapp.collection
+    pk: rave:DR4_Stellar_Parameters
+    fields:
+        entity_ptr: rave:DR4_Stellar_Parameters
+-   model: provapp.collection
+    pk: rave:GKStellarParametersFiles
+    fields:
+        entity_ptr: rave:GKStellarParametersFiles
+-   model: provapp.collection
+    pk: rave:irafReduced
+    fields:
+        entity_ptr: rave:irafReduced
+-   model: provapp.collection
+    pk: rave:modelSpectra
+    fields:
+        entity_ptr: rave:modelSpectra
+-   model: provapp.collection
+    pk: rave:sparvProcessedData_spectra
+    fields:
+        entity_ptr: rave:sparvProcessedData_spectra
+
 
 # Agent
 - model: provapp.agent
