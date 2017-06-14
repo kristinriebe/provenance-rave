@@ -4,6 +4,8 @@ from rest_framework import serializers
 from rest_framework.fields import SkipField, empty
 from rest_framework.relations import PKOnlyObject
 
+from django.db.models import Max
+
 from .models import (
     Activity,
     Entity,
@@ -204,6 +206,11 @@ class WasDerivedFromSerializer(NonNullCustomSerializer):
         model = WasDerivedFrom
         fields = '__all__'
 
+class WasInformedBySerializer(NonNullCustomSerializer):
+
+    class Meta:
+        model = WasInformedBy
+        fields = '__all__'
 
 class CollectionSerializer(EntitySerializer):
 
@@ -212,8 +219,7 @@ class CollectionSerializer(EntitySerializer):
         fields = ('prov_id', 'prov_label', 'prov_type', 'prov_description', 'voprov_rights', 'voprov_dataType', 'voprov_storageLocation')
 
 
-
-class ProvenanceSerializer(serializers.Serializer):
+class W3CProvenanceSerializer(serializers.Serializer):
 
     activity = serializers.SerializerMethodField()
     entity = serializers.SerializerMethodField()
@@ -238,31 +244,30 @@ class ProvenanceSerializer(serializers.Serializer):
         activity = {}
         for a_id, a in obj['activity'].iteritems():
             data = ActivitySerializer(a).data
-            activity[a_id] = data #self.restructure_qualifiers(data)
+            activity[a_id] = data
 
         # add activities that are stored as activityFlow to
         # activities for W3C serialisation
         for a_id, a in obj['activityFlow'].iteritems():
             data = ActivitySerializer(a).data
-            data['voprov:type'] = 'activityFlow'
-            activity[a_id] = data #self.restructure_qualifiers(data)
-        # TODO: create a prov-bundle for the wasInformedBy-relations and
-        # attach it to this activity as input entity of prov:type="Bundle"
-        # or try to define a plan
+            data['voprov:class'] = 'voprov:activityFlow'
+            activity[a_id] = data
         return activity
 
     def get_entity(self, obj):
         entity = {}
         for e_id, e in obj['entity'].iteritems():
             data = EntitySerializer(e).data
-            entity[e_id] = (data)
-
-        return entity
+            entity[e_id] = data
 
         for e_id, e in obj['collection'].iteritems():
             data = CollectionSerializer(e).data
-            entity[e_id] = (data)
+            entity[e_id] = data
 
+        # create a plan for each activityFlow
+        for a_id, a in obj['activityFlow'].iteritems():
+            p_id = self.get_plan_id(a_id)
+            entity[p_id] = {'prov:label': 'Plan for %s' % a.name, 'prov:type': 'prov:Plan'}
         return entity
 
     def get_agent(self, obj):
@@ -297,7 +302,22 @@ class ProvenanceSerializer(serializers.Serializer):
             data = WasAssociatedWithSerializer(w).data
             w_id = self.add_relationnamespace(w_id)
             wasAssociatedWith[w_id] = self.restructure_relations(data)
+            print 'wa: ', wasAssociatedWith[w_id]
+        # link activities of an activityFlow with its plan
+        result = WasAssociatedWith.objects.aggregate(Max('id'))
+        i = int(result['id__max'])
+        for a_id, a in obj['activityFlow'].iteritems():
+            p_id = self.get_plan_id(a_id)
+            hs_activities = HadStep.objects.filter(activityFlow=a_id)
+            for hs in hs_activities:
+                w_id = self.add_relationnamespace(i)
+                wasAssociatedWith[w_id] = {'prov:activity': hs.activity.id, 'prov:plan': p_id, 'voprov:class': 'hadStep'}
+                i += 1
 
+            # link plan with activityFlow itself
+            w_id = self.add_relationnamespace(i)
+            wasAssociatedWith[w_id] = {'prov:activity': a_id, 'prov:plan': p_id, 'voprov:class': 'hadStep'}
+            i += 1
         return wasAssociatedWith
 
     def get_wasAttributedTo(self, obj):
@@ -387,6 +407,9 @@ class ProvenanceSerializer(serializers.Serializer):
 
         return data
 
+    def get_plan_id(self, a_id):
+        p_id = "%s_plan" % a_id
+        return p_id
 
 # IVOA specific serializers
 class VOActivitySerializer(NonNullCustomSerializer):
@@ -542,7 +565,7 @@ class VOProvenanceSerializer(serializers.Serializer):
         activity = {}
         for a_id, a in obj['activity'].iteritems():
             data = VOActivitySerializer(a).data
-            activity[a_id] = data #self.restructure_qualifiers(data)
+            activity[a_id] = data
 
         return activity
 
@@ -681,7 +704,8 @@ class VOProvenanceSerializer(serializers.Serializer):
 
 class ProvenanceGraphSerializer(serializers.Serializer):
     # Create a serialization for usage with d3.js library or similar
-    # for graphical representation of the provenance record
+    # for graphical representation of the provenance record,
+    # for usage with VO only??
 
     nodes = serializers.SerializerMethodField()
     links = serializers.SerializerMethodField()
@@ -732,13 +756,24 @@ class ProvenanceGraphSerializer(serializers.Serializer):
 
         for r_id, r in obj['wasAssociatedWith'].iteritems():
             value = 0.2
-            links.append({
-                'source': map_nodes_ids[r.agent.id],
-                'target': map_nodes_ids[r.activity.id],
-                'value': value,
-                'type': 'wasAssociatedWith'
-            })
-            count_links += 1
+            # if there is an agent, link to it:
+            if r.agent.id:
+                links.append({
+                    'source': map_nodes_ids[r.agent.id],
+                    'target': map_nodes_ids[r.activity.id],
+                    'value': value,
+                    'type': 'wasAssociatedWith'
+                })
+                count_links += 1
+            # if there is a plan, also link to it:
+            # if r.plan.id:
+            #     links.append({
+            #         'source': map_nodes_ids[r.plan.id],
+            #         'target': map_nodes_ids[r.activity.id],
+            #         'value': value,
+            #         'type': 'wasAssociatedWith'
+            #     })
+            #     count_links += 1
 
         for r_id, r in obj['wasAttributedTo'].iteritems():
             value = 0.2

@@ -123,21 +123,36 @@ Uploading to ProvStore works for rave.json
 * merge find_entity_graph with find_entity etc. to avoid code repetition
 * use different api-root for W3C and IVOA (rest framework)
 * fix datetime (UTC)
+
 * finish implementing activityFlow:
-    - include in javascript (extra color for this; also in force-directed!)
+    - serialize in W3C:
+        + create a bundle (new model class!) with all hadStep-activities, including wasInformedBy?
+        + link bundle as input (Used) to the activity-flow activity
+        + ? Do we need to enforce that all activities of a pipeline are linked via wasInformedBy? => no, can be linked via wasGeneratedBy and used as well.
     - auto-generate wasGeneratedBy and used-relationships? Or insert?
         + (but cannot know, which entities are used outside of act. flow and which not! => Have to assume that they all are important.)
     - graphical view: choose viewLevel, show/hide details inside activityFlow
 
+* Need additional ActivityCollection for grouping all the individual observations to one?
+* Implement bundles for grouping provenance records (and also for prov. of prov.) -- could use a new bundle class (model), temporarily create a bundle-thing with list of activities, entities, agents etc. and then create a bundle serializer.
+* add prov-namespace in the renderer after all? I.e. serializer just deals with renaming and restructuring, renderer adds namespaces and omits null-fields; it may be better to expose the real underlying data as the REST API,
+i.e. using the non-namespaced and not renamed fields.
+
 * ProvDAL:
     * Allow to enter an activity id as well
+
+* add activityflow to provn-renderer as well
+
+* Question: Follow provenance of hadMember and hadStep relations for children? Or just for the parents?
+    - Problem was, that provenance of rave:act_irafReduction returned complete prov. records because children of activityFlow rave_pipeline were followed.
+    - Could be avoided by ignoring hadMember/hadStep , children side.
 
 ### Soon
 * write a general prov-app, with abstract classes; make a new app for each project, derive project-specific classes from abstract classes
     => reusable prov-app as core library
 
 ###  At some point later in the future
-* maybe use a proper namespace-solution after all?
+* maybe use a proper namespace-solution after all? For the serialisation?
 * add datatypes ($, type) where needed for json and provn serialization
 
 
