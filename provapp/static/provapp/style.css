@@ -133,6 +133,15 @@ svg {
   fill: #fed37f;
 }
 
+.link.hadStep {
+  stroke: #7f83fe;
+  fill: none;
+}
+.marker.hadStep {
+  stroke: #7f83fe;
+  fill: #7f83fe;
+}
+
 .link.wasAssociatedWith {
   /*stroke-dasharray: 0,2 1;*/
   stroke: #ccc;
@@ -149,6 +158,16 @@ svg {
   fill: none;
 }
 .marker.wasDerivedFrom {
+  stroke: #aaa;
+  fill: #aaa;
+}
+
+.link.wasInformedBy {
+  stroke-dasharray: 0,2 1;
+  stroke: #aaa;
+  fill: none;
+}
+.marker.wasInformedBy {
   stroke: #aaa;
   fill: #aaa;
 }
@@ -183,6 +202,10 @@ circle {
 
 .activity {
   fill: #9fb1fc; 
+  stroke: #0000ff;
+}
+.activityFlow {
+  fill: #6f56f6; 
   stroke: #0000ff;
 }
 

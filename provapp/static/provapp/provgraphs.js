@@ -97,15 +97,17 @@ d3.json(jsonurl, function(prov) {
 // First draw some lines for a simple legend
 var svg3 = d3.select("#force-legend").append("svg")
             .attr("width", 300)
-            .attr("height", 65);
+            .attr("height", 80);
 
 var lineData = [
   { "x1": 5, "y1": 15, "x2": 40, "y2": 15, "name": "used" },
   { "x1": 5, "y1": 30, "x2": 40, "y2": 30, "name": "wasGeneratedBy" },
   { "x1": 5, "y1": 45, "x2": 40, "y2": 45, "name": "hadMember" },
+  { "x1": 5, "y1": 60, "x2": 40, "y2": 60, "name": "hadStep" },
   { "x1": 155, "y1": 15, "x2": 190, "y2": 15, "name": "wasAssociatedWith" },
   { "x1": 155, "y1": 30, "x2": 190, "y2": 30, "name": "wasAttributedTo" },
   { "x1": 155, "y1": 45, "x2": 190, "y2": 45, "name": "wasDerivedFrom" },
+  { "x1": 155, "y1": 60, "x2": 190, "y2": 60, "name": "wasInformedBy" },
   ];
 
 var lines = svg3.selectAll("line")
@@ -159,7 +161,7 @@ d3.json(jsonurl, function(prov) {
 
   // Per-type markers, as they don't inherit styles.
   svg2.append("defs").selectAll("marker")
-      .data(["used", "wasGeneratedBy", "wasAssociatedWith", "wasAssociatedWith", "hadMember", "wasDerivedFrom"])
+      .data(["used", "wasGeneratedBy", "wasAssociatedWith", "wasAssociatedWith", "hadMember", "wasDerivedFrom", "hadStep", "wasInformedBy"])
     .enter().append("marker")
       .attr("id", function(d) { return d; })
       .attr("viewBox", "0 -5 10 10")
@@ -213,6 +215,15 @@ d3.json(jsonurl, function(prov) {
       .attr("height", 18)
       .call(force.drag);
 
+  var rectangle2 = shapes.append("rect")
+      .filter(function(d){ return d.type == "activityFlow"; })
+      .attr("class", function(d) { return d.type; })
+      .attr("x", -14)
+      .attr("y", -9)
+      .attr("width", 28)
+      .attr("height", 18)
+      .call(force.drag);
+
   var text = svg2.append("g").selectAll("text")
       .data(force.nodes())
     .enter().append("text")
@@ -226,6 +237,7 @@ d3.json(jsonurl, function(prov) {
     ellipse.attr("transform", transform);
     polygon.attr("transform", transform);
     rectangle.attr("transform", transform);
+    rectangle2.attr("transform", transform);
     text.attr("transform", transform);
   }
 
