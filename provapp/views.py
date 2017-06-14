@@ -36,6 +36,7 @@ from .models import (
     WasInformedBy,
     ActivityFlow,
     Collection,
+    #Bundle,
     RaveObsids
 )
 
@@ -49,9 +50,9 @@ from .serializers import (
     WasAttributedToSerializer,
     HadMemberSerializer,
     WasDerivedFromSerializer,
-    # ActivityFlowSerializer,
+    WasInformedBySerializer,
     CollectionSerializer,
-    ProvenanceSerializer,
+    W3CProvenanceSerializer,
     VOProvenanceSerializer,
     ProvenanceGraphSerializer
 )
@@ -224,7 +225,7 @@ def allprov(request, format):
     #return render(request, 'provapp/activities.html', {'activity_list': activity_list})
 
     # serialize it (W3C):
-    serializer = ProvenanceSerializer(prov)
+    serializer = W3CProvenanceSerializer(prov)
     data = serializer.data
 
     # write provenance information in desired format:
@@ -444,12 +445,12 @@ def provdal_form(request):
         if form.is_valid():
         # process the data in form.cleaned_data as required
             try:
-                entity_id = form.cleaned_data['entity_id']
+                obj_id = form.cleaned_data['obj_id']
                 step = form.cleaned_data['step_flag']
                 format = form.cleaned_data['format']
                 compliance = form.cleaned_data['model']
 
-                return HttpResponseRedirect(reverse('provapp:provdal')+"?ID=%s&STEP=%s&FORMAT=%s&MODEL=%s" % (str(entity_id), str(step), str(format), str(compliance)))
+                return HttpResponseRedirect(reverse('provapp:provdal')+"?ID=%s&STEP=%s&FORMAT=%s&MODEL=%s" % (str(obj_id), str(step), str(format), str(compliance)))
 
             except ValueError:
                 form = ProvDalForm(request.POST)
@@ -468,17 +469,32 @@ def provdal(request):
 
     # entity_id = request.GET.get('ID') #default: None
     # There can be more than one ID given, so:
-    entity_list = request.GET.getlist('ID')
+    id_list = request.GET.getlist('ID')
     step_flag = request.GET.get('STEP', 'LAST') # can be LAST or ALL
     format = request.GET.get('FORMAT', 'PROV-N') # can be PROV-N, PROV-JSON, VOTABLE
     model = request.GET.get('MODEL', 'IVOA')  # one of IVOA, W3C (or None?)
 
     if format == 'GRAPH':
         ids = ''
-        for e in entity_list:
-            ids += 'ID=%s&' % e
+        for i in id_list:
+            ids += 'ID=%s&' % i
         return render(request, 'provapp/provdal_graph.html',
             {'url': reverse('provapp:provdal') + "?%sSTEP=%s&FORMAT=GRAPH-JSON&MODEL=%s" % (ids, str(step_flag), str(model))})
+
+    # check step_flag, store as 'follow' for provenance functions
+    if step_flag == "ALL":
+        # will search for further provenance, recursively
+        follow = True
+    elif step_flag == "LAST":
+        # will just go back one step (backwards in time)
+        follow = False
+    else:
+        # raise error: not supported
+        raise ValidationError(
+            'Invalid value: %(value)s is not supported',
+            code='invalid',
+            params={'value': step_flag},
+        )
 
     prefix = {
         "rave": "http://www.rave-survey.org/prov/",
@@ -494,7 +510,7 @@ def provdal(request):
         'activity': {},
         'activityFlow': {},
         'entity': {},
-        'collection': {},  # not used, yet
+        'collection': {},  # not used, yet, stored with entities
         'agent': {},
         'used': {},
         'wasGeneratedBy': {},
@@ -506,38 +522,36 @@ def provdal(request):
         'wasInformedBy': {}
     }
 
-    # Note: even if collection class used, Entity.objects.all() still contains all entities
-    for entity_id in entity_list:
+    # Note: even if collection class is used, Entity.objects.all() still contains all entities
+    for obj_id in id_list:
 
         try:
-            entity = Entity.objects.get(id=entity_id)
-        except Entity.DoesNotExist:
-            entity = None
-            #return HttpResponse(provstr, content_type='text/plain')
-
-        # store current entity in dict:
-        if entity is not None:
+            entity = Entity.objects.get(id=obj_id)
+            # store current entity in dict and search for provenance:
             prov['entity'][entity.id] = entity
-            if step_flag == "ALL":
-                # search for further provenance, recursively
-                prov = utils.find_entity(entity, prov, follow=True)
-            elif step_flag == "LAST":
-                # just go back one step (to the next entity)
-                prov = utils.find_entity(entity, prov, follow=False)
-            else:
-                # raise error: not supported
-                raise ValidationError(
-                    'Invalid value: %(value)s is not supported',
-                    code='invalid',
-                    params={'value': step_flag},
-                )
+            prov = utils.find_entity(entity, prov, follow=follow)
+        except Entity.DoesNotExist:
+            pass
+            # do not return, just continue with other ids
+            # (and if none of them exists, return empty provenance record)
+
+        try:
+            activity = Activity.objects.get(id=obj_id)
+            # or store current activity and search for its provenance
+            activity_type = utils.get_activity_type(obj_id)
+
+            prov[activity_type][activity.id] = activity
+            prov = utils.find_activity(activity, prov, follow=follow)
+        except Activity.DoesNotExist:
+            pass
+
 
     # The prov dictionary now contains the complete provenance information,
     # for all given entity ids,
     # in the form of a dictionary of querysets. First serialize them according to
     # the specified model.
     if model == "W3C":
-        serializer = ProvenanceSerializer(prov)
+        serializer = W3CProvenanceSerializer(prov)
     elif model == "IVOA":
         serializer = VOProvenanceSerializer(prov)
     else:

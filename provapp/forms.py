@@ -35,11 +35,11 @@ class ObservationIdForm(forms.Form):
         return desired_obs #{'rave_obsid': desired_obs, 'detail_flag': desired_detail}
 
 class ProvDalForm(forms.Form):
-    entity_id = forms.CharField(
-        label='Entity ID',
+    obj_id = forms.CharField(
+        label='Entity or activity ID',
         max_length=1024,
         widget=forms.TextInput(attrs={'size':36}),
-        help_text="Please enter the identifier for an entity, e.g. rave:20030411_1507m23_001 or rave:20121220_0752m38_089",
+        help_text="Please enter the identifier for an entity (e.g. rave:20030411_1507m23_001 or rave:20121220_0752m38_089) or an activity (e.g. rave:act_irafReduction)",
     )
 
     step_flag = forms.ChoiceField(
