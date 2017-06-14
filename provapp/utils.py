@@ -291,21 +291,22 @@ def find_activity(activity, prov, follow=True):
         prov['hadStep'][h.id] = h
 
     # hadStep, other direction
-    queryset = HadStep.objects.filter(activityFlow=activity.id)
-    for h in queryset:
-        print "ActivityFlow " + h.activityFlow.id + " hadStep activity ", h.activity.id
+    # -> do not follow this, may be too much!
+    # queryset = HadStep.objects.filter(activityFlow=activity.id)
+    # for h in queryset:
+    #     print "ActivityFlow " + h.activityFlow.id + " hadStep activity ", h.activity.id
 
-        # add activity, if not yet done
-        activity_type = get_activity_type(h.activity.id)
-        if h.activity.id not in prov[activity_type]:
-            prov[activity_type][h.activity.id] = h.activity
+    #     # add activity, if not yet done
+    #     activity_type = get_activity_type(h.activity.id)
+    #     if h.activity.id not in prov[activity_type]:
+    #         prov[activity_type][h.activity.id] = h.activity
 
-            # follow provenance along this activity(flow)
-            if follow:
-                prov = find_activity(h.activity, prov, follow=True)
+    #         # follow provenance along this activity(flow)
+    #         #if follow:
+    #         #    prov = find_activity(h.activity, prov, follow=True)
 
-        # add relationship to prov
-        prov['hadStep'][h.id] = h
+    #     # add relationship to prov
+    #     prov['hadStep'][h.id] = h
 
 
 
