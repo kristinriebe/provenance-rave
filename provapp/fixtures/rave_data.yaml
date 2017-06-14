@@ -71,6 +71,7 @@
     annotation: observation within RAVE project, startTime: !!timestamp '2012-12-20T16:19:23', endTime: !!timestamp '2012-12-20T16:19:23'}
 - model: provapp.activity
   pk: rave:act_observations
+  # introduce dmtype to specify that this is an activityFlow?
   fields: {name: RAVE Observations, type: 'obs:Observation', annotation: 'RAVE observations,
       data release 4', startTime: !!timestamp '2003-04-11 14:42:16', endTime: !!timestamp '2012-05-27T17:05:00', 
       doculink: 'RAVE DR4: Kordopatis et al. 2013, AJ, 146, Issue 5, article id. 134, pp.421-451'}
@@ -83,62 +84,121 @@
   fields: {name: Stellar Pipeline, type: 'obs:Reduction', annotation: Stellar pipeline as described in DR4 paper,
       doculink: 'RAVE DR4: Kordopatis et al. 2013, AJ, 146, Issue 5, article id. 134, pp.421-451'}
 - model: provapp.activity
-  pk: rave:rave_pipeline
+  pk: rave:act_pipeline
   fields:
     name: RAVE Pipeline
-    type: 'voprov:ActivityFlow'
-    annotation: 'includes the main steps from observation to data release'
+    type: 'voprov:Pipeline'
+    annotation: 'includes the main processing steps between observations and data release'
 
 
 # ActivityFlow
 - model: provapp.activityflow
-  pk: rave:rave_pipeline
+  pk: rave:act_pipeline
   fields:
-      activity_ptr: rave:rave_pipeline
+      activity_ptr: rave:act_pipeline
+- model: provapp.activityflow
+  pk: rave:act_observations
+  fields:
+      activity_ptr: rave:act_observations
+
 
 # HadStep
+# -- hadStep for pipeline
 - model: provapp.hadstep
   pk: 0
   fields:
-    activityFlow: 'rave:rave_pipeline'
+    activityFlow: 'rave:act_pipeline'
     activity: 'rave:act_sparvPipeline'
 - model: provapp.hadstep
   pk: 1
   fields:
-    activityFlow: 'rave:rave_pipeline'
+    activityFlow: 'rave:act_pipeline'
     activity: rave:act_irafReduction
 - model: provapp.hadstep
   pk: 2
   fields:
-    activityFlow: 'rave:rave_pipeline'
+    activityFlow: 'rave:act_pipeline'
     activity: rave:act_chemicalPipeline
 - model: provapp.hadstep
   pk: 3
   fields:
-    activityFlow: 'rave:rave_pipeline'
+    activityFlow: 'rave:act_pipeline'
     activity: rave:act_stellarPipeline
 - model: provapp.hadstep
   pk: 4
   fields:
-    activityFlow: 'rave:rave_pipeline'
+    activityFlow: 'rave:act_pipeline'
     activity: rave:act_distancesZwitter
 - model: provapp.hadstep
   pk: 5
   fields:
-    activityFlow: 'rave:rave_pipeline'
+    activityFlow: 'rave:act_pipeline'
     activity: rave:act_distancesBinney
 - model: provapp.hadstep
   pk: 6
   fields:
-    activityFlow: 'rave:rave_pipeline'
+    activityFlow: 'rave:act_pipeline'
     activity: rave:act_dataextraction
 - model: provapp.hadstep
   pk: 7
   fields:
-    activityFlow: 'rave:rave_pipeline'
+    activityFlow: 'rave:act_pipeline'
     activity: rave:act_classificationPipeline
 
-# WasInformedBy
+# -- hadStep for observations
+- model: provapp.hadstep
+  pk: 8
+  fields:
+    activityFlow: 'rave:act_observations'
+    activity: rave:act_observation_UK-SCHM_20121220_143027
+- model: provapp.hadstep
+  pk: 9
+  fields:
+    activityFlow: 'rave:act_observations'
+    activity: rave:act_observation_UK-SCHM_20121220_143220
+- model: provapp.hadstep
+  pk: 10
+  fields:
+    activityFlow: 'rave:act_observations'
+    activity: rave:act_observation_UK-SCHM_20121220_143312
+- model: provapp.hadstep
+  pk: 11
+  fields:
+    activityFlow: 'rave:act_observations'
+    activity: rave:act_observation_UK-SCHM_20121220_143403
+- model: provapp.hadstep
+  pk: 12
+  fields:
+    activityFlow: 'rave:act_observations'
+    activity: rave:act_observation_UK-SCHM_20121220_143455
+- model: provapp.hadstep
+  pk: 13
+  fields:
+    activityFlow: 'rave:act_observations'
+    activity: rave:act_observation_UK-SCHM_20121220_143546
+- model: provapp.hadstep
+  pk: 14
+  fields:
+    activityFlow: 'rave:act_observations'
+    activity: rave:act_observation_UK-SCHM_20121220_144638
+- model: provapp.hadstep
+  pk: 15
+  fields:
+    activityFlow: 'rave:act_observations'
+    activity: rave:act_observation_UK-SCHM_20121220_151810
+- model: provapp.hadstep
+  pk: 16
+  fields:
+    activityFlow: 'rave:act_observations'
+    activity: rave:act_observation_UK-SCHM_20121220_154846
+- model: provapp.hadstep
+  pk: 17
+  fields:
+    activityFlow: 'rave:act_observations'
+    activity: rave:act_observation_UK-SCHM_20121220_161923
+
+
+# WasInformedBy (just some examples)
 - model: provapp.wasinformedby
   pk: 0
   fields:
@@ -157,6 +217,11 @@
 
 
 # Entity
+- model: provapp.entity
+  pk: rave:20121220_0752m383
+  fields: {name: Dataset 20121220_0752m383, type: 'prov:collection', annotation: 'collection of 17 original fits files for the same date, with different exposures', 
+    rights: 'voprov:restricted',
+    dataType: directory, storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE_ORIG/20121220/'}
 - model: provapp.entity
   pk: rave:0645m522I0049_wav_fits
   fields: {name: 0645m522I0049.wav.fits, type: 'voprov:image', annotation: A processed
@@ -476,8 +541,10 @@
     pk: rave:sparvProcessedData_spectra
     fields:
         entity_ptr: rave:sparvProcessedData_spectra
-
-
+-   model: provapp.collection
+    pk: rave:20121220_0752m383
+    fields:
+        entity_ptr: rave:20121220_0752m383
 
 # Agent
 - model: provapp.agent
@@ -673,11 +740,15 @@
   pk: 49
   fields: {activity: 'rave:act_dataextraction', entity: 'rave:20121220_0752m38_rvsun_089_cont_txt',
     role: continuum subtracted spectrum}
+- model: provapp.used
+  pk: 41
+  fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383',
+    role: raw images}
 
 # WasGeneratedBy
 - model: provapp.wasgeneratedby
   pk: 0
-  fields: {entity: 'rave:fits_orig', activity: 'rave:act_observations'}
+  fields: {entity: 'rave:20121220_0752m383', activity: 'rave:act_observations'}
 - model: provapp.wasgeneratedby
   pk: 1
   fields: {entity: 'rave:irafReduced', activity: 'rave:act_irafReduction'}
@@ -774,6 +845,12 @@
 - model: provapp.wasgeneratedby
   pk: 32
   fields: {entity: 'rave:20121220_0752m38_089', activity: 'rave:act_dataextraction'}
+- model: provapp.wasgeneratedby
+  pk: 33
+  fields: {entity: 'rave:fits_orig', activity: 'rave:act_observations'}
+
+
+# HadMember
 - model: provapp.hadmember
   pk: 0
   fields: {collection: 'rave:ravedr4', entity: 'rave:DR4_RAVEDR4'}
@@ -852,6 +929,64 @@
 - model: provapp.hadmember
   pk: 26
   fields: {collection: 'rave:DR4_RAVEDR4', entity: 'rave:20030411_1507m23_004'}
+
+- model: provapp.hadmember
+  pk: 27
+  fields:
+    collection: 'rave:fits_orig'
+    entity: 'rave:20121220_0752m383'
+- model: provapp.hadmember
+  pk: 28
+  fields:
+    collection: 'rave:20121220_0752m383'
+    entity: 'rave:20121220_0752m383I00001_fits'
+- model: provapp.hadmember
+  pk: 29
+  fields:
+    collection: 'rave:20121220_0752m383'
+    entity: 'rave:20121220_0752m383I00002_fits'
+- model: provapp.hadmember
+  pk: 30
+  fields:
+    collection: 'rave:20121220_0752m383'
+    entity: 'rave:20121220_0752m383I00003_fits'
+- model: provapp.hadmember
+  pk: 31
+  fields:
+    collection: 'rave:20121220_0752m383'
+    entity: 'rave:20121220_0752m383I00004_fits'
+- model: provapp.hadmember
+  pk: 32
+  fields:
+    collection: 'rave:20121220_0752m383'
+    entity: 'rave:20121220_0752m383I00005_fits'
+- model: provapp.hadmember
+  pk: 33
+  fields:
+    collection: 'rave:20121220_0752m383'
+    entity: 'rave:20121220_0752m383I00006_fits'
+- model: provapp.hadmember
+  pk: 34
+  fields:
+    collection: 'rave:20121220_0752m383'
+    entity: 'rave:20121220_0752m383I00007_fits'
+- model: provapp.hadmember
+  pk: 35
+  fields:
+    collection: 'rave:20121220_0752m383'
+    entity: 'rave:20121220_0752m383I00008_fits'
+- model: provapp.hadmember
+  pk: 36
+  fields:
+    collection: 'rave:20121220_0752m383'
+    entity: 'rave:20121220_0752m383I00009_fits'
+- model: provapp.hadmember
+  pk: 37
+  fields:
+    collection: 'rave:20121220_0752m383'
+    entity: 'rave:20121220_0752m383I00010_fits'
+
+# WasDerivedFrom
 - model: provapp.wasderivedfrom
   pk: 0
   fields: {generatedEntity: 'rave:irafReduced', usedEntity: 'rave:fits_orig'}
