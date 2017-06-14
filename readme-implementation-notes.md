@@ -18,6 +18,9 @@ I defined two main functions: `find_entity` and `find_activity`.
 ## Prov-DAL
 If a user asks for the provenance record of an entity with option "STEP=LAST", then I interprete it as one step *backwards in time*. I have cases where the backwards provenance of a data item is not recorded, only for the collection to which it belongs. With STEP=LAST I originally returned only 1 provenance relation for the data item, which did not include any "backwards" information (just the hadMember link). Now, in such a case, I track the collection's relations further until at least one wasGeneratedBy or one wasDerivedFrom link is found.
 
+The ID value for ProvDAL can now occur multiple times. It can be an entity or activity ID.
+
+
 ## Implementing Collection
 Entities that are collections and can have members are stored as Collection, 
 which is an inherited class from Entity. So far, the attributes are not different, thus when serializing/displaying a collection, it has the same attributes as an entity. Also, when loading collection data into the database, collections are stored in the entity-table and only additionally linked from the collection-table. I.e. when looking for an entity or a collection, it's still enough to do the lookup with the entity-table. But if one needs to make sure that something is a collection, then one should look it up in the collection-table.
@@ -97,6 +100,16 @@ If someone intends to use provenance records with VO-tools, these VO-tools may d
 
 Thus, I wrote VO-variants of the serializers for each model, which more directly map the model attributes and use "voprov" as namespace everywhere.
 
+
+### W3C serialization of ActivityFlow
+Since ActivityFlow and hadStep do not exist in W3C, they have to be represented differently. I chose to use a plan-entity for linking
+activities with their activityFlow. Thus, for each activityFlow one needs to:
+* include activityFlow with its attributes as activity; additional attribute voprov:class = 'voprov:activityFlow'
+* create a plan-entity, with an id derived from activityFlow id
+* for each hadStep-relation, add a wasAssociatedWith-relation, linking the step- activity with the plan of the activityFlow (and no agent); also link plan with activityFlow itself
+
+This is similar to what is shown in D-PROV for representing workflows with core W3C classes.
+
 ## Issues to be taken care of
 * provn serialization needs marker "-" for missing elements, e.g. for time in `used` and `wasGeneratedBy` relationship
 * all ids must be qualified (even for relations)
@@ -125,27 +138,23 @@ Uploading to ProvStore works for rave.json
 * fix datetime (UTC)
 
 * finish implementing activityFlow:
-    - serialize in W3C:
-        + create a bundle (new model class!) with all hadStep-activities, including wasInformedBy?
-        + link bundle as input (Used) to the activity-flow activity
-        + ? Do we need to enforce that all activities of a pipeline are linked via wasInformedBy? => no, can be linked via wasGeneratedBy and used as well.
     - auto-generate wasGeneratedBy and used-relationships? Or insert?
         + (but cannot know, which entities are used outside of act. flow and which not! => Have to assume that they all are important.)
-    - graphical view: choose viewLevel, show/hide details inside activityFlow
+    - graphical view: choose viewLevel, show/hide details inside activityFlow,
+        + properly show relations via plan for W3C representation
+    - add activityflow to provn-renderer as well
 
-* Need additional ActivityCollection for grouping all the individual observations to one?
 * Implement bundles for grouping provenance records (and also for prov. of prov.) -- could use a new bundle class (model), temporarily create a bundle-thing with list of activities, entities, agents etc. and then create a bundle serializer.
 * add prov-namespace in the renderer after all? I.e. serializer just deals with renaming and restructuring, renderer adds namespaces and omits null-fields; it may be better to expose the real underlying data as the REST API,
 i.e. using the non-namespaced and not renamed fields.
 
-* ProvDAL:
-    * Allow to enter an activity id as well
 
-* add activityflow to provn-renderer as well
 
-* Question: Follow provenance of hadMember and hadStep relations for children? Or just for the parents?
+### Question:
+* Follow provenance of hadMember and hadStep relations for children? Or just for the parents?
     - Problem was, that provenance of rave:act_irafReduction returned complete prov. records because children of activityFlow rave_pipeline were followed.
     - Could be avoided by ignoring hadMember/hadStep , children side.
+* Need additional ActivityCollection for grouping all the individual observations to one?
 
 ### Soon
 * write a general prov-app, with abstract classes; make a new app for each project, derive project-specific classes from abstract classes
