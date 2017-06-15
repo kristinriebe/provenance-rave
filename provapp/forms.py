@@ -50,18 +50,18 @@ class ProvDalForm(forms.Form):
         initial='ALL'
     )
 
-    format = forms.ChoiceField(
-        label="Format",
-        choices=[('PROV-N', 'PROV-N'), ('PROV-JSON','PROV-JSON'), ('GRAPH', 'Graphics')],
-        widget=forms.RadioSelect(),
-        help_text="Format of returned provenance record",
-        initial='PROV-JSON'
-    )
-
     model = forms.ChoiceField(
         label="Data model",
         choices=[('IVOA','IVOA'), ('W3C', 'W3C')],
         widget=forms.RadioSelect(),
         help_text="Choose W3C for W3C Prov-DM compliant serialization",
         initial='W3C'
+    )
+
+    format = forms.ChoiceField(
+        label="Format",
+        choices=[('PROV-N', 'PROV-N'), ('PROV-JSON','PROV-JSON'), ('GRAPH', 'Graphics')],
+        widget=forms.RadioSelect(),
+        help_text="Format of returned provenance record",
+        initial='PROV-JSON'
     )
