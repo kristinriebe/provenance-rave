@@ -250,7 +250,7 @@ class W3CProvenanceSerializer(serializers.Serializer):
         # activities for W3C serialisation
         for a_id, a in obj['activityFlow'].iteritems():
             data = ActivitySerializer(a).data
-            data['voprov:class'] = 'voprov:activityFlow'
+            data['voprov:votype'] = 'voprov:activityFlow'
             activity[a_id] = data
         return activity
 
@@ -267,7 +267,7 @@ class W3CProvenanceSerializer(serializers.Serializer):
         # create a plan for each activityFlow
         for a_id, a in obj['activityFlow'].iteritems():
             p_id = self.get_plan_id(a_id)
-            entity[p_id] = {'prov:label': 'Plan for %s' % a.name, 'prov:type': 'prov:Plan'}
+            entity[p_id] = {'prov:id': '%s' % p_id, 'prov:label': 'Plan for %s' % a.name, 'prov:type': 'prov:Plan'}
         return entity
 
     def get_agent(self, obj):
@@ -311,12 +311,12 @@ class W3CProvenanceSerializer(serializers.Serializer):
             hs_activities = HadStep.objects.filter(activityFlow=a_id)
             for hs in hs_activities:
                 w_id = self.add_relationnamespace(i)
-                wasAssociatedWith[w_id] = {'prov:activity': hs.activity.id, 'prov:plan': p_id, 'voprov:class': 'hadStep'}
+                wasAssociatedWith[w_id] = {'prov:activity': hs.activity.id, 'prov:plan': p_id, 'voprov:votype': 'hadStep'}
                 i += 1
 
             # link plan with activityFlow itself
             w_id = self.add_relationnamespace(i)
-            wasAssociatedWith[w_id] = {'prov:activity': a_id, 'prov:plan': p_id, 'voprov:class': 'hadStep'}
+            wasAssociatedWith[w_id] = {'prov:activity': a_id, 'prov:plan': p_id, 'voprov:votype': 'hadStep'}
             i += 1
         return wasAssociatedWith
 

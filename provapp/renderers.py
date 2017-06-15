@@ -86,6 +86,19 @@ class ActivityPROVNRenderer(PROVNBaseRenderer):
 
         return string
 
+class ActivityFlowPROVNRenderer(PROVNBaseRenderer):
+
+    def render(self, activityFlow):
+        string = "activityFlow("\
+            + self.get_value(activityFlow, "id") + ", "\
+            + self.get_value(activityFlow, "startTime") + ", "\
+            + self.get_value(activityFlow, "endTime")\
+            + ")"
+
+        string = self.add_optional_attributes(string, activityFlow)
+
+        return string
+
 
 class EntityPROVNRenderer(PROVNBaseRenderer):
 
@@ -206,7 +219,6 @@ class WasDerivedFromPROVNRenderer(PROVNBaseRenderer):
     def render(self, wasDerivedFrom):
         string = "wasDerivedFrom("
 
-        # does not have an id nor optional attributes in W3C
         string = self.add_relation_id(string, wasDerivedFrom)
         string += self.get_value(wasDerivedFrom, "generatedEntity") + ", "
         string += self.get_value(wasDerivedFrom, "usedEntity") + ", "
@@ -217,6 +229,42 @@ class WasDerivedFromPROVNRenderer(PROVNBaseRenderer):
 
         # add all other optional attributes in []
         string = self.add_optional_attributes(string, wasDerivedFrom)
+
+        return string
+
+
+class HadStepPROVNRenderer(PROVNBaseRenderer):
+
+    def render(self, hadStep):
+        string = "hadStep("
+
+        string = self.add_relation_id(string, hadStep)
+        string += self.get_value(hadStep, "activityFlow") + ", "
+        string += self.get_value(hadStep, "activity")
+
+        string += ")"
+
+        # add all other optional attributes in []
+        string = self.add_optional_attributes(string, hadStep)
+
+        return string
+
+
+class WasInformedByPROVNRenderer(PROVNBaseRenderer):
+
+    def render(self, wasInformedBy):
+        string = "wasInformedBy("
+
+        string = self.add_relation_id(string, wasInformedBy)
+        string += self.get_value(wasInformedBy, "generatedEntity") + ", "
+        string += self.get_value(wasInformedBy, "usedEntity") + ", "
+        string += self.get_value(wasInformedBy, "activity") + ", "
+        string += self.get_value(wasInformedBy, "generation") + ", "
+        string += self.get_value(wasInformedBy, "usage")
+        string += ")"
+
+        # add all other optional attributes in []
+        string = self.add_optional_attributes(string, wasInformedBy)
 
         return string
 
@@ -236,6 +284,10 @@ class PROVNRenderer(PROVNBaseRenderer):
 
         for a_id, a in data['activity'].iteritems():
             string += ActivityPROVNRenderer().render(a) + "\n"
+
+        if 'activityFlow' in data:
+            for a_id, a in data['activityFlow'].iteritems():
+                string += ActivityFlowPROVNRenderer().render(a) + "\n"
 
         for e_id, e in data['entity'].iteritems():
             string += EntityPROVNRenderer().render(e) + "\n"
@@ -260,6 +312,14 @@ class PROVNRenderer(PROVNBaseRenderer):
 
         for w_id, w in data['wasDerivedFrom'].iteritems():
             string += WasDerivedFromPROVNRenderer().render(w) + "\n"
+
+        if 'hadStep' in data:
+            for h_id, h in data['hadStep'].iteritems():
+                string += HadStepPROVNRenderer().render(h) + "\n"
+
+        if 'wasInformedBy' in data:
+            for w_id, w in data['wasInformedBy'].iteritems():
+                string += WasInformedByPROVNRenderer().render(w) + "\n"
 
         string += "endDocument"
 
