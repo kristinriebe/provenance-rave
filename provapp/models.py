@@ -159,7 +159,7 @@ class HadStep(models.Model):
     activity = models.ForeignKey(Activity, related_name='activityFlow', null=True)
 
     def __str__(self):
-        return "id=%s; collection=%s; entity=%s; role=%s" % (str(self.id), self.collection, self.entity, self.role)
+        return "id=%s; activityFlow=%s; activity=%s" % (str(self.id), self.activityFlow, self.activity)
 
 
 @python_2_unicode_compatible
