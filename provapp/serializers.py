@@ -144,7 +144,7 @@ class AgentSerializer(NonNullCustomSerializer):
 
     prov_id = CustomCharField(source='id', custom_field_name='prov:id')
     prov_type = CustomCharField(source='type', custom_field_name='prov:type')
-    voprov_name = CustomCharField(source='name', custom_field_name='voprov:name')
+    voprov_name = CustomCharField(source='name', custom_field_name='prov:label')
     voprov_email = CustomCharField(source='email', custom_field_name='voprov:email')
     prov_description = CustomCharField(source='annotation', custom_field_name='prov:description')
 
@@ -302,22 +302,24 @@ class W3CProvenanceSerializer(serializers.Serializer):
             data = WasAssociatedWithSerializer(w).data
             w_id = self.add_relationnamespace(w_id)
             wasAssociatedWith[w_id] = self.restructure_relations(data)
-            print 'wa: ', wasAssociatedWith[w_id]
+
         # link activities of an activityFlow with its plan
         result = WasAssociatedWith.objects.aggregate(Max('id'))
         i = int(result['id__max'])
+
+        for hs_id, hs in obj['hadStep'].iteritems():
+            p_id = self.get_plan_id(hs.activityFlow.id)
+            w_id = self.add_relationnamespace(i)
+            wasAssociatedWith[w_id] = {'prov:activity': hs.activity.id, 'prov:plan': p_id, 'voprov:votype': 'hadStep'}
+            i += 1
+
+        # link plan with activityFlow itself
         for a_id, a in obj['activityFlow'].iteritems():
             p_id = self.get_plan_id(a_id)
-            hs_activities = HadStep.objects.filter(activityFlow=a_id)
-            for hs in hs_activities:
-                w_id = self.add_relationnamespace(i)
-                wasAssociatedWith[w_id] = {'prov:activity': hs.activity.id, 'prov:plan': p_id, 'voprov:votype': 'hadStep'}
-                i += 1
-
-            # link plan with activityFlow itself
             w_id = self.add_relationnamespace(i)
             wasAssociatedWith[w_id] = {'prov:activity': a_id, 'prov:plan': p_id, 'voprov:votype': 'hadStep'}
             i += 1
+
         return wasAssociatedWith
 
     def get_wasAttributedTo(self, obj):
@@ -410,6 +412,7 @@ class W3CProvenanceSerializer(serializers.Serializer):
     def get_plan_id(self, a_id):
         p_id = "%s_plan" % a_id
         return p_id
+
 
 # IVOA specific serializers
 class VOActivitySerializer(NonNullCustomSerializer):
@@ -703,16 +706,32 @@ class VOProvenanceSerializer(serializers.Serializer):
 
 
 class ProvenanceGraphSerializer(serializers.Serializer):
-    # Create a serialization for usage with d3.js library or similar
-    # for graphical representation of the provenance record,
-    # for usage with VO only??
+    # Restructure an already serialized prov-dataset (dictionary),
+    # for usage with d3.js library or similar,
+    # for graphical representation of the provenance record
+    _model = ""
 
     nodes = serializers.SerializerMethodField()
     links = serializers.SerializerMethodField()
 
     _map_nodes_ids = {}    # maps ids of nodes to integers, for use in links-list
 
-    def get_nodes(self, obj): # is a list
+    def __init__(self, obj, model="IVOA"):
+        serializers.Serializer.__init__(self, obj)
+        self._model = model
+
+
+    def get_nodes(self, obj):
+        print 'nodes model: ', self._model
+        if self._model == 'IVOA':
+            name = 'voprov:name'
+            nid = 'voprov:id'
+        elif self._model == 'W3C':
+            name = 'prov:label'
+            nid = 'prov:id'
+        else:
+            name = 'id'
+            nid = 'id'
 
         nodes = []
         count_nodes = 0
@@ -722,107 +741,135 @@ class ProvenanceGraphSerializer(serializers.Serializer):
         for key in ['activity', 'entity', 'agent', 'activityFlow', 'collection']:
             if key in obj:
                 for n_id, n in obj[key].iteritems():
-                    nodes.append({'name': n.name, 'type': key})
-                    map_nodes_ids[n.id] = count_nodes
+                    print 'key, node: ', key, n[name], n[nid]
+                    nodes.append({'name': n[name], 'type': key})
+                    map_nodes_ids[n[nid]] = count_nodes
                     count_nodes += 1
         self._map_nodes_ids = map_nodes_ids
         return nodes
 
     def get_links(self, obj):
         # relations
+
+        if self._model == 'IVOA':
+            ns = 'voprov'
+        elif self._model == 'W3C':
+            ns = 'prov'
+        else:
+            ns = '_'
+
         map_nodes_ids = self._map_nodes_ids
         links = []
         count_links = 0
 
-        for r_id, r in obj['used'].iteritems():
-            value = 0.5
-            links.append({
-                'source': map_nodes_ids[r.activity.id],
-                'target': map_nodes_ids[r.entity.id],
-                'value': value,
-                'type': 'used'
-            })
-            count_links += 1
-
-        for r_id, r in obj['wasGeneratedBy'].iteritems():
-            value = 0.5
-            links.append({
-                'source': map_nodes_ids[r.entity.id],
-                'target': map_nodes_ids[r.activity.id],
-                'value': value,
-                'type': 'wasGeneratedBy'
-            })
-            count_links += 1
-
-        for r_id, r in obj['wasAssociatedWith'].iteritems():
-            value = 0.2
-            # if there is an agent, link to it:
-            if r.agent.id:
+        if 'used' in obj:
+            for r_id, r in obj['used'].iteritems():
+                value = 0.5
                 links.append({
-                    'source': map_nodes_ids[r.agent.id],
-                    'target': map_nodes_ids[r.activity.id],
+                    'source': map_nodes_ids[r[self.add_namespace('activity', ns)]],
+                    'target': map_nodes_ids[r[self.add_namespace('entity', ns)]],
                     'value': value,
-                    'type': 'wasAssociatedWith'
+                    'type': 'used'
                 })
                 count_links += 1
-            # if there is a plan, also link to it:
-            # if r.plan.id:
-            #     links.append({
-            #         'source': map_nodes_ids[r.plan.id],
-            #         'target': map_nodes_ids[r.activity.id],
-            #         'value': value,
-            #         'type': 'wasAssociatedWith'
-            #     })
-            #     count_links += 1
 
-        for r_id, r in obj['wasAttributedTo'].iteritems():
-            value = 0.2
-            links.append({
-                'source': map_nodes_ids[r.agent.id],
-                'target': map_nodes_ids[r.entity.id],
-                'value': value,
-                'type': 'wasAttributedTo'
-            })
-            count_links += 1
+        if 'wasGeneratedBy' in obj:
+            for r_id, r in obj['wasGeneratedBy'].iteritems():
+                value = 0.5
+                links.append({
+                    'source': map_nodes_ids[r[self.add_namespace('entity', ns)]],
+                    'target': map_nodes_ids[r[self.add_namespace('activity', ns)]],
+                    'value': value,
+                    'type': 'wasGeneratedBy'
+                })
+                count_links += 1
 
-        for r_id, r in obj['hadMember'].iteritems():
-            value = 0.2
-            links.append({
-                'source': map_nodes_ids[r.collection.id],
-                'target': map_nodes_ids[r.entity.id],
-                'value': value,
-                'type': 'hadMember'
-            })
-            count_links += 1
+        if 'wasAssociatedWith' in obj:
+            for r_id, r in obj['wasAssociatedWith'].iteritems():
+                print r
+            for r_id, r in obj['wasAssociatedWith'].iteritems():
+                value = 0.2
+                # if there is an agent, link to it:
+                if self.add_namespace('agent', ns) in r:
+                    links.append({
+                        'source': map_nodes_ids[r[self.add_namespace('agent', ns)]],
+                        'target': map_nodes_ids[r[self.add_namespace('activity', ns)]],
+                        'value': value,
+                        'type': 'wasAssociatedWith'
+                    })
+                    count_links += 1
+                    print "wasAss: ", r[self.add_namespace('agent', ns)], r[self.add_namespace('activity', ns)]
+                # if there is a plan, also link to it:
+                if self.add_namespace('plan', ns) in r:
+                    print "wasAss - : ", self.add_namespace('plan', ns), self.add_namespace('activity', ns)
+                    print "wasAss: r ", r
+                    links.append({
+                        'source': map_nodes_ids[r[self.add_namespace('plan', ns)]],
+                        'target': map_nodes_ids[r[self.add_namespace('activity', ns)]],
+                        'value': value,
+                        'type': 'wasAssociatedWith'
+                    })
+                    count_links += 1
+                    print "wasAss: ", r[self.add_namespace('plan', ns)], r[self.add_namespace('activity', ns)]
 
-        for r_id, r in obj['wasDerivedFrom'].iteritems():
-            value = 0.2
-            links.append({
-                'source': map_nodes_ids[r.generatedEntity.id],
-                'target': map_nodes_ids[r.usedEntity.id],
-                'value': value,
-                'type': 'wasDerivedFrom'
-            })
-            count_links += 1
+        if 'wasAttributedTo' in obj:
+            for r_id, r in obj['wasAttributedTo'].iteritems():
+                value = 0.2
+                links.append({
+                    'source': map_nodes_ids[r[self.add_namespace('agent', ns)]],
+                    'target': map_nodes_ids[r[self.add_namespace('entity', ns)]],
+                    'value': value,
+                    'type': 'wasAttributedTo'
+                })
+                count_links += 1
 
-        for r_id, r in obj['hadStep'].iteritems():
-            value = 0.2
-            links.append({
-                'source': map_nodes_ids[r.activityFlow.id],
-                'target': map_nodes_ids[r.activity.id],
-                'value': value,
-                'type': 'hadStep'
-            })
-            count_links += 1
+        if 'hadMember' in obj:
+            for r_id, r in obj['hadMember'].iteritems():
+                value = 0.2
+                links.append({
+                    'source': map_nodes_ids[r[self.add_namespace('collection', ns)]],
+                    'target': map_nodes_ids[r[self.add_namespace('entity', ns)]],
+                    'value': value,
+                    'type': 'hadMember'
+                })
+                count_links += 1
 
-        for r_id, r in obj['wasInformedBy'].iteritems():
-            value = 0.2
-            links.append({
-                'source': map_nodes_ids[r.informed.id],
-                'target': map_nodes_ids[r.informant.id],
-                'value': value,
-                'type': 'wasInformedBy'
-            })
-            count_links += 1
+        if 'wasDerivedFrom' in obj:
+            for r_id, r in obj['wasDerivedFrom'].iteritems():
+                value = 0.2
+                links.append({
+                    'source': map_nodes_ids[r[self.add_namespace('generatedEntity', ns)]],
+                    'target': map_nodes_ids[r[self.add_namespace('usedEntity', ns)]],
+                    'value': value,
+                    'type': 'wasDerivedFrom'
+                })
+                count_links += 1
+
+        if 'hadStep' in obj:
+            for r_id, r in obj['hadStep'].iteritems():
+                value = 0.2
+                links.append({
+                    'source': map_nodes_ids[r[self.add_namespace('activityFlow', ns)]],
+                    'target': map_nodes_ids[r[self.add_namespace('activity', ns)]],
+                    'value': value,
+                    'type': 'hadStep'
+                })
+                count_links += 1
+
+        if 'wasInformedBy' in obj:
+            for r_id, r in obj['wasInformedBy'].iteritems():
+                value = 0.2
+                links.append({
+                    'source': map_nodes_ids[r[self.add_namespace('informed', ns)]],
+                    'target': map_nodes_ids[r[self.add_namespace('informant', ns)]],
+                    'value': value,
+                    'type': 'wasInformedBy'
+                })
+                count_links += 1
 
         return links
+
+    def add_namespace(self, value, namespace):
+        ns_value = "%s:%s" % (namespace, value)
+        #print " -- ns_value: ", ns_value
+        return ns_value

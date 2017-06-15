@@ -576,7 +576,7 @@ def provdal(request):
 
     elif format == "GRAPH-JSON":
         # need to re-structure the serialized data
-        serializer = ProvenanceGraphSerializer(prov) ## should use W3C or IVOA formatted data-structure here!!
+        serializer = ProvenanceGraphSerializer(data, model=model)
         prov_dict = serializer.data
         return JsonResponse(prov_dict)
 
