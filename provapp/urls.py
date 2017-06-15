@@ -38,7 +38,6 @@ urlpatterns = [
     # provdal form
     url(r'^provdal/$', views.provdal, name='provdal'),
     url(r'^provdalform/$', views.provdal_form, name='provdal_form'),
-    url(r'^provdal/graphjson$', views.provdal, name='provdal'),
 
     # graph overviews
     url(r'^graph/$', views.graph, name='graph'),
