@@ -48,11 +48,11 @@ class RaveObsids_TestCase(TestCase):
 class Activity_TestCase(TestCase):
 
     def setUp(self):
-        f = Activity.objects.create(id="rave:myid", label="mylabel")
+        f = Activity.objects.create(id="rave:myid", name="mylabel")
         f.save()
 
     def test_getActivity(self):
         qset = Activity.objects.get(id="rave:myid")
         #print(qset)
         #print("label: ", qset.label)
-        self.assertEqual(qset.label, "mylabel")
+        self.assertEqual(qset.name, "mylabel")
