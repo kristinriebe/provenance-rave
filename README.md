@@ -1,6 +1,10 @@
 # Provenance webapp for RAVE using Django
 This webapp is used as a testing environment for implementing the current IVOA Provenance Data Model, using metadata from the [RAVE](https://www.rave-project.org) project.
 
+A (more or less) live working example is available here (but may be outdated or broken any time):  
+
+https://escience.aip.de/provenance-rave/
+
 **Warning: This is at a very preliminary state, used only for testing purposes and object to many changes! No guarantees for anything!**
 
 ## Installation
@@ -84,53 +88,6 @@ and point a web browser to `localhost:8000`. Note that you can also provide a di
 
 The webapp should be visible in the browser and it should even work offline, since all libraries are stored in the directory: `provenance-rave/provapp/static`. For deploying the webapp on an apache webserver, see below.
 
-
-## Get a model graph
-If the `graphviz` library is installed additionally, an image of the models and their relations can be created automatically with:
-
-```shell
-python manage.py graph_models provapp -o provenance-models.png
-```
-
-This produces an image file `provenance-models.png`, which shows all models from provapp with their attributes and relations. Other output formats like `pdf` or `svg` are also supported.
-
-
-## Features
-This webapp allows to:
-
-* Retrieve information on activities, entities or agents from the database (list/detail view, using REST api)
-* Display a graphical representation of the (full) provenance graph (sankey, force-directed graph)
-* Get a PROVN-representation of the (full) provenance information (main path, using collections)
-* Get detailed (no collections) or basic (only collections) provenance graphs for a given `RAVE_OBS_ID` (but there are just 2 `RAVE_OBS_ID` included in data right now).
-* Prov-DAL endpoint: 
-    - Get provenance record in PROV-JSON or PROV-N format for any given entity id
-    - specify ID, STEP, FORMAT and also MODEL (IVOA or W3C) for serializations
-    - also allows multiple (entity) ids, e.g. via:
-      `http://localhost:8002/provapp/provdal/?ID=vo:UCAC4&ID=rave:20121220_0752m383I00009_fits&STEP=ALL&FORMAT=PROV-N&MODEL=W3C`
-    - additionally provides option to display retrieved data as interactive
-      graphical representation using javascript (d3.js)
-
-* Uses Django REST Framework for automatic list and detail views
-* Uses serializers for different model serialization (W3C/IVOA)
-* Use renderer for PROV-N
-
-
-## TODO:
-* Proper error handling
-* Write tests for checking all the functionality
-* Use MySQL database/remote database instead of Sqlite3
-
-* Implement xml serialization, votable serialization
-* Clean up, remove unnecessary parts
-* Use prov-json and provjs from W3C model and Southhamption Provenance tools instead of custom made json and javascript (?)
-* Use functions for detailed views, instead of loading everything into database?
-
-* Implement ActivityFlow
-* Implement Description side
-* Connect with real data from the real RAVE database
-* Write implementation report, including nice overview on used classes (graphical?), also see readme-implementation-notes.txt
-
-
 ## Deploying the webapp on an apache server with `mod_wsgi`.
 * Follow the installation steps on the web server, i.e. create a directory, clone the sources from GitHub, create a virtual environment, activate it and install the requirements. Then proceed as follows:
 
@@ -191,3 +148,28 @@ This webapp allows to:
 * Reload the webserver, e.g. on Debian: `service httpd reload`
 
 * Now open your web browser at the server specific address (e.g. http://localhost:8111/ or http://localhost/provenance-cosmosim/) and test the web application!
+## Get a model graph
+If the `graphviz` library is installed additionally, an image of the models and their relations can be created automatically with:
+
+```shell
+python manage.py graph_models provapp -o provenance-models.png
+```
+
+This produces an image file `provenance-models.png`, which shows all models from provapp with their attributes and relations. Other output formats like `pdf` or `svg` are also supported.
+
+## TODO:
+* Proper error handling
+* Write tests for checking all the functionality
+* Use MySQL database/remote database instead of Sqlite3
+
+* Implement xml serialization, votable serialization
+* Clean up, remove unnecessary parts
+* Use prov-json and provjs from W3C model and Southhamption Provenance tools instead of custom made json and javascript (?)
+* Use functions for detailed views, instead of loading everything into database?
+
+* Implement ActivityFlow
+* Implement Description side
+* Connect with real data from the real RAVE database
+* Write implementation report, including nice overview on used classes (graphical?), also see readme-implementation-notes.txt
+
+
