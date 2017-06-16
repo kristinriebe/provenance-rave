@@ -5,3 +5,5 @@
 *all*.sqlite3
 *.csv
 env
+custom_settings.yaml
+

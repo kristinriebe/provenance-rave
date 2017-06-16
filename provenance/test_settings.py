@@ -5,13 +5,13 @@ unmanaged databases/tables (with "managed = False" in their Meta class)
 Use these settings for testing, together with --nomigrations 
 (for suppressing migrations; otherwise it won't work!),
 e.g.: 
-python manage.py test --settings=provsite.test_settings --nomigrations
+python manage.py test --settings=provenance.test_settings --nomigrations
 """
 
 import os
 import sys
 
-from provsite.settings import *
+from provenance.settings import *
 from django.test.runner import DiscoverRunner
 from django.apps import apps
 
@@ -37,4 +37,4 @@ class UnManagedModelTestRunner(DiscoverRunner):
             m._meta.managed = False
 
 # Set Django's test runner to the custom class defined above
-TEST_RUNNER = 'provsite.test_settings.UnManagedModelTestRunner'
+TEST_RUNNER = 'provenance.test_settings.UnManagedModelTestRunner'

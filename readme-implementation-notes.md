@@ -5,7 +5,7 @@ Implementation notes
 Provenance classes can be implemented directly as Django model classes.
 When using Django RestFramework, one can easily get an API for retrieving
 all activities/entities etc., getting details for one of them etc.
-Updating an object or adding a new one via the REST API is not tested yet (and will likely fail).
+Updating an object or adding a new one via the REST API is not implemented.
 
 ## Tracking provenance
 Provenance for an entity or activity can be tracked backwards via the different relations.
@@ -13,12 +13,19 @@ Provenance tracking is done recursively, because:
     * It is unknown, how many steps one needs to go backwards.
     * There may be loops, i.e. one node of the provenance graph may be visited multiple times.
 
-I defined two main functions: `find_entity` and `find_activity`.
+I defined two main functions `find_entity` and `find_activity` to take care of finding relations for and entity/activity and following the linked entities/activities further. There is no need to follow agents.
 
 ## Prov-DAL
-If a user asks for the provenance record of an entity with option "STEP=LAST", then I interprete it as one step *backwards in time*. I have cases where the backwards provenance of a data item is not recorded, only for the collection to which it belongs. With STEP=LAST I originally returned only 1 provenance relation for the data item, which did not include any "backwards" information (just the hadMember link). Now, in such a case, I track the collection's relations further until at least one wasGeneratedBy or one wasDerivedFrom link is found.
+The Prov-DAL interface is implemented at /provapp/provdal/ and can be used to
+retrieve provenance records for one or more entities or activities based on their ids. A form is availale at /provapp/provdalform for convenience to fill out the available parameters as described in the IVOA Provenance Working Draft.
 
-The ID value for ProvDAL can now occur multiple times. It can be an entity or activity ID.
+If a user asks for the provenance record of an entity or activity with option "STEP=LAST", then I interprete it as one step *backwards in time*. I have cases where the backwards provenance of a data item is not recorded, only for the collection to which it belongs. With STEP=LAST I originally returned only 1 provenance relation for the data item, which did not include any "backwards" information (just the hadMember link). Now, in such a case, I track the collection's relations further until at least one wasGeneratedBy or one wasDerivedFrom link is found.
+
+The form currently does not support it, but it is possible to use the ID-parameter multiple times in a request to retrieve the provenance of more than one entity or activity at once.
+
+Currently, the Prov-DAL endpoint only supports PROV-N and PROV-JSON format. By choosing FORMAT=GRAPH instead, one can also get a webpage with a graphical representation of the retrieved provenance description using Javascript.
+
+The additional parameter MODEL is used to distinguish between serializing the data according to the IVOA or W3C Provenance Data Model.
 
 
 ## Implementing Collection
@@ -104,7 +111,7 @@ Thus, I wrote VO-variants of the serializers for each model, which more directly
 ### W3C serialization of ActivityFlow
 Since ActivityFlow and hadStep do not exist in W3C, they have to be represented differently. I chose to use a plan-entity for linking
 activities with their activityFlow. Thus, for each activityFlow one needs to:
-* include activityFlow with its attributes as activity; additional attribute voprov:class = 'voprov:activityFlow'
+* include activityFlow with its attributes as activity; additional attribute voprov:votype = 'voprov:activityFlow'
 * create a plan-entity, with an id derived from activityFlow id
 * for each hadStep-relation, add a wasAssociatedWith-relation, linking the step- activity with the plan of the activityFlow (and no agent); also link plan with activityFlow itself
 
@@ -124,13 +131,12 @@ use e.g. https://provenance.ecs.soton.ac.uk/validator/view/validator.html
 https://provenance.ecs.soton.ac.uk/validator/view/translator.html
 => works now as well
 
-Uploading to ProvStore works for rave.json
-=> working for json and provn
+Uploading to ProvStore works with the generated PROV-JSON and PROV-N provenance descriptions.
 
 ## TODO
+* implement PROV-XML and VOTABLE format
 * use description-classes
-* use collection class in IVOA ProvenanceDM explicitly!!
-* make a difference between graph for W3C/IVOA model!
+* use collection class in IVOA ProvenanceDM explicitly
 * find a better solution for providing a dynamic url for graphjson?
 * make use of ProvenanceGraphSerializer for overview graph, observationId form etc. as well
 * merge find_entity_graph with find_entity etc. to avoid code repetition
@@ -142,13 +148,11 @@ Uploading to ProvStore works for rave.json
         + (but cannot know, which entities are used outside of act. flow and which not! => Have to assume that they all are important.)
     - graphical view: choose viewLevel, show/hide details inside activityFlow,
         + properly show relations via plan for W3C representation
-    - add activityflow to provn-renderer as well
 
-* Implement bundles for grouping provenance records (and also for prov. of prov.) -- could use a new bundle class (model), temporarily create a bundle-thing with list of activities, entities, agents etc. and then create a bundle serializer.
-* add prov-namespace in the renderer after all? I.e. serializer just deals with renaming and restructuring, renderer adds namespaces and omits null-fields; it may be better to expose the real underlying data as the REST API,
+* implement bundles for grouping provenance records (and also for prov. of prov.) -- could use a new bundle class (model), temporarily create a bundle-thing with list of activities, entities, agents etc. and then create a bundle serializer.
+* add prov-namespace in the renderer after all? I.e. serializer just deals with renaming and restructuring, renderer adds namespaces and omits null-fields; it may be better to expose the real underlying data via the REST API,
 i.e. using the non-namespaced and not renamed fields.
-
-
+* implement multiple ids in provdalform
 
 ### Question:
 * Follow provenance of hadMember and hadStep relations for children? Or just for the parents?
@@ -163,7 +167,7 @@ i.e. using the non-namespaced and not renamed fields.
 ###  At some point later in the future
 * maybe use a proper namespace-solution after all? For the serialisation?
 * add datatypes ($, type) where needed for json and provn serialization
-
+* convert to Python3
 
 
 
