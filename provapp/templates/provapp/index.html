@@ -29,7 +29,7 @@
 
 <h4>REST API</h4>
 <p>
-    Pick one of the classes below to show the available data using the REST <a href="/provapp/api">api</a>.
+    Pick one of the classes below to show the available data using the REST <a href="api/">api</a>.
 </p>
 <ul>
     <li><a href="{% url 'provapp:activity-list' %}">Activity</a></li>
@@ -49,7 +49,7 @@
     For one activity, a normal json representation is shown by appending
     <code>?format=json</code> to the existing detail url, e.g.:
     <ul>
-         <li>json: <a href="/provapp/activities/rave:act_dataextraction/?format=json">/provapp/activities/rave:act_dataextraction/?format=json/</a></li>
+         <li>json: <a href="{% url 'provapp:activity-detail' 'rave:act_dataextraction' %}?format=json">/provapp/activities/rave:act_dataextraction/?format=json/</a></li>
     </ul>
     xml and provn serialisations still need to be defined, e.g. like this <code>?format=xml</code>
 </p>
