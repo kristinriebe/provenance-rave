@@ -24,7 +24,8 @@ urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='index'),
 
     # include automatic rest api urls for models
-    url(r'^api/', include(router.urls, namespace='api')),
+    # do NOT use a namespace here, because cannot have nested namespaces (provapp:api:activites-list won't work)
+    url(r'^api/', include(router.urls)),
 
     # provn of everything:
     url(r'^allprov/(?P<format>[a-zA-Z-]+)$', views.allprov, name='allprov'),
@@ -43,5 +44,3 @@ urlpatterns = [
     url(r'^graph/$', views.graph, name='graph'),
     url(r'^graph/graphjson$', views.fullgraphjson, name='graphjson'),
 ]
-
-urlpatterns += router.urls

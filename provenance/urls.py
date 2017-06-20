@@ -21,6 +21,6 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^provapp/', include('provapp.urls')), # try to change this later on to route from prov to provapp (cannot use only "prov", since module already exists)
+    url(r'^provapp/', include('provapp.urls')),
     url(r'^admin/', admin.site.urls),
 ]
