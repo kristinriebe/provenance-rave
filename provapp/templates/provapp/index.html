@@ -21,7 +21,7 @@
 
 <h4>Complete provenance (overview)</h4>
 <ul>
-    <li>Overview: <a href="{% url 'provapp:graph' %}">Graph</a> of the main workflow</li>
+    <li>Overview: <a href="{% url 'provapp:graph' %}">Graph</a> of the main workflow (ignoring ActivityFlow and wasInformedBy)</li>
     <li>Overview: <a href="{% url 'provapp:allprov' 'PROV-N' %}">PROV-N</a> or <a href="{% url 'provapp:allprov' 'PROV-JSON' %}">PROV-JSON</a> representation</li>
     <li>Overview: <a href="{% url 'provapp:prettyprovn' %}">Pretty Provn</a> representation (with clickable links, not complete)</li>
 </ul>

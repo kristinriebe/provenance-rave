@@ -211,18 +211,19 @@ def allprov(request, format):
     prov = {
         'prefix': prefix,
         'activity': convert_to_dict_querysets(Activity.objects.all()),
+        'activityFlow': convert_to_dict_querysets(ActivityFlow.objects.all()),
         'entity': convert_to_dict_querysets(Entity.objects.all()),
+        'collection': convert_to_dict_querysets(Collection.objects.all()),
         'agent': convert_to_dict_querysets(Agent.objects.all()),
         'used': convert_to_dict_querysets(Used.objects.all()),
         'wasGeneratedBy': convert_to_dict_querysets(WasGeneratedBy.objects.all()),
         'wasAssociatedWith': convert_to_dict_querysets(WasAssociatedWith.objects.all()),
         'wasAttributedTo': convert_to_dict_querysets(WasAttributedTo.objects.all()),
         'hadMember': convert_to_dict_querysets(HadMember.objects.all()),
-        'wasDerivedFrom': convert_to_dict_querysets(WasDerivedFrom.objects.all())
+        'wasDerivedFrom': convert_to_dict_querysets(WasDerivedFrom.objects.all()),
+        'hadStep': convert_to_dict_querysets(HadStep.objects.all()),
+        'wasInformedBy': convert_to_dict_querysets(WasInformedBy.objects.all())
     }
-
-    #return JsonResponse(activity_dict)
-    #return render(request, 'provapp/activities.html', {'activity_list': activity_list})
 
     # serialize it (W3C):
     serializer = W3CProvenanceSerializer(prov)
@@ -269,11 +270,6 @@ def graph(request):
 
 
 def fullgraphjson(request):
-    #activity = get_object_or_404(Activity, pk=activity_id)
-    #return HttpResponse(json.dumps(data), content_type='application/json')
-    #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'annotation': activity.annotation}
-    #activity_dict = to_dict(activity)
-
 
     activity_list = Activity.objects.all()
     entity_list = Entity.objects.all()
