@@ -364,11 +364,11 @@ def get_observationId(request):
                 entity = Entity.objects.get(name=form.cleaned_data['observation_id'])
 
                 if detail == 'basic':
-                    return HttpResponseRedirect('/provapp/' + str(entity.id) + '/basic')
+                    return HttpResponseRedirect(reverse('provapp:observationid_detail')+ str(entity.id) + '/basic')
                 elif detail == 'detailed':
-                    return HttpResponseRedirect('/provapp/' + str(entity.id) + '/detail')
+                    return HttpResponseRedirect(reverse('provapp:observationid_detail')+ str(entity.id) + '/detail')
                 else:
-                    return HttpResponseRedirect('/provapp/' + str(entity.id) + '/all')
+                    return HttpResponseRedirect(reverse('provapp:observationid_detail')+ str(entity.id) + '/all')
 
             except ValueError:
                 form = ObservationIdForm(request.POST)
@@ -385,7 +385,6 @@ def get_observationId(request):
 
 def observationid_detail(request, observation_id, detail_flag):
     entity = get_object_or_404(Entity, pk=observation_id)
-
     return render(request, 'provapp/observationid_detail.html', {'entity': entity, 'url': 'graphjson'})
 
 
