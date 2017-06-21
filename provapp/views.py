@@ -115,76 +115,6 @@ class CollectionViewSet(viewsets.ModelViewSet):
     serializer_class = CollectionSerializer
     queryset = Collection.objects.all()
 
-def activitygraphjson(request, activity_id):
-    activity = get_object_or_404(Activity, pk=activity_id)
-    #return HttpResponse(json.dumps(data), content_type='application/json')
-    #activity_dict = {'id': activity.id, 'label': activity.label, 'type': activity.type, 'annotation': activity.annotation}
-    #activity_dict = to_dict(activity)
-
-    used_list = Used.objects.all()
-    wasGeneratedBy_list = WasGeneratedBy.objects.all()
-    wasAssociatedWith_list = WasAssociatedWith.objects.all()
-
-    nodes_dict = []
-    nodes_dict.append({"name": activity.name, "type": "activity"})
-    count_nodes = 0
-    count_act = 0
-
-    links_dict = []
-    count_link = 0
-
-    for u in used_list:
-        if u.activity.id == activity_id:
-            # add node
-            nodes_dict.append({"name": "%s" % u.entity.name, "type": "entity"})
-            count_nodes = count_nodes + 1
-
-            # and add link (source, target, value)
-            links_dict.append({"source": count_act, "target": count_nodes, "value": 0.2, "type": "used"})
-            count_link = count_link + 1
-
-
-    for w in wasGeneratedBy_list:
-        if w.activity.id == activity_id:
-            # add node
-            nodes_dict.append({"name": "%s" % w.entity.name, "type": "entity"})
-            count_nodes = count_nodes + 1
-
-            # and add link (source, target, value)
-            links_dict.append({"source": count_nodes, "target": count_act, "value": 0.2, "type": "wasGeneratedBy"})
-            count_link = count_link + 1
-
-    for w in wasAssociatedWith_list:
-        if w.activity.id == activity_id:
-            # add node
-            nodes_dict.append({"name": "%s" % w.agent.name, "type": "agent"})
-            count_nodes = count_nodes + 1
-
-            # and add link (source, target, value)
-            links_dict.append({"source": count_act, "target": count_nodes, "value": 0.5, "type": "wasAssociatedWith"})
-            count_link = count_link + 1
-
-    prov_dict = {"nodes": nodes_dict, "links": links_dict}
-
-    return JsonResponse(prov_dict)
-
-
-class ActivityDetailXmlView(generic.DetailView):
-    model = Activity
-    #json_dumps_kwargs = {u"indent": 2}
-
-    def get(self, request, *args, **kwargs):
-        activity = self.get_object() # wrap in try/except??? (404 error)
-        #serializer = ActivitySerializer(activity)
-        #return MyJsonResponse(serializer.data)
-        #serializers.deserialize("xml", data, ignorenonexistent=True)
-
-        data = serializers.serialize('xml', [ activity ] )
-        # How to use not all, but only this currently selected activity???
-
-        #activity_dict = to_dict(activity)
-        return HttpResponse(data, content_type="application/xml")
-
 
 def convert_to_dict_querysets(listqueryset):
 
@@ -246,6 +176,8 @@ def allprov(request, format):
 
 
 def prettyprovn(request):
+    # use hyperlinks for ids
+    # still missing new classes, just used for testing
     activity_list = Activity.objects.order_by('-startTime')[:]
     entity_list = Entity.objects.order_by('-name')[:]
     agent_list = Agent.objects.order_by('-name')[:]
@@ -253,7 +185,7 @@ def prettyprovn(request):
     wasGeneratedBy_list = WasGeneratedBy.objects.order_by('-id')[:]
     wasAssociatedWith_list = WasAssociatedWith.objects.order_by('-id')[:]
     wasAttributedTo_list = WasAttributedTo.objects.order_by('-id')[:]
-    #return JsonResponse(activity_dict)
+
     return render(request, 'provapp/provn.html',
                  {'activity_list': activity_list,
                   'entity_list': entity_list,
@@ -270,6 +202,7 @@ def graph(request):
 
 
 def fullgraphjson(request):
+    # TODO: should construct this similar to provdal-version
 
     activity_list = Activity.objects.all()
     entity_list = Entity.objects.all()

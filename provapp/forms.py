@@ -29,10 +29,8 @@ class ObservationIdForm(forms.Form):
                 params={'value': desired_obs},
             )
 
-        #desired_detail = self.cleaned_data['detail_flag']
-
         # always return the data!
-        return desired_obs #{'rave_obsid': desired_obs, 'detail_flag': desired_detail}
+        return desired_obs
 
 class ProvDalForm(forms.Form):
     obj_id = forms.CharField(
@@ -55,7 +53,7 @@ class ProvDalForm(forms.Form):
         choices=[('IVOA','IVOA'), ('W3C', 'W3C')],
         widget=forms.RadioSelect(),
         help_text="Choose W3C for W3C Prov-DM compliant serialization",
-        initial='W3C'
+        initial='IVOA'
     )
 
     format = forms.ChoiceField(

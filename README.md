@@ -162,13 +162,16 @@ This produces an image file `provenance-models.png`, which shows all models from
 * Write tests for checking all the functionality
 * Use MySQL database/remote database instead of Sqlite3
 
-* Implement xml serialization, votable serialization
-* Clean up, remove unnecessary parts (get_observationId-stuff)
-* Use prov-json and provjs from W3C model and Southhamption Provenance tools instead of custom made json and javascript (?)
-* Use functions for detailed views, instead of loading everything into database?
+* Implement xml serialization, votable serialization, for REST api and for Prov-DAL endoint
+* Implement "description" classes, i.e. ActivityDescription etc. (if needed)
+* Find a better way to visualize activityFlow, collection, detail/basic etc.
 
-* Implement Description side
+* Remove unnecessary parts
+
 * Connect with real data from the real RAVE database
-* Write implementation report, including nice overview on used classes (graphical?), also see readme-implementation-notes.txt
+    - map the existing RAVE DB information to provenance descriptions (create views?)
+    - use functions for filling in missing information (e.g. for storageLocations constructed from base path and observation id)
+
+* Write implementation report, including nice overview on used classes (graphical), also see [readme-implementation-notes.txt](readme-implementation-notes.txt)
 
 

@@ -186,6 +186,7 @@ class WasAssociatedWithSerializer(NonNullCustomSerializer):
 
 class WasAttributedToSerializer(NonNullCustomSerializer):
 
+    # role is not allowed in W3C for wasAttributedTo, thus use voprov-namespace
     voprov_role = CustomCharField(source='role', custom_field_name='voprov:role')
 
     class Meta:
@@ -474,28 +475,16 @@ class VOAgentSerializer(NonNullCustomSerializer):
 
 class VOUsedSerializer(NonNullCustomSerializer):
 
-#    voprov_activity = CustomCharField(source='activity_id', custom_field_name='voprov:activity')
-#    voprov_entity = CustomCharField(source='entity_id', custom_field_name='voprov:entity')
-#    voprov_time = CustomDateTimeField(source='time', custom_field_name='voprov:time')
-#    voprov_role = CustomCharField(source='role', custom_field_name='voprov:role')
-
     class Meta:
         model = Used
         fields = '__all__'
-#        fields = ('id', 'voprov_activity', 'voprov_entity', 'voprov_time', 'voprov_role')
 
 
 class VOWasGeneratedBySerializer(NonNullCustomSerializer):
 
-    #voprov_entity = CustomCharField(source='entity_id', custom_field_name='voprov:entity')
-    #voprov_activity = CustomCharField(source='activity_id', custom_field_name='voprov:activity')
-    #voprov_time = CustomDateTimeField(source='time', custom_field_name='voprov:time')
-    #voprov_role = CustomCharField(source='role', custom_field_name='voprov:role')
-
     class Meta:
         model = WasGeneratedBy
         fields = '__all__'
-        #fields = ('id', 'voprov_entity', 'voprov_activity', 'voprov_time', 'voprov_role')
 
 
 class VOWasAssociatedWithSerializer(NonNullCustomSerializer):
@@ -507,11 +496,9 @@ class VOWasAssociatedWithSerializer(NonNullCustomSerializer):
 
 class VOWasAttributedToSerializer(NonNullCustomSerializer):
 
-    voprov_role = CustomCharField(source='role', custom_field_name='voprov:role')
-
     class Meta:
         model = WasAttributedTo
-        fields = ('id', 'entity', 'agent', 'voprov_role')
+        fields = '__all__'
 
 
 class VOHadMemberSerializer(NonNullCustomSerializer):
@@ -678,6 +665,7 @@ class VOProvenanceSerializer(serializers.Serializer):
         return wasInformedBy
 
     def add_relationnamespace(self, objectId):
+        # If there is no namespace yet, add the default namespace instead
         ns = "_"
         if ":" not in str(objectId):
             objectId = ns + ":" + str(objectId)
@@ -741,7 +729,6 @@ class ProvenanceGraphSerializer(serializers.Serializer):
         for key in ['activity', 'entity', 'agent', 'activityFlow', 'collection']:
             if key in obj:
                 for n_id, n in obj[key].iteritems():
-                    print 'key, node: ', key, n[name], n[nid]
                     nodes.append({'name': n[name], 'type': key})
                     map_nodes_ids[n[nid]] = count_nodes
                     count_nodes += 1
@@ -798,11 +785,8 @@ class ProvenanceGraphSerializer(serializers.Serializer):
                         'type': 'wasAssociatedWith'
                     })
                     count_links += 1
-                    print "wasAss: ", r[self.add_namespace('agent', ns)], r[self.add_namespace('activity', ns)]
                 # if there is a plan, also link to it:
                 if self.add_namespace('plan', ns) in r:
-                    print "wasAss - : ", self.add_namespace('plan', ns), self.add_namespace('activity', ns)
-                    print "wasAss: r ", r
                     links.append({
                         'source': map_nodes_ids[r[self.add_namespace('plan', ns)]],
                         'target': map_nodes_ids[r[self.add_namespace('activity', ns)]],
@@ -810,7 +794,6 @@ class ProvenanceGraphSerializer(serializers.Serializer):
                         'type': 'wasAssociatedWith'
                     })
                     count_links += 1
-                    print "wasAss: ", r[self.add_namespace('plan', ns)], r[self.add_namespace('activity', ns)]
 
         if 'wasAttributedTo' in obj:
             for r_id, r in obj['wasAttributedTo'].iteritems():
@@ -871,5 +854,4 @@ class ProvenanceGraphSerializer(serializers.Serializer):
 
     def add_namespace(self, value, namespace):
         ns_value = "%s:%s" % (namespace, value)
-        #print " -- ns_value: ", ns_value
         return ns_value

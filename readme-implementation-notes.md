@@ -30,7 +30,9 @@ The additional parameter MODEL is used to distinguish between serializing the da
 
 ## Implementing Collection
 Entities that are collections and can have members are stored as Collection, 
-which is an inherited class from Entity. So far, the attributes are not different, thus when serializing/displaying a collection, it has the same attributes as an entity. Also, when loading collection data into the database, collections are stored in the entity-table and only additionally linked from the collection-table. I.e. when looking for an entity or a collection, it's still enough to do the lookup with the entity-table. But if one needs to make sure that something is a collection, then one should look it up in the collection-table.
+which is an inherited class from Entity. So far, the attributes are not different, thus when serializing/displaying a collection, it has the same attributes as an entity.
+
+Also, when loading collection data into the database, collections are stored in the entity-table and only additionally linked from the collection-table. I.e. when looking for an entity or a collection, it's still enough to do the lookup with the entity-table. But if one needs to make sure that something is a collection, then one should look it up in the collection-table.
 
 In W3C serialization, Collections are Entities with type "prov:collection". In IVOA we can serialize them explicitly as collections.
 (Having the same attributes as entity + hadMember relationship.)
@@ -45,6 +47,7 @@ Advantage of collection as entity with type 'prov:collection':
 - faster, because additional lookup in Colleciton table not needed
     + if I want to know the type, I just look up the attribute type;
     + => no additional database request needed
+
 
 ## Serialization
 
@@ -152,13 +155,12 @@ Uploading to ProvStore works with the generated PROV-JSON and PROV-N provenance 
 * implement bundles for grouping provenance records (and also for prov. of prov.) -- could use a new bundle class (model), temporarily create a bundle-thing with list of activities, entities, agents etc. and then create a bundle serializer.
 * add prov-namespace in the renderer after all? I.e. serializer just deals with renaming and restructuring, renderer adds namespaces and omits null-fields; it may be better to expose the real underlying data via the REST API,
 i.e. using the non-namespaced and not renamed fields.
-* implement multiple ids in provdalform
 
-### Question:
+### To be discussed
 * Follow provenance of hadMember and hadStep relations for children? Or just for the parents?
     - Problem was, that provenance of rave:act_irafReduction returned complete prov. records because children of activityFlow rave_pipeline were followed.
     - Could be avoided by ignoring hadMember/hadStep , children side.
-* Need additional ActivityCollection for grouping all the individual observations to one?
+* Need additional ActivityCollection for grouping all the individual observations to one? (In addittion to activityFlow)
 
 ### Soon
 * write a general prov-app, with abstract classes; make a new app for each project, derive project-specific classes from abstract classes

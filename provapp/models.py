@@ -194,7 +194,6 @@ class RaveObsids(models.Model):
         corrspec_file = filepath + filedname + ".rvsun." + platenumber + ".cont.txt"
 
         # would need more metadata here!
-
         return {'stn_file': stn_file, 'uncorrspec_file': uncorrspec_file,
                 'corrspec_file': corrspec_file}
 
@@ -213,7 +212,6 @@ class RaveObsids(models.Model):
         reduced_file = filepath + ".rvsun.fts"
         sky_file = filepath + ".sky.fts"
         usky_file = filepath + ".usky.fts"
-        #"RAVE/reduced_IRAF/2012/20121220/0752m38.rvsun.fts"
         return {'reduced_file': reduced_file, 'sky_file': sky_file,
                 'usky_file': usky_file}
 
