@@ -163,11 +163,10 @@ This produces an image file `provenance-models.png`, which shows all models from
 * Use MySQL database/remote database instead of Sqlite3
 
 * Implement xml serialization, votable serialization
-* Clean up, remove unnecessary parts
+* Clean up, remove unnecessary parts (get_observationId-stuff)
 * Use prov-json and provjs from W3C model and Southhamption Provenance tools instead of custom made json and javascript (?)
 * Use functions for detailed views, instead of loading everything into database?
 
-* Implement ActivityFlow
 * Implement Description side
 * Connect with real data from the real RAVE database
 * Write implementation report, including nice overview on used classes (graphical?), also see readme-implementation-notes.txt

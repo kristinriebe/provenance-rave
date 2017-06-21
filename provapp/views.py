@@ -356,7 +356,7 @@ def get_observationId(request):
 
                 obsid = RaveObsids.objects.get(rave_obs_id=form.cleaned_data['observation_id'])
                 detail = form.cleaned_data['detail_flag']
-                print "detail: ", detail
+                # print "detail: ", detail
                 #print "from obsid-table: ", obsid
 
                 #if obsid: -- should we check this??
@@ -364,11 +364,13 @@ def get_observationId(request):
                 entity = Entity.objects.get(name=form.cleaned_data['observation_id'])
 
                 if detail == 'basic':
-                    return HttpResponseRedirect(reverse('provapp:observationid_detail')+ str(entity.id) + '/basic')
+                    detail_flag = 'basic'
                 elif detail == 'detailed':
-                    return HttpResponseRedirect(reverse('provapp:observationid_detail')+ str(entity.id) + '/detail')
+                    detail_flag = 'detail'
                 else:
-                    return HttpResponseRedirect(reverse('provapp:observationid_detail')+ str(entity.id) + '/all')
+                    detail_flag = 'all'
+
+                return HttpResponseRedirect(reverse('provapp:observationid_detail', kwargs={'observation_id': str(entity.id), 'detail_flag': 'basic'}))
 
             except ValueError:
                 form = ObservationIdForm(request.POST)
