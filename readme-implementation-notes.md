@@ -112,15 +112,10 @@ If someone intends to use provenance records with VO-tools, these VO-tools may d
 
 Thus, I wrote VO-variants of the serializers for each model, which more directly map the model attributes and use "voprov" as namespace everywhere.
 
-
 ### W3C serialization of ActivityFlow
-Since ActivityFlow and hadStep do not exist in W3C, they have to be represented differently. I chose to use a plan-entity for linking
-activities with their activityFlow. Thus, for each activityFlow one needs to:
-* include activityFlow with its attributes as activity; additional attribute voprov:votype = 'voprov:activityFlow'
-* create a plan-entity, with an id derived from activityFlow id
-* for each hadStep-relation, add a wasAssociatedWith-relation, linking the step- activity with the plan of the activityFlow (and no agent); also link plan with activityFlow itself
-
-This is similar to what is shown in D-PROV for representing workflows with core W3C classes.
+Since ActivityFlow and HadStep do not exist in W3C, they have to be represented differently:
+* represent each activityFlow as an activity; additional attribute `voprov:votype = 'voprov:activityFlow'`
+* represent each hadStep relation as an wasInfluencedBy relation; additional attribute `voprov:votype = 'voprov:hadStep'`
 
 ## Issues to be taken care of
 * provn serialization needs marker "-" for missing elements, e.g. for time in `used` and `wasGeneratedBy` relationship
