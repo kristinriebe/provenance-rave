@@ -52,10 +52,18 @@ class CustomDateTimeField(serializers.DateTimeField):
             self.input_formats = input_formats
         if default_timezone is not None:
             self.timezone = default_timezone
-
         self.custom_field_name = kwargs.pop('custom_field_name', None)
-
         super(CustomDateTimeField, self).__init__(*args, **kwargs)
+
+
+# Define custom SerializerMethodField to add attribute custom_field_name
+class CustomSerializerMethodField(serializers.SerializerMethodField):
+    def __init__(self, method_name=None, **kwargs):
+        self.method_name = method_name
+        kwargs['source'] = '*'
+        kwargs['read_only'] = True
+        self.custom_field_name = kwargs.pop('custom_field_name', None)
+        super(CustomSerializerMethodField, self).__init__(**kwargs)
 
 
 # Define custom serializer class with some modifications
@@ -207,13 +215,38 @@ class WasDerivedFromSerializer(NonNullCustomSerializer):
         model = WasDerivedFrom
         fields = '__all__'
 
+
 class WasInformedBySerializer(NonNullCustomSerializer):
 
     class Meta:
         model = WasInformedBy
         fields = '__all__'
 
-class CollectionSerializer(EntitySerializer):
+
+class W3CHadStepSerializer(NonNullCustomSerializer):
+    prov_influencee = CustomCharField(source='activityFlow_id', custom_field_name='prov:influencee')
+    prov_influencer = CustomCharField(source='activity_id', custom_field_name='prov:influencer')
+    voprov_votype = CustomSerializerMethodField(custom_field_name='voprov:votype')
+
+    def get_voprov_votype(self, obj):
+        return 'voprov:hadStep'
+
+    class Meta:
+        model = HadStep
+        fields = ('id', 'prov_influencee', 'prov_influencer', 'voprov_votype')
+
+class W3CActivityFlowSerializer(ActivitySerializer):
+    voprov_votype = CustomSerializerMethodField(custom_field_name='voprov:votype')
+
+    def get_voprov_votype(self, obj):
+        return 'voprov:activityFlow'
+
+    class Meta:
+        model = ActivityFlow
+        fields = ('prov_id', 'prov_label', 'prov_type', 'prov_description', 'prov_startTime', 'prov_endTime', 'voprov_votype', 'voprov_doculink')
+
+
+class W3CCollectionSerializer(EntitySerializer):
 
     class Meta:
         model = Collection
@@ -232,6 +265,7 @@ class W3CProvenanceSerializer(serializers.Serializer):
     hadMember = serializers.SerializerMethodField()
     wasDerivedFrom = serializers.SerializerMethodField()
     wasInformedBy = serializers.SerializerMethodField()
+    wasInfluencedBy = serializers.SerializerMethodField()
     prefix = serializers.SerializerMethodField()
 
 
@@ -248,10 +282,9 @@ class W3CProvenanceSerializer(serializers.Serializer):
             activity[a_id] = data
 
         # add activities that are stored as activityFlow to
-        # activities for W3C serialisation
+        # "normal" activities for W3C serialisation,
         for a_id, a in obj['activityFlow'].iteritems():
-            data = ActivitySerializer(a).data
-            data['voprov:votype'] = 'voprov:activityFlow'
+            data = W3CActivityFlowSerializer(a).data
             activity[a_id] = data
         return activity
 
@@ -261,14 +294,11 @@ class W3CProvenanceSerializer(serializers.Serializer):
             data = EntitySerializer(e).data
             entity[e_id] = data
 
+        # add collections to entities as well
         for e_id, e in obj['collection'].iteritems():
-            data = CollectionSerializer(e).data
+            data = W3CCollectionSerializer(e).data
             entity[e_id] = data
 
-        # create a plan for each activityFlow
-        for a_id, a in obj['activityFlow'].iteritems():
-            p_id = self.get_plan_id(a_id)
-            entity[p_id] = {'prov:id': '%s' % p_id, 'prov:label': 'Plan for %s' % a.name, 'prov:type': 'prov:Plan'}
         return entity
 
     def get_agent(self, obj):
@@ -303,23 +333,6 @@ class W3CProvenanceSerializer(serializers.Serializer):
             data = WasAssociatedWithSerializer(w).data
             w_id = self.add_relationnamespace(w_id)
             wasAssociatedWith[w_id] = self.restructure_relations(data)
-
-        # link activities of an activityFlow with its plan
-        result = WasAssociatedWith.objects.aggregate(Max('id'))
-        i = int(result['id__max'])
-
-        for hs_id, hs in obj['hadStep'].iteritems():
-            p_id = self.get_plan_id(hs.activityFlow.id)
-            w_id = self.add_relationnamespace(i)
-            wasAssociatedWith[w_id] = {'prov:activity': hs.activity.id, 'prov:plan': p_id, 'voprov:votype': 'hadStep'}
-            i += 1
-
-        # link plan with activityFlow itself
-        for a_id, a in obj['activityFlow'].iteritems():
-            p_id = self.get_plan_id(a_id)
-            w_id = self.add_relationnamespace(i)
-            wasAssociatedWith[w_id] = {'prov:activity': a_id, 'prov:plan': p_id, 'voprov:votype': 'hadStep'}
-            i += 1
 
         return wasAssociatedWith
 
@@ -358,6 +371,16 @@ class W3CProvenanceSerializer(serializers.Serializer):
             wasInformedBy[w_id] = self.restructure_relations(data)
 
         return wasInformedBy
+
+    def get_wasInfluencedBy(self, obj):
+        wasInfluencedBy = {}
+        # go through all hadStep relations
+        for w_id, w in obj['hadStep'].iteritems():
+            data = W3CHadStepSerializer(w).data
+            w_id = self.add_relationnamespace(w_id)
+            wasInfluencedBy[w_id] = self.restructure_relations(data)
+
+        return wasInfluencedBy
 
 
     def restructure_qualifiers(self, data):
@@ -404,7 +427,7 @@ class W3CProvenanceSerializer(serializers.Serializer):
         for key, value in data.iteritems():
 
             # replace prov_ by prov for the given keys:
-            if key in ['id', 'activity', 'entity', 'collection', 'agent', 'generatedEntity', 'usedEntity', 'usage', 'generation', 'role', 'informed', 'informant']:
+            if key in ['id', 'activity', 'entity', 'collection', 'agent', 'generatedEntity', 'usedEntity', 'usage', 'generation', 'role', 'informed', 'informant', 'influencee', 'influencer']:
                 newkey = 'prov:' + key
                 data[newkey] = data.pop(key)
 

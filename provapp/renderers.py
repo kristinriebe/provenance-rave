@@ -265,6 +265,21 @@ class WasInformedByPROVNRenderer(PROVNBaseRenderer):
 
         return string
 
+class WasInfluencedByPROVNRenderer(PROVNBaseRenderer):
+
+    def render(self, wasInfluencedBy):
+        string = "wasInfluencedBy("
+
+        string = self.add_relation_id(string, wasInfluencedBy)
+        string += self.get_value(wasInfluencedBy, "influencee") + ", "
+        string += self.get_value(wasInfluencedBy, "influencer")
+
+        string += ")"
+
+        # add all other optional attributes in []
+        string = self.add_optional_attributes(string, wasInfluencedBy)
+
+        return string
 
 class PROVNRenderer(PROVNBaseRenderer):
     """
@@ -317,6 +332,10 @@ class PROVNRenderer(PROVNBaseRenderer):
         if 'wasInformedBy' in data:
             for w_id, w in data['wasInformedBy'].iteritems():
                 string += WasInformedByPROVNRenderer().render(w) + "\n"
+
+        if 'wasInfluencedBy' in data:
+            for w_id, w in data['wasInfluencedBy'].iteritems():
+                string += WasInfluencedByPROVNRenderer().render(w) + "\n"
 
         string += "endDocument"
 

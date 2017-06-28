@@ -51,7 +51,7 @@ from .serializers import (
     HadMemberSerializer,
     WasDerivedFromSerializer,
     WasInformedBySerializer,
-    CollectionSerializer,
+    W3CCollectionSerializer,
     W3CProvenanceSerializer,
     VOProvenanceSerializer,
     ProvenanceGraphSerializer
@@ -112,7 +112,7 @@ class WasDerivedFromViewSet(viewsets.ModelViewSet):
 #     queryset = ActivityFlow.objects.all()
 
 class CollectionViewSet(viewsets.ModelViewSet):
-    serializer_class = CollectionSerializer
+    serializer_class = W3CCollectionSerializer
     queryset = Collection.objects.all()
 
 
