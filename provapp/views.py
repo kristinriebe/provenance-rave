@@ -450,6 +450,7 @@ def provdal(request):
         'wasDerivedFrom': {},
         'hadStep': {},
         'wasInformedBy': {}
+        'wasInfluencedBy': {}
     }
 
     # Note: even if collection class is used, Entity.objects.all() still contains all entities
