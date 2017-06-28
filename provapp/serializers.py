@@ -404,7 +404,7 @@ class W3CProvenanceSerializer(serializers.Serializer):
         for key, value in data.iteritems():
 
             # replace prov_ by prov for the given keys:
-            if key in ['id', 'activity', 'entity', 'collection', 'agent', 'generatedEntity', 'usedEntity', 'usage', 'generation', 'role']:
+            if key in ['id', 'activity', 'entity', 'collection', 'agent', 'generatedEntity', 'usedEntity', 'usage', 'generation', 'role', 'informed', 'informant']:
                 newkey = 'prov:' + key
                 data[newkey] = data.pop(key)
 

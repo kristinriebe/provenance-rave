@@ -256,11 +256,8 @@ class WasInformedByPROVNRenderer(PROVNBaseRenderer):
         string = "wasInformedBy("
 
         string = self.add_relation_id(string, wasInformedBy)
-        string += self.get_value(wasInformedBy, "generatedEntity") + ", "
-        string += self.get_value(wasInformedBy, "usedEntity") + ", "
-        string += self.get_value(wasInformedBy, "activity") + ", "
-        string += self.get_value(wasInformedBy, "generation") + ", "
-        string += self.get_value(wasInformedBy, "usage")
+        string += self.get_value(wasInformedBy, "informed") + ", "
+        string += self.get_value(wasInformedBy, "informant")
         string += ")"
 
         # add all other optional attributes in []
