@@ -13,11 +13,11 @@ Provenance tracking is done recursively, because:
     * It is unknown, how many steps one needs to go backwards.
     * There may be loops, i.e. one node of the provenance graph may be visited multiple times.
 
-I defined two main functions `find_entity` and `find_activity` to take care of finding relations for and entity/activity and following the linked entities/activities further. There is no need to follow agents.
+I defined two main functions `find_entity` and `find_activity` to take care of finding relations for an entity/activity and following the linked entities/activities further. There is no need to follow agents.
 
 ## Prov-DAL
 The Prov-DAL interface is implemented at /provapp/provdal/ and can be used to
-retrieve provenance records for one or more entities or activities based on their ids. A form is availale at /provapp/provdalform for convenience to fill out the available parameters as described in the IVOA Provenance Working Draft.
+retrieve provenance records for one or more entities or activities based on their ids. A form is available at /provapp/provdalform for convenience to fill out the available parameters as described in the IVOA Provenance Working Draft.
 
 If a user asks for the provenance record of an entity or activity with option "STEP=LAST", then I interprete it as one step *backwards in time*. I have cases where the backwards provenance of a data item is not recorded, only for the collection to which it belongs. With STEP=LAST I originally returned only 1 provenance relation for the data item, which did not include any "backwards" information (just the hadMember link). Now, in such a case, I track the collection's relations further until at least one wasGeneratedBy or one wasDerivedFrom link is found.
 
@@ -38,7 +38,7 @@ In W3C serialization, Collections are Entities with type "prov:collection". In I
 (Having the same attributes as entity + hadMember relationship.)
 
 Advantage of collection as class:
-- in HadMember, the collection-attribute must link to a colelction, which is a straight-forward constraint if collection is an extra class
+- in HadMember, the collection-attribute must link to a collection, which is a straight-forward constraint if collection is an extra class
 - can check very clearly, if something is a collection or not (even if metadata are incomplete) by checking if the entity occurs in Collection table as well
 - if additional attributes are needed, then I need the extra class
 
@@ -47,6 +47,8 @@ Advantage of collection as entity with type 'prov:collection':
 - faster, because additional lookup in Colleciton table not needed
     + if I want to know the type, I just look up the attribute type;
     + => no additional database request needed
+
+Thus, for now, I use only the type 'prov:collection' to mark collection entities.
 
 
 ## Serialization
@@ -102,7 +104,7 @@ and similar (in PROV-N, the datatypes are marked using %% after the value). The 
 then a string datatype is assumed. This is good enough for us now, so I'll just skip explicitly mentioning the datatypes for now.
 
 ### IVOA serialization
-According to the IVOA Provenance DM requirements, is must be possible to serialize the provenance information into at least one of the W3C formats.
+According to the IVOA Provenance DM requirements, it must be possible to serialize the provenance information into at least one of the W3C formats.
 Since we also define additional classes and additional/different attributes in IVOA Provenance DM, we also need a serialization format that can reflect these classes and attributes directly.
 
 If someone intends to use provenance records with W3C-clients/tools, he/she should use a W3C compliant serialization. But then one cannot make use of the additional features.
@@ -146,7 +148,7 @@ Uploading to ProvStore works with the generated PROV-JSON and PROV-N provenance 
 * use different api-root for W3C and IVOA (rest framework)
 * fix datetime (UTC)
 
-* finish implementing activityFlow:
+* finish implementing ActivityFlow:
     - auto-generate wasGeneratedBy and used-relationships? Or insert?
         + (but cannot know, which entities are used outside of act. flow and which not! => Have to assume that they all are important.)
     - graphical view: choose viewLevel, show/hide details inside activityFlow,
@@ -160,7 +162,7 @@ i.e. using the non-namespaced and not renamed fields.
 * Follow provenance of hadMember and hadStep relations for children? Or just for the parents?
     - Problem was, that provenance of rave:act_irafReduction returned complete prov. records because children of activityFlow rave_pipeline were followed.
     - Could be avoided by ignoring hadMember/hadStep , children side.
-* Need additional ActivityCollection for grouping all the individual observations to one? (In addittion to activityFlow)
+* Need additional ActivityCollection for grouping all the individual observations to one? (In addition to ActivityFlow?)
 
 ### Soon
 * write a general prov-app, with abstract classes; make a new app for each project, derive project-specific classes from abstract classes

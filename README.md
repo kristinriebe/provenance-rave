@@ -148,6 +148,7 @@ The webapp should be visible in the browser and it should even work offline, sin
 * Reload the webserver, e.g. on Debian: `service httpd reload`
 
 * Now open your web browser at the server specific address (e.g. http://localhost:8111/ or http://localhost/provenance-cosmosim/) and test the web application!
+
 ## Get a model graph
 If the `graphviz` library is installed additionally, an image of the models and their relations can be created automatically with:
 
