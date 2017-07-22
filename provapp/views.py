@@ -449,7 +449,7 @@ def provdal(request):
         'hadMember': {},
         'wasDerivedFrom': {},
         'hadStep': {},
-        'wasInformedBy': {}
+        'wasInformedBy': {},
         'wasInfluencedBy': {}
     }
 
