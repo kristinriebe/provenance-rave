@@ -1,6 +1,8 @@
 import os
 import sys
 
+sys.path.append('../../django-provapp/')
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #print("BASE_DIR: ", BASE_DIR)
@@ -33,6 +35,7 @@ ALLOWED_HOSTS = custom['allowed_hosts']
 
 INSTALLED_APPS = [
     'test_without_migrations', # needed for testing unmanaged models (with "managed=False")
+    'core',
     'provapp.apps.ProvappConfig',
     'rest_framework',
     'django.contrib.admin',

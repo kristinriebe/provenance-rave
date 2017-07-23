@@ -15,12 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from provapp import views
+from core import views as coreviews
 from django.views.generic import TemplateView
 
 
 urlpatterns = [
-    url(r'^$', views.IndexView.as_view(), name='index'),
+    url(r'^$', coreviews.IndexView.as_view(), name='index'),
     url(r'^provapp/', include('provapp.urls')),
     url(r'^admin/', admin.site.urls),
 ]

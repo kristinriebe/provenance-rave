@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'core/bootstrap.css' %}" >
+<link rel="stylesheet" type="text/css" href="{% static 'core/style.css' %}" >
+
+
+<title>{% block title %}{% endblock %}</title>
+
+<script type="text/javascript">
+{% block javascript %}{% endblock %}
+</script>
+
+</head>
+<body>
+
+<div class="container-fluid">
+{% block content %}{% endblock %}
+</div>
+
+<div style="clear:both"></div>
+<p class="footer">RAVE provenance webapp</p>
+</body>
+</html>

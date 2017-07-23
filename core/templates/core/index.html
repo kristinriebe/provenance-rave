@@ -1,0 +1,28 @@
+{% extends "core/base.html" %}
+
+{% block title %}RAVE Provenance{% endblock %}
+
+{% block content %}
+<h1>RAVE Provenance</h1>
+<h3>Provenance webapp prototype for the RAVE project</h3>
+<p>
+    Details about the RAVE project are available here:
+    <a href="https://www.rave-survey.org/project/" target="_blank">RAVE webpage</a>.
+</p>
+<p>
+    This is a prototype webapp for displaying provenance information of RAVE data, using the <a href="https://www.djangoproject.com/">Django framework</a> and the provenance package django-prov-vo.
+</p>
+
+<h4>Provenance endpoint</h4>
+<p>
+    Provenance specific links etc. can be found via the following link:
+    <ul>
+        <li>prov-vo endpoint: <a href="{% url 'provapp:index' %}">prov-vo</a></li>
+    </ul>
+</p>
+
+<h4>Sources</h4>
+<p>
+    The sources for this web application are available at <a href="https://github.com/kristinriebe/provenance-rave/">GitHub</a>.
+</p>
+{% endblock %}
