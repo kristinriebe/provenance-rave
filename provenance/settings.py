@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'test_without_migrations', # needed for testing unmanaged models (with "managed=False")
     'core',
     'provapp.apps.ProvappConfig',
+    'raveprov',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -13,13 +13,19 @@
     This is a prototype webapp for displaying provenance information of RAVE data, using the <a href="https://www.djangoproject.com/">Django framework</a> and the provenance package django-prov-vo.
 </p>
 
-<h4>Provenance endpoint</h4>
+<h4>General provenance endpoint</h4>
 <p>
     Provenance specific links etc. can be found via the following link:
     <ul>
         <li>prov-vo endpoint: <a href="{% url 'provapp:index' %}">prov-vo</a></li>
     </ul>
 </p>
+
+<h4>RAVE specific provenance links</h4>
+<ul>
+    <li>Detail/basic provenance, with graph output: <a href="{% url 'raveprov:get_observationId' %}">Form for RAVE_OBS_IDs</a> (experimental)</li>
+</ul>
+
 
 <h4>Sources</h4>
 <p>
