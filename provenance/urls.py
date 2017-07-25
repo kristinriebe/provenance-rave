@@ -21,7 +21,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     url(r'^$', coreviews.IndexView.as_view(), name='index'),
-    url(r'^provapp/', include('provapp.urls')),
+    url(r'^prov_vo/', include('prov_vo.urls')),
     url(r'^raveprov/', include('raveprov.urls')),
     url(r'^admin/', admin.site.urls),
 ]

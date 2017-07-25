@@ -23,10 +23,10 @@ cd provenance-rave
 pip install -r requirements.txt
 ```
 
-Download the django-prov-vo package, which contains the models implementing the IVOA provenance data model and the ProvDAL API:
+Download the django-prov_vo package, which contains the models implementing the IVOA provenance data model and the ProvDAL API:
 
 ```
-git clone https://github.com/kristinriebe/django-prov-vo.git ../prov-vo
+git clone https://github.com/kristinriebe/django-prov_vo.git ../prov_vo
 ```
 
 Copy custom_settings_example.yaml to custom_settings.yaml:
@@ -35,7 +35,7 @@ Copy custom_settings_example.yaml to custom_settings.yaml:
 cp custom_settings_example.yaml custom_settings.yaml
 ```
 
-and adjust as needed. Enter the path as well ('prov-vo': '../prov-vo') so the path will be appended in settings.py and the prov-vo package becomes available.
+and adjust as needed. Enter the path as well ('prov_vo': '../prov_vo') so the path will be appended in settings.py and the prov_vo package becomes available.
 
 Install graphviz package additionally, if you want to get images of the used model classes and their attributes (not required for running the web application):
 
@@ -89,7 +89,7 @@ python manage.py runserver
 
 and point a web browser to `localhost:8000`. Note that you can also provide a different port as additional argument to manage.py.
 
-The webapp should be visible in the browser and it should even work offline, since all libraries are stored in the directory: `provenance-rave/provapp/static`. For deploying the webapp on an apache webserver, see below.
+The webapp should be visible in the browser and it should even work offline, since all libraries are stored in the static directories. For deploying the webapp on an apache webserver, see below.
 
 ## Deploying the webapp on an apache server with `mod_wsgi`.
 * Follow the installation steps on the web server, i.e. create a directory, clone the sources from GitHub, create a virtual environment, activate it and install the requirements. Then proceed as follows:
@@ -156,10 +156,10 @@ The webapp should be visible in the browser and it should even work offline, sin
 If the `graphviz` library is installed additionally, an image of the models and their relations can be created automatically with:
 
 ```shell
-python manage.py graph_models provapp -o provenance-models.png
+python manage.py graph_models prov_vo_ -o provenance-models.png
 ```
 
-This produces an image file `provenance-models.png`, which shows all models from provapp with their attributes and relations. Other output formats like `pdf` or `svg` are also supported.
+This produces an image file `provenance-models.png`, which shows all models from prov_vo_ with their attributes and relations. Other output formats like `pdf` or `svg` are also supported.
 
 ## TODO:
 * Proper error handling

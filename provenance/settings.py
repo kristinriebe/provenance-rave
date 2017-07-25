@@ -21,7 +21,7 @@ except:
     raise
 
 # append path to prov-vo library package
-sys.path.append(custom['prov-vo'])
+sys.path.append(custom['prov_vo'])
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -38,7 +38,7 @@ ALLOWED_HOSTS = custom['allowed_hosts']
 INSTALLED_APPS = [
     'test_without_migrations', # needed for testing unmanaged models (with "managed=False")
     'core',
-    'provapp.apps.ProvappConfig',
+    'prov_vo.apps.ProvVoConfig',
     'raveprov',
     'rest_framework',
     'django.contrib.admin',

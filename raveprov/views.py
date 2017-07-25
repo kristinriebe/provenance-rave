@@ -6,8 +6,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from django.core.urlresolvers import reverse
 
-from provapp.models import Entity
-import provapp.utils
+from prov_vo.models import Entity
+import prov_vo.utils
 
 from .forms import ObservationIdForm
 from .models import RaveObsids
@@ -24,7 +24,7 @@ def get_observationId(request):
             try:
                 #print form.cleaned_data
                 #entity = Entity.objects.get(label=form.cleaned_data['observation_id'])
-                #return HttpResponseRedirect('/provapp/provdetail/'+entity.id)
+                #return HttpResponseRedirect('/prov_vo/provdetail/'+entity.id)
 
                 obsid = RaveObsids.objects.get(rave_obs_id=form.cleaned_data['observation_id'])
                 detail = form.cleaned_data['detail_flag']
@@ -99,7 +99,7 @@ def observationid_detailjson(request, observation_id, detail_flag):
                 params={'value': detail_flag},
             )
 
-    prov = provapp.utils.find_entity_graph(entity, prov, collection=collection)
+    prov = prov_vo.utils.find_entity_graph(entity, prov, collection=collection)
 
     prov_dict = {"nodes": prov['nodes_dict'], "links": prov['links_dict']}
 
