@@ -3,3 +3,4 @@
 'debug': 'True'
 'allowed_hosts': ['127.0.0.1', 'localhost']
 'static_url': '/static/'
+'prov-vo': '../prov-vo/'

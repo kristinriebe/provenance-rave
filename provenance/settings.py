@@ -1,11 +1,9 @@
 import os
 import sys
 
-sys.path.append('../../django-provapp/')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-#print("BASE_DIR: ", BASE_DIR)
 
 # Read values from a secret file, for use in production server environment
 import yaml
@@ -21,6 +19,10 @@ except yaml.YAMLError as e:
 except:
     print "Unexpected error: ", sys.exc_info()[0]
     raise
+
+# append path to prov-vo library package
+sys.path.append(custom['prov-vo'])
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = custom['key']

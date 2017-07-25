@@ -23,16 +23,19 @@ cd provenance-rave
 pip install -r requirements.txt
 ```
 
-The following packages are needed:
+Download the django-prov-vo package, which contains the models implementing the IVOA provenance data model and the ProvDAL API:
 
-django  
-djangorestframework  
-django-extensions -- for exporting model-graphs
-django-test-without-migrations -- for enabling tests of unmanaged models
-pygments  
-markdown  
-BeautifulSoup  
-pyyaml  
+```
+git clone https://github.com/kristinriebe/django-prov-vo.git ../prov-vo
+```
+
+Copy custom_settings_example.yaml to custom_settings.yaml:
+
+```
+cp custom_settings_example.yaml custom_settings.yaml
+```
+
+and adjust as needed. Enter the path as well ('prov-vo': '../prov-vo') so the path will be appended in settings.py and the prov-vo package becomes available.
 
 Install graphviz package additionally, if you want to get images of the used model classes and their attributes (not required for running the web application):
 
@@ -60,7 +63,7 @@ Currently, there are only a few tests available, but this will hopefully improve
 Currently, the RAVE metadata can be loaded into the sqlite database with:
 
 ```bash
-python manage.py loaddata prov_app/fixtures/rave_data.yaml
+python manage.py loaddata raveprov/fixtures/rave_data.yaml
 ```
 
 The data can be deleted again using
@@ -69,7 +72,7 @@ The data can be deleted again using
 cat data/delete_rave_data.sql | sqlite3 db.sqlite3
 ```
 
-Additionally, observation ids of RAVE are ingested into an additional table `rave_obsids`. Have a look into the `data/` directory to find scripts for loading them directly from a csv file into the database and then post-proccessing the data (using `update_rave_obsids.sql` for adding an id column etc.).
+Additionally, observation ids of RAVE are ingested into an extra table `rave_obsids`. Have a look into the `data/` directory to find scripts for loading them directly from a csv file into the database and then post-proccessing the data (using `update_rave_obsids.sql` for adding an id column etc.).
 
 ## Starting the webapp locally (test server)
 The server settings are read from an extra file `custom_settings.yaml` (see `provenance/settings.py`). An example file for running the webapp with the local test server is `custom_settings_example.yaml`, which you can just copy for local setup:
@@ -162,10 +165,6 @@ This produces an image file `provenance-models.png`, which shows all models from
 * Proper error handling
 * Write tests for checking all the functionality
 * Use MySQL database/remote database instead of Sqlite3
-
-* Implement xml serialization, votable serialization, for REST api and for Prov-DAL endoint
-* Implement "description" classes, i.e. ActivityDescription etc. (if needed)
-* Find a better way to visualize activityFlow, collection, detail/basic etc.
 
 * Remove unnecessary parts
 
