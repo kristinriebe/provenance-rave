@@ -28,7 +28,7 @@ sys.path.append(custom['prov_vo'])
 SECRET_KEY = custom['key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = custom['key']
+DEBUG = custom['debug']
 
 ALLOWED_HOSTS = custom['allowed_hosts']
 
