@@ -35,7 +35,7 @@ Copy custom_settings_example.yaml to custom_settings.yaml:
 cp custom_settings_example.yaml custom_settings.yaml
 ```
 
-and adjust as needed. Enter the path as well ('prov_vo': '../prov_vo') so the path will be appended in settings.py and the prov_vo package becomes available.
+and adjust as needed. Enter the path to prov_vo package as well ('prov_vo': '../prov_vo') so the path will be appended in settings.py and the prov_vo package becomes available.
 
 Install graphviz package additionally, if you want to get images of the used model classes and their attributes (not required for running the web application):
 
