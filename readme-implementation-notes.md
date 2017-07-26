@@ -16,8 +16,8 @@ Provenance tracking is done recursively, because:
 I defined two main functions `find_entity` and `find_activity` to take care of finding relations for an entity/activity and following the linked entities/activities further. There is no need to follow agents.
 
 ## Prov-DAL
-The Prov-DAL interface is implemented at /provapp/provdal/ and can be used to
-retrieve provenance records for one or more entities or activities based on their ids. A form is available at /provapp/provdalform for convenience to fill out the available parameters as described in the IVOA Provenance Working Draft.
+The Prov-DAL interface is implemented at /prov_vo/provdal/ and can be used to
+retrieve provenance records for one or more entities or activities based on their ids. A form is available at /prov_vo/provdalform for convenience to fill out the available parameters as described in the IVOA Provenance Working Draft.
 
 If a user asks for the provenance record of an entity or activity with option "STEP=LAST", then I interprete it as one step *backwards in time*. I have cases where the backwards provenance of a data item is not recorded, only for the collection to which it belongs. With STEP=LAST I originally returned only 1 provenance relation for the data item, which did not include any "backwards" information (just the hadMember link). Now, in such a case, I track the collection's relations further until at least one wasGeneratedBy or one wasDerivedFrom link is found.
 
