@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.core.urlresolvers import reverse
 
 from prov_vo.models import Entity
-import prov_vo.utils
+import raveprov.utils
 
 from .forms import ObservationIdForm
 from .models import RaveObsids
@@ -99,7 +99,7 @@ def observationid_detailjson(request, observation_id, detail_flag):
                 params={'value': detail_flag},
             )
 
-    prov = prov_vo.utils.find_entity_graph(entity, prov, collection=collection)
+    prov = raveprov.utils.find_entity_graph(entity, prov, collection=collection)
 
     prov_dict = {"nodes": prov['nodes_dict'], "links": prov['links_dict']}
 
