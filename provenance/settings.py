@@ -110,6 +110,42 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Logging setup
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log')
+        }
+    },
+    'loggers': {
+        'core': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'prov_vo': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'raveprov': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
@@ -130,3 +166,7 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR,'static/')
 STATIC_URL = custom['static_url']
 
+# custom settings for prov_vo app:
+PROV_VO_FORM_CONFIG = {
+    'obj_id.help_text': "Please enter the identifier for an entity (e.g. rave:20030411_1507m23_001 or rave:20121220_0752m38_089) or an activity (e.g. rave:act_irafReduction)"
+}
