@@ -147,6 +147,17 @@ LOGGING = {
     },
 }
 
+# custom settings for prov_vo app:
+PROV_VO_CONFIG = {
+    'namespaces': {
+        'rave': "http://www.rave-survey.org/prov/",
+    },
+    'provdalform': {
+        'obj_id.help_text': "Please enter the identifier for an entity (e.g. rave:20030411_1507m23_001 or rave:20121220_0752m38_089) or an activity (e.g. rave:act_irafReduction)"
+    }
+}
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
@@ -160,13 +171,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR,'static/')
 STATIC_URL = custom['static_url']
-
-# custom settings for prov_vo app:
-PROV_VO_FORM_CONFIG = {
-    'obj_id.help_text': "Please enter the identifier for an entity (e.g. rave:20030411_1507m23_001 or rave:20121220_0752m38_089) or an activity (e.g. rave:act_irafReduction)"
-}
