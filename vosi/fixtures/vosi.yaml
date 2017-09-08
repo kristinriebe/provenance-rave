@@ -1,0 +1,98 @@
+#   VOResource_Capability
+-   model: vosi.VOResource_Capability
+    fields:
+        id: 1
+        type:
+        standardID:
+        description: 'Web form for ProvDAL'
+-   model: vosi.VOResource_Capability
+    fields:
+        id: 2
+        type:
+        standardID: 'ivo://ivoa.net/std/VOSI#capabilities'
+        description: 'VOSI capabilities'
+-   model: vosi.VOResource_Capability
+    fields:
+        id: 3
+        type:
+        standardID: 'ivo://ivoa.net/std/VOSI#availability'
+        description: 'VOSI availability'
+-   model: vosi.VOResource_Capability
+    fields:
+        id: 4
+        type:
+        standardID: 'ivo://ivoa.net/std/ProvenanceDM#ProvDAL'
+        description: 'VOSI availability'
+
+
+#   VOResource_Interface
+-   model: vosi.VOResource_Interface
+    fields:
+        id: 1
+        type: "vr:WebBrowser"
+        capability: 1
+        version:
+        role:
+-   model: vosi.VOResource_Interface
+    fields:
+        id: 2
+        type: "vs:ParamHTTP"
+        capability: 2
+        version:
+        role: 'std'
+-   model: vosi.VOResource_Interface
+    fields:
+        id: 3
+        type: "vs:ParamHTTP"
+        capability: 3
+        version:
+        role: 'std'
+-   model: vosi.VOResource_Interface
+    fields:
+        id: 4
+        type: "vs:ParamHTTP"
+        capability: 4
+        version: '1.0'
+        role: 'std'
+
+#   VOResource_AccessURL
+-   model: vosi.VOResource_AccessURL
+    fields:
+        interface: 1
+        url: "http://escience.aip.de/provenance-rave/prov_vo/provdal_form/"
+        use: "full"
+-   model: vosi.VOResource_AccessURL
+    fields:
+        interface: 1
+        url: "http://localhost:8005/prov_vo/provdal_form/"
+        use: "full"
+-   model: vosi.VOResource_AccessURL
+    fields:
+        interface: 2
+        url: "http://escience.aip.de/provenance-rave/vosi/capabilities/"
+        use: "full"
+-   model: vosi.VOResource_AccessURL
+    fields:
+        interface: 3
+        url: "http://escience.aip.de/provenance-rave/vosi/availability/"
+        use: "full"
+-   model: vosi.VOResource_AccessURL
+    fields:
+        interface: 4
+        url: "http://escience.aip.de/provenance-rave/prov_vo/provdal"
+        use: "full"
+
+#   Availability
+-   model: vosi.AvailabilityOption
+    fields:
+        id: 1
+        available: true
+        note: 'service is ready for requests'
+-   model: vosi.AvailabilityOption
+    fields:
+        id: 2
+        available: false
+        note: 'service is down for maintenance'
+-   model: vosi.Availability
+    fields:
+        enabled: 1

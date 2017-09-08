@@ -10,3 +10,5 @@ custom_settings_server.yaml
 provenance-models-*.png
 static/
 *.log
+htmlcov
+.*

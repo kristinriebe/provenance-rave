@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'core',
     'prov_vo.apps.ProvVoConfig',
     'raveprov',
+    'vosi',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -111,7 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Logging setup
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
