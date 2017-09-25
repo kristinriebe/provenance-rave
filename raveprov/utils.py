@@ -12,7 +12,7 @@ def find_entity_graph(entity, prov, collection="include"):
     # no matter if it's a collection or not
     queryset = HadMember.objects.filter(entity=entity.id)
     for h in queryset:
-        print "Entity "+ entity.id + " is member of collection: ", h.collection.id
+        #print "Entity "+ entity.id + " is member of collection: ", h.collection.id
 
         # add entity to prov-json, if not yet done
         if h.collection.id not in prov['map_nodes_ids']:
@@ -47,7 +47,7 @@ def find_entity_graph(entity, prov, collection="include"):
 
     queryset = WasGeneratedBy.objects.filter(entity=entity.id)
     for wg in queryset:
-        print "Entity " + entity.id + " wasGeneratedBy activity: ", wg.activity.id
+        #print "Entity " + entity.id + " wasGeneratedBy activity: ", wg.activity.id
 
         # add activity to prov-json for graphics, if not yet done
         # (use map_activity_ids for easier checking)
@@ -68,7 +68,7 @@ def find_entity_graph(entity, prov, collection="include"):
     queryset = WasDerivedFrom.objects.filter(generatedEntity=entity.id)
     # this relation is unique, there can be only one ... or not?
     for wd in queryset:
-        print "Entity " + entity.id + " wasDerivedFrom entity ", wd.usedEntity.id
+        #print "Entity " + entity.id + " wasDerivedFrom entity ", wd.usedEntity.id
 
         # add entity to prov-json, if not yet done
         if wd.usedEntity.id not in prov['map_nodes_ids']:
@@ -96,7 +96,7 @@ def find_activity_graph(activity, prov, collection="include"):
     queryset = Used.objects.filter(activity=activity.id)
     for u in queryset:
 
-        print "Activity " + activity.id + " used entity ", u.entity.id
+        #print "Activity " + activity.id + " used entity ", u.entity.id
 
         # only continue, if collection or no collection or always
         cont = True
