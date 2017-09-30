@@ -22,6 +22,8 @@ class AvailabilityOption(models.Model):
 
     def __str__(self):
         return self.id
+
+
 class Availability(models.Model):
     enabled = models.ForeignKey(AvailabilityOption, on_delete=models.CASCADE)
 

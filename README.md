@@ -64,6 +64,7 @@ Currently, the RAVE metadata can be loaded into the sqlite database with:
 
 ```bash
 python manage.py loaddata raveprov/fixtures/rave_data.yaml
+python manage.py loaddata raveprov/fixtures/vosi.yaml
 ```
 
 The data can be deleted again using
