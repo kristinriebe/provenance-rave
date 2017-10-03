@@ -4,3 +4,4 @@
 'allowed_hosts': ['127.0.0.1', 'localhost']
 'static_url': '/static/'
 'prov_vo': '../prov_vo/'
+'vosi': '../vosi/'

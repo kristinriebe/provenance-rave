@@ -22,7 +22,7 @@ except:
 
 # append path to prov-vo library package
 sys.path.append(custom['prov_vo'])
-sys.path.append('../../django-vosi/')
+sys.path.append(custom['vosi'])
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = custom['key']

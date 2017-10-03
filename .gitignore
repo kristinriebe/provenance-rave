@@ -12,3 +12,4 @@ static/
 *.log
 htmlcov
 .*
+.travis.yml

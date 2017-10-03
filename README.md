@@ -7,6 +7,12 @@ https://escience.aip.de/provenance-rave/
 
 **Warning: This is at a very preliminary state, used only for testing purposes and object to many changes! No guarantees for anything!**
 
+## Dependencies
+Needs the following external packages in addition to the requirements:
+
+https://github.com/github/kristinriebe/django-prov_vo/
+https://github.com/github/kristinriebe/django-vosi/
+
 ## Installation
 Clone the git repository:
 ```
@@ -23,10 +29,11 @@ cd provenance-rave
 pip install -r requirements.txt
 ```
 
-Download the django-prov_vo package, which contains the models implementing the IVOA provenance data model and the ProvDAL API:
+Download the django-prov_vo and django-vosi package, which contains the models implementing the IVOA provenance data model and the ProvDAL API with its VOSI resources:
 
 ```
 git clone https://github.com/kristinriebe/django-prov_vo.git ../prov_vo
+git clone https://github.com/kristinriebe/django-vosi.git ../vosi
 ```
 
 Copy custom_settings_example.yaml to custom_settings.yaml:
@@ -35,7 +42,7 @@ Copy custom_settings_example.yaml to custom_settings.yaml:
 cp custom_settings_example.yaml custom_settings.yaml
 ```
 
-and adjust as needed. Enter the path to prov_vo package as well ('prov_vo': '../prov_vo') so the path will be appended in settings.py and the prov_vo package becomes available.
+and adjust as needed. Enter the path to prov_vo package as well as the path to vosi package (e.g. 'prov_vo': '../prov_vo') so the path will be appended in settings.py and the prov_vo and vosi packages become available.
 
 Install graphviz package additionally, if you want to get images of the used model classes and their attributes (not required for running the web application):
 
