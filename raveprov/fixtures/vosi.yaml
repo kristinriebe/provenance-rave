@@ -28,13 +28,6 @@
         description: 'VOSI availability'
         appname: 'prov_vo'
 
--   model: vosi.VOResource_Capability
-    fields:
-        id: 5
-        type:
-        standardID: 'ivo://standardID'
-        description: 'TAP whatever'
-        appname: 'hubba'
 
 #   VOResource_Interface
 -   model: vosi.VOResource_Interface
@@ -65,49 +58,27 @@
         capability: 4
         version: '1.0'
         role: 'std'
--   model: vosi.VOResource_Interface
-    fields:
-        id: 5
-        type: "vs:ParamHTTP"
-        capability: 5
-        version: '1.0'
-        role: 'std'
 
 #   VOResource_AccessURL
 -   model: vosi.VOResource_AccessURL
     fields:
-        id: 1
         interface: 1
         url: "http://escience.aip.de/provenance-rave/prov_vo/provdal_form/"
         use: "full"
 -   model: vosi.VOResource_AccessURL
     fields:
-        id: 2
-        interface: 1
-        url: "http://localhost:8005/prov_vo/provdal_form/"
-        use: "full"
--   model: vosi.VOResource_AccessURL
-    fields:
-        id: 3
         interface: 2
         url: "http://escience.aip.de/provenance-rave/prov_vo/capabilities/"
         use: "full"
 -   model: vosi.VOResource_AccessURL
     fields:
-        id: 4
         interface: 3
         url: "http://escience.aip.de/provenance-rave/prov_vo/availability/"
         use: "full"
 -   model: vosi.VOResource_AccessURL
     fields:
-        id: 5
         interface: 4
         url: "http://escience.aip.de/provenance-rave/prov_vo/provdal"
-        use: "full"
--   model: vosi.VOResource_AccessURL
-    fields:
-        interface: 5
-        url: "http://foobar.com/tap/async"
         use: "full"
 
 #   Availability
@@ -128,8 +99,3 @@
         id: 1
         enabled: 1
         appname: 'prov_vo'
--   model: vosi.Availability
-    fields:
-        id: 2
-        enabled: 1
-        appname: 'hubba'
