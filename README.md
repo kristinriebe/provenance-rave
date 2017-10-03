@@ -70,7 +70,7 @@ python manage.py loaddata raveprov/fixtures/vosi.yaml
 The data can be deleted again using
 
 ```bash
-cat data/delete_rave_data.sql | sqlite3 db.sqlite3
+cat data/delete_rave_data.sql | sqlite3 provdb.sqlite3
 ```
 
 Additionally, observation ids of RAVE are ingested into an extra table `rave_obsids`. Have a look into the `data/` directory to find scripts for loading them directly from a csv file into the database and then post-proccessing the data (using `update_rave_obsids.sql` for adding an id column etc.).

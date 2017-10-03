@@ -1,93 +1,135 @@
 #   VOResource_Capability
--   model: prov_vo.VOResource_Capability
+-   model: vosi.VOResource_Capability
     fields:
         id: 1
         type:
         standardID:
         description: 'Web form for ProvDAL'
--   model: prov_vo.VOResource_Capability
+        appname: 'prov_vo'
+-   model: vosi.VOResource_Capability
     fields:
         id: 2
         type:
         standardID: 'ivo://ivoa.net/std/VOSI#capabilities'
         description: 'VOSI capabilities'
--   model: prov_vo.VOResource_Capability
+        appname: 'prov_vo'
+-   model: vosi.VOResource_Capability
     fields:
         id: 3
         type:
         standardID: 'ivo://ivoa.net/std/VOSI#availability'
         description: 'VOSI availability'
--   model: prov_vo.VOResource_Capability
+        appname: 'prov_vo'
+-   model: vosi.VOResource_Capability
     fields:
         id: 4
         type:
-        standardID: 'ivo://ivoa.net/std/ProvenanceDM#ProvDAL-1.0'
+        standardID: 'ivo://ivoa.net/std/ProvenanceDM#ProvDAL'
         description: 'VOSI availability'
+        appname: 'prov_vo'
 
+-   model: vosi.VOResource_Capability
+    fields:
+        id: 5
+        type:
+        standardID: 'ivo://standardID'
+        description: 'TAP whatever'
+        appname: 'hubba'
 
 #   VOResource_Interface
--   model: prov_vo.VOResource_Interface
+-   model: vosi.VOResource_Interface
     fields:
         id: 1
         type: "vr:WebBrowser"
         capability: 1
         version:
         role:
--   model: prov_vo.VOResource_Interface
+-   model: vosi.VOResource_Interface
     fields:
         id: 2
         type: "vs:ParamHTTP"
         capability: 2
         version:
         role: 'std'
--   model: prov_vo.VOResource_Interface
+-   model: vosi.VOResource_Interface
     fields:
         id: 3
         type: "vs:ParamHTTP"
         capability: 3
         version:
         role: 'std'
--   model: prov_vo.VOResource_Interface
+-   model: vosi.VOResource_Interface
     fields:
         id: 4
         type: "vs:ParamHTTP"
         capability: 4
         version: '1.0'
         role: 'std'
+-   model: vosi.VOResource_Interface
+    fields:
+        id: 5
+        type: "vs:ParamHTTP"
+        capability: 5
+        version: '1.0'
+        role: 'std'
 
 #   VOResource_AccessURL
--   model: prov_vo.VOResource_AccessURL
+-   model: vosi.VOResource_AccessURL
     fields:
+        id: 1
         interface: 1
         url: "http://escience.aip.de/provenance-rave/prov_vo/provdal_form/"
         use: "full"
--   model: prov_vo.VOResource_AccessURL
+-   model: vosi.VOResource_AccessURL
     fields:
+        id: 2
+        interface: 1
+        url: "http://localhost:8005/prov_vo/provdal_form/"
+        use: "full"
+-   model: vosi.VOResource_AccessURL
+    fields:
+        id: 3
         interface: 2
         url: "http://escience.aip.de/provenance-rave/prov_vo/capabilities/"
         use: "full"
--   model: prov_vo.VOResource_AccessURL
+-   model: vosi.VOResource_AccessURL
     fields:
+        id: 4
         interface: 3
         url: "http://escience.aip.de/provenance-rave/prov_vo/availability/"
         use: "full"
--   model: prov_vo.VOResource_AccessURL
+-   model: vosi.VOResource_AccessURL
     fields:
+        id: 5
         interface: 4
         url: "http://escience.aip.de/provenance-rave/prov_vo/provdal"
         use: "full"
+-   model: vosi.VOResource_AccessURL
+    fields:
+        interface: 5
+        url: "http://foobar.com/tap/async"
+        use: "full"
 
 #   Availability
--   model: prov_vo.AvailabilityOption
+-   model: vosi.AvailabilityOption
     fields:
         id: 1
         available: true
         note: 'service is ready for requests'
--   model: prov_vo.AvailabilityOption
+        appname: 'prov_vo'
+-   model: vosi.AvailabilityOption
     fields:
         id: 2
         available: false
         note: 'service is down for maintenance'
--   model: prov_vo.Availability
+        appname: 'prov_vo'
+-   model: vosi.Availability
     fields:
+        id: 1
         enabled: 1
+        appname: 'prov_vo'
+-   model: vosi.Availability
+    fields:
+        id: 2
+        enabled: 1
+        appname: 'hubba'
