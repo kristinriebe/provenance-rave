@@ -5,7 +5,7 @@ A (more or less) live working example is available here (but may be outdated or 
 
 https://escience.aip.de/provenance-rave/
 
-**Warning: This is at a very preliminary state, used only for testing purposes and object to many changes! No guarantees for anything!**
+**Warning: This project is at a very preliminary state, used only for testing purposes and object to many changes! No guarantees for anything!**
 
 ## Dependencies
 Needs the following external packages in addition to the requirements:

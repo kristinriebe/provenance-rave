@@ -150,7 +150,10 @@ LOGGING = {
 # custom settings for prov_vo app:
 PROV_VO_CONFIG = {
     'namespaces': {
-        'rave': "http://www.rave-survey.org/prov/",
+        "rave": "http://www.rave-survey.org/prov/",
+        "org": "http://www.ivoa.net/documents/ProvenanceDM/ns/org/",
+        "vo": "http://www.ivoa.net/documents/ProvenanceDM/ns/vo",
+
     },
     'provdalform': {
         'obj_id.help_text': "Please enter the identifier for an entity (e.g. rave:20030411_1507m23_001 or rave:20121220_0752m38_089) or an activity (e.g. rave:act_irafReduction)"

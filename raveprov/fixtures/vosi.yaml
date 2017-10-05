@@ -25,7 +25,7 @@
         id: 4
         type:
         standardID: 'ivo://ivoa.net/std/ProvenanceDM#ProvDAL'
-        description: 'VOSI availability'
+        description: 'Provenance DAL interface'
         appname: 'prov_vo'
 
 

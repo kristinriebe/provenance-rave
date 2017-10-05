@@ -68,3 +68,10 @@ class RaveObsids(models.Model):
         filepath = basepath + "/" + date + "/" + fieldname + "*.fits"
 
         return {'originalfiles': filepath}
+
+#
+#class Entity(prov_vo.Entity):
+#    dataType= models.CharField(max_length=128, null=True, blank=True)
+#    # maybe use obscore_access_format?
+#    storageLocation = models.CharField('storage location', max_length=1024, null=True, blank=True)
+#    # may be use obscore_access_url here? But this is not the same as dorectory path on a server ...
