@@ -78,6 +78,7 @@ The data can be deleted again using
 
 ```bash
 cat data/delete_rave_data.sql | sqlite3 provdb.sqlite3
+cat data/delete_vosi_data.sql | sqlite3 provdb.sqlite3
 ```
 
 Additionally, observation ids of RAVE are ingested into an extra table `rave_obsids`. Have a look into the `data/` directory to find scripts for loading them directly from a csv file into the database and then post-proccessing the data (using `update_rave_obsids.sql` for adding an id column etc.).
@@ -123,7 +124,7 @@ The webapp should be visible in the browser and it should even work offline, sin
     - on Ubuntu, the user is called `www-data`.
   - you may need to repeat this each time you do `collectstatic`
 
-* Add a virtual host or an alias to your server configuration. Here's an example for a configuration on Debian using an alias (provenance-cosmosim), which you need to add to the config file at `/etc/httpd/conf.d/vhosts.conf`:
+* Add a virtual host or an alias to your server configuration. Here's an example for a configuration on Debian using an alias (provenance-rave), which you need to add to the config file at `/etc/httpd/conf.d/vhosts.conf`:
 
     ```
     <VirtualHost *:80>
@@ -177,7 +178,7 @@ This produces an image file `provenance-models.png`, which shows all models from
 * Remove unnecessary parts
 
 * Connect with real data from the real RAVE database
-    - map the existing RAVE DB information to provenance descriptions (create views?)
+    - map the existing RAVE DB information to provenance descriptions (create database views?)
     - use functions for filling in missing information (e.g. for storageLocations constructed from base path and observation id)
 
 * Write implementation report, including nice overview on used classes (graphical), also see [readme-implementation-notes.txt](readme-implementation-notes.txt)

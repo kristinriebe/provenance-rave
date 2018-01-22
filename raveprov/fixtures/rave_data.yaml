@@ -246,31 +246,27 @@
       file, rights: 'voprov:secure'}
 - model: prov_vo.entity
   pk: rave:0645m522I0049_fits
-  fields: {name: 0645m522I0049.fits, datatype: 'image, fits', annotation: One of the original fits files,
+  fields: {name: 0645m522I0049.fits, datatype: 'image, fits', description: 'rave:edesc_rawobsspectrum',
       rights: 'voprov:secure', storageLocation: unknown}
 - model: prov_vo.entity
   pk: rave:0645m522I0056_fits
-  fields: {name: 0645m522I0056.fits, datatype: 'image, fits', annotation: One of the
-      original fits files, rights: 'voprov:secure'}
+  fields: {name: 0645m522I0056.fits, datatype: 'image, fits', description: 'rave:edesc_rawobsspectrum', rights: 'voprov:secure'}
 - model: prov_vo.entity
   pk: rave:1705m611I0061_fits
-  fields: {name: 1705m611I0061.fits, datatype: 'image, fits', annotation: One of the
-      original fits files, rights: 'voprov:secure'}
+  fields: {name: 1705m611I0061.fits, datatype: 'image, fits', description: 'rave:edesc_rawobsspectrum', rights: 'voprov:secure'}
 - model: prov_vo.entity
   pk: rave:20030411_1507m23_001
-  fields: {name: 20030411_1507m23_001, annotation: Properties
-      of observed star derived for this observation in RAVE DR4, rights: 'voprov:public',
+  fields: {name: 20030411_1507m23_001, description: 'rave:edesc_stellarprop', rights: 'voprov:public',
     datatype: 'databaseRow', storageLocation: 'https://www.rave-surve.org/query/'}
 - model: prov_vo.entity
   pk: rave:20030411_1507m23_003
-  fields: {name: 20111230_0917m15_132, annotation: Properties
-      of observed star derived for this observation in RAVE DR4, rights: 'voprov:public',
+  fields: {name: 20111230_0917m15_132, description: 'rave:edesc_stellarprop', rights: 'voprov:public',
     datatype: 'databaseRow', storageLocation: 'https://www.rave-surve.org/query/'}
 - model: prov_vo.entity
   pk: rave:20030411_1507m23_004
-  fields: {name: 20030411_1507m23_004, annotation: Properties
-      of observed star derived for this observation in RAVE DR4, rights: 'voprov:public',
+  fields: {name: 20030411_1507m23_004, description: 'rave:edesc_stellarprop', rights: 'voprov:public',
     datatype: 'databaseRow', storageLocation: 'https://www.rave-surve.org/query/'}
+
 - model: prov_vo.entity
   pk: rave:20121220_0752m38_rvsun_089_cont_txt
   fields: {name: 20121220_0752m38.rvsun.089.cont.txt (sparv result),
@@ -498,6 +494,21 @@
   pk: vo:USNOB1
   fields: {name: USNOB1,
     rights: 'voprov:public', datatype: 'databaseTable, catalog'}
+
+
+# EntityDescription
+- model: prov_vo.entitydescription
+  pk: 'rave:edesc_stellarprop'
+  fields:
+    name: 'Derived stellar properties'
+    annotation: 'Properties of a star derived from its observed spectrum'
+    category: 'stellar_properties'
+- model: prov_vo.entitydescription
+  pk: 'rave:edesc_rawobsspectrum'
+  fields:
+    name: 'Raw observed spectrum'
+    annotation: 'Fits file with raw observed spectrum'
+    category: 'raw_data'
 
 
 # Collection

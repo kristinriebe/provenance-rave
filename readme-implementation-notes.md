@@ -6,6 +6,7 @@ The Django web application framework provides a convenient way to implement the 
 Provenance classes can be implemented directly as Django model classes.
 When using Django RestFramework, one can easily get an API for retrieving
 all activities/entities etc., getting details for one of them etc.
+
 Updating an object or adding a new one via the REST API is not implemented.
 
 ## TODO:
