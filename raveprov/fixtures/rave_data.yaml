@@ -1,8 +1,18 @@
 # Activity
 - model: prov_vo.activity
   pk: rave:act_chemicalPipeline
-  fields: {name: Chemical Pipeline, type: 'calc:ChemicalPipeline', annotation: The
-      chemical pipeline of RAVE}
+  fields:
+    name: Chemical Pipeline
+    description: 'rave:actdesc_chemicalPipeline'
+
+- model: prov_vo.activityDescription
+  pk: rave:actdesc_chemicalPipeline
+  fields:
+    type: 'calc:ChemicalPipeline'
+    annotation: The chemical pipeline of RAVE
+
+
+
 - model: prov_vo.activity
   pk: rave:act_classificationPipeline
   fields: {name: Spectral Classifications, type: 'obs:Classification', annotation: Spectral
@@ -13,9 +23,16 @@
       input catalogues}
 - model: prov_vo.activity
   pk: rave:act_dataextraction
-  fields: {name: Data Extraction, type: 'obs:Extraction', annotation: 'RAVE observations,
-      data release 4', startTime: !!timestamp '2003-04-11 14:42:16', endTime: !!timestamp '2012-05-27
-      17:05:00', doculink: 'RAVE DR4: Kordopatis et al. 2013, AJ, 146, Issue 5, article id. 134, pp.421-451'}
+  fields: {name: Data Extraction, startTime: !!timestamp '2003-04-11 14:42:16', endTime: !!timestamp '2012-05-27
+      17:05:00', description: 'rave:actdesc_dataextraction'}
+
+- model: prov_vo.activityDescription
+  pk: rave:actdesc_dataextraction
+  fields:
+    type: 'obs:Extraction'
+    annotation: 'Extracting stellar properties, merging with existing catalogues'
+    doculink: 'RAVE DR4: Kordopatis et al. 2013, AJ, 146, Issue 5, article id. 134, pp.421-451'
+
 - model: prov_vo.activity
   pk: rave:act_distancesBinney
   fields: {name: Distance calculation (Binney), type: 'calc:Distances', annotation: Distance

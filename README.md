@@ -165,7 +165,7 @@ The webapp should be visible in the browser and it should even work offline, sin
 If the `graphviz` library is installed additionally, an image of the models and their relations can be created automatically with:
 
 ```shell
-python manage.py graph_models prov_vo_ -o provenance-models.png
+python manage.py graph_models prov_vo -o provenance-models.png
 ```
 
 This produces an image file `provenance-models.png`, which shows all models from prov_vo_ with their attributes and relations. Other output formats like `pdf` or `svg` are also supported.
