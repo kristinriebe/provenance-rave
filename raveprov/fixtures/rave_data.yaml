@@ -506,11 +506,11 @@
 
 
 - model: prov_vo.entityDescription
-  pk: rave:edesc_reduced_fits
+  pk: rave:edesc_reduced_sky_fits
   fields:
-    name: reduced fits
+    name: reduced sky image
     datatype: 'image, fits'
-    annotation: reduced
+    annotation: reduced sky image
 
 - model: prov_vo.entityDescription
   pk: rave:edesc_reduced_rvsun_fits
@@ -533,7 +533,7 @@
     name: 20121220_0752m38.sky.fts (reduced)
     rights: 'voprov:secure'
     storageLocation: 'corvus.aip.de:/store/01/Data_RAVE_s/RAVE/reduced_IRAF/2012/20121220/0752m38.sky.fts'
-    description: rave:edesc_reduced_fits
+    description: rave:edesc_reduced_sky_fits
 
 
 - model: prov_vo.entity
@@ -1016,47 +1016,76 @@
 
 
 # Public catalogs for cross matching
+- model: prov_vo.entityDescription
+  pk: vo:edesc_2MASS
+  fields: {name: Description of 2MASS, datatype: 'databaseTable, catalog'}
+- model: prov_vo.entityDescription
+  pk: vo:edesc_PPMX
+  fields: {name: Description of PPMX, datatype: 'databaseTable, catalog'}
+- model: prov_vo.entityDescription
+  pk: vo:edesc_PPMXL
+  fields: {name: Description of PPMXL, datatype: 'databaseTable, catalog'}
+- model: prov_vo.entityDescription
+  pk: vo:edesc_SCS
+  fields: {name: Description of SCS,  datatype: 'databaseTable, catalog'}
+- model: prov_vo.entityDescription
+  pk: vo:edesc_SPM4
+  fields: {name: Description of SPM4, datatype: 'databaseTable, catalog'}
+- model: prov_vo.entityDescription
+  pk: vo:edesc_TYCHO2
+  fields: {name: Description of TYCHO2, datatype: 'databaseTable, catalog'}
+- model: prov_vo.entityDescription
+  pk: vo:edesc_UCAC2
+  fields: {name: Description of UCAC2, datatype: 'databaseTable, catalog'}
+- model: prov_vo.entityDescription
+  pk: vo:edesc_UCAC3
+  fields: {name: Description of UCAC3, datatype: 'databaseTable, catalog'}
+- model: prov_vo.entityDescription
+  pk: vo:edesc_UCAC4
+  fields: {name: Description of UCAC4, datatype: 'databaseTable, catalog'}
+- model: prov_vo.entityDescription
+  pk: vo:edesc_USNOB1
+  fields: {name: Description of USNOB1, datatype: 'databaseTable, catalog'}
+
 - model: prov_vo.entity
   pk: vo:2MASS
   fields: {name: 2MASS,
-    rights: 'voprov:public', datatype: 'databaseTable, catalog'}
+    rights: 'voprov:public', description: 'vo:edesc_2MASS'}
 - model: prov_vo.entity
   pk: vo:PPMX
   fields: {name: PPMX,
-    rights: 'voprov:public', datatype: 'databaseTable, catalog'}
+    rights: 'voprov:public', description: 'vo:edesc_PPMX'}
 - model: prov_vo.entity
   pk: vo:PPMXL
   fields: {name: PPMXL,
-    rights: 'voprov:public', datatype: 'databaseTable, catalog'}
+    rights: 'voprov:public', description: 'vo:edesc_PPMXL'}
 - model: prov_vo.entity
   pk: vo:SCS
-  fields: {name: SCS, rights: 'voprov:public',
-    datatype: 'databaseTable, catalog'}
+  fields: {name: SCS, rights: 'voprov:public', description: 'vo:edesc_SCS'}
 - model: prov_vo.entity
   pk: vo:SPM4
   fields: {name: SPM4,
-    rights: 'voprov:public', datatype: 'databaseTable, catalog'}
+    rights: 'voprov:public', description: 'vo:edesc_SPM4'}
 - model: prov_vo.entity
   pk: vo:TYCHO2
   fields: {name: TYCHO2,
-    rights: 'voprov:public', datatype: 'databaseTable, catalog'}
+    rights: 'voprov:public', description: 'vo:edesc_TYCHO2'}
 - model: prov_vo.entity
   pk: vo:UCAC2
   fields: {name: UCAC2,
-    rights: 'voprov:public', datatype: 'databaseTable, catalog'}
+    rights: 'voprov:public', description: 'vo:edesc_UCAC2'}
 - model: prov_vo.entity
   pk: vo:UCAC3
   fields: {name: UCAC3,
-    rights: 'voprov:public', datatype: 'databaseTable, catalog'}
+    rights: 'voprov:public', description: 'vo:edesc_UCAC3'}
 - model: prov_vo.entity
   pk: vo:UCAC4
   fields: {name: UCAC4,
-    rights: 'voprov:public', datatype: 'databaseTable, catalog'}
+    rights: 'voprov:public', description: 'vo:edesc_UCAC4'}
 - model: prov_vo.entity
   pk: vo:USNOB1
   fields: {name: USNOB1,
-    rights: 'voprov:public', datatype: 'databaseTable, catalog'}
-
+    rights: 'voprov:public', description: 'vo:edesc_USNOB1'}
 
 # Collection
 -   model: prov_vo.collection
@@ -1153,14 +1182,14 @@
 # Used
 - model: prov_vo.usedDescription
   pk: rave:used_iraf_orig
-  fields: {activityDescription: 'rave:actdesc_irafReduction', entityDescription: 'rave:edesc_fits_orig'}
+  fields: {activityDescription: 'rave:actdesc_irafReduction', entityDescription: 'rave:edesc_fits_orig', role: raw_image}
 - model: prov_vo.used
   pk: 0
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:fits_orig', description: 'rave:used_iraf_orig'}
 
 - model: prov_vo.usedDescription
   pk: rave:used_sparv_iraf
-  fields: {activityDescription: 'rave:actdesc_sparvPipeline', entityDescription: 'rave:edesc_irafReduced'}
+  fields: {activityDescription: 'rave:actdesc_sparvPipeline', entityDescription: 'rave:edesc_irafReduced', role: reduced_spectrum}
 - model: prov_vo.used
   pk: 1
   fields: {activity: 'rave:act_sparvPipeline', entity: 'rave:irafReduced', description: 'rave:used_sparv_iraf'}
@@ -1228,137 +1257,228 @@
   fields: {activity: 'rave:act_distancesZwitter', entity: 'rave:sparvProcessedData', description: 'rave:used_distZwitter_sparvdata'}
 
 
+- model: prov_vo.usedDescription
+  pk: rave:used_crpss_sparvdata
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'rave:edesc_sparvProcessedData'}
+- model: prov_vo.usedDescription
+  pk: rave:used_cross_scs
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'vo:edesc_SCS'}
+- model: prov_vo.usedDescription
+  pk: rave:used_cross_2mass
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'vo:edesc_2MASS'}
+- model: prov_vo.usedDescription
+  pk: rave:used_cross_ppmx
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'vo:edesc_PPMX'}
+- model: prov_vo.usedDescription
+  pk: rave:used_cross_ppmxl
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'vo:edesc_PPMXL'}
+- model: prov_vo.usedDescription
+  pk: rave:used_cross_spm4
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'vo:edesc_SPM4'}
+- model: prov_vo.usedDescription
+  pk: rave:used_cross_tycho2
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'vo:edesc_TYCHO2'}
+- model: prov_vo.usedDescription
+  pk: rave:used_cross_ucac2
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'vo:edesc_UCAC2'}
+- model: prov_vo.usedDescription
+  pk: rave:used_cross_ucac3
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'vo:edesc_UCAC3'}
+- model: prov_vo.usedDescription
+  pk: rave:used_cross_ucac4
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'vo:edesc_UCAC4'}
+- model: prov_vo.usedDescription
+  pk: rave:used_cross_usnob1
+  fields: {activityDescription: 'rave:actdesc_crossmatch', entityDescription: 'vo:edesc_USNOB1'}
+
+
 - model: prov_vo.used
   pk: 10
-  fields: {activity: 'rave:act_crossmatch', entity: 'rave:sparvProcessedData'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'rave:sparvProcessedData', description: 'rave:used_crpss_sparvdata'}
 - model: prov_vo.used
   pk: 11
-  fields: {activity: 'rave:act_crossmatch', entity: 'vo:SCS'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'vo:SCS', description: 'rave:used_cross_scs'}
 - model: prov_vo.used
   pk: 12
-  fields: {activity: 'rave:act_crossmatch', entity: 'vo:2MASS'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'vo:2MASS', description: 'rave:used_cross_2mass'}
 - model: prov_vo.used
   pk: 13
-  fields: {activity: 'rave:act_crossmatch', entity: 'vo:PPMX'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'vo:PPMX', description: 'rave:used_cross_ppmx'}
 - model: prov_vo.used
   pk: 14
-  fields: {activity: 'rave:act_crossmatch', entity: 'vo:PPMXL'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'vo:PPMXL', description: 'rave:used_cross_ppmx'}
 - model: prov_vo.used
   pk: 15
-  fields: {activity: 'rave:act_crossmatch', entity: 'vo:SPM4'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'vo:SPM4', description: 'rave:used_cross_spm4'}
 - model: prov_vo.used
   pk: 16
-  fields: {activity: 'rave:act_crossmatch', entity: 'vo:TYCHO2'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'vo:TYCHO2', description: 'rave:used_cross_tycho2'}
 - model: prov_vo.used
   pk: 17
-  fields: {activity: 'rave:act_crossmatch', entity: 'vo:UCAC2'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'vo:UCAC2', description: 'rave:used_cross_ucac2'}
 - model: prov_vo.used
   pk: 18
-  fields: {activity: 'rave:act_crossmatch', entity: 'vo:UCAC3'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'vo:UCAC3', description: 'rave:used_cross_ucac3'}
 - model: prov_vo.used
   pk: 19
-  fields: {activity: 'rave:act_crossmatch', entity: 'vo:UCAC4'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'vo:UCAC4', description: 'rave:used_cross_ucac4'}
 - model: prov_vo.used
   pk: 20
-  fields: {activity: 'rave:act_crossmatch', entity: 'vo:USNOB1'}
+  fields: {activity: 'rave:act_crossmatch', entity: 'vo:USNOB1', description: 'rave:used_cross_usnob1'}
+
+
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_sparvdata
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_sparvProcessedData'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_GKStellarParameters
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_GKStellarParameters'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_Classification_Matijevic
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_Classification_Matijevic'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_Chemical_Abundances
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_Chemical_Abundances'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_Distances_Binney
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_Distances_Binney'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_Distances_Zwitter
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_Distances_Zwitter'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_SCS
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_rave_SCS'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_2MASS
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_rave_2MASS'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_PPMX
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_rave_PPMX'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_PPMXL
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_rave_PPMXL'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_SPM4
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_rave_SPM4'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_TYCHO2
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_rave_TYCHO2'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_UCAC2
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_rave_UCAC2'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_UCAC3
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_rave_UCAC3'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_UCAC4
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_rave_UCAC4'}
+- model: prov_vo.usedDescription
+  pk: rave:used_extract_USNOB1
+  fields: {activityDescription: 'rave:actdesc_dataextraction', entityDescription: 'rave:edesc_rave_USNOB1'}
+
+
 - model: prov_vo.used
   pk: 21
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:sparvProcessedData'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:sparvProcessedData', description: 'rave:used_extract_sparvdata'}
 - model: prov_vo.used
   pk: 22
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:GKStellarParameters'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:GKStellarParameters', description: 'rave:used_extract_GKStellarParameters'}
 - model: prov_vo.used
   pk: 23
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_Classification_Matijevic'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_Classification_Matijevic', description: 'rave:used_extract_Classification_Matijevic'}
 - model: prov_vo.used
   pk: 24
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_Chemical_Abundances'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_Chemical_Abundances', description: 'rave:used_extract_Chemical_Abundances'}
 - model: prov_vo.used
   pk: 25
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_Distances_Binney'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_Distances_Binney', description: 'rave:used_extract_Distances_Binney'}
 - model: prov_vo.used
   pk: 26
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_Distances_Zwitter'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_Distances_Zwitter', description: 'rave:used_extract_Distances_Zwitter'}
 - model: prov_vo.used
   pk: 27
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_SCS'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_SCS', description: 'rave:used_extract_SCS'}
 - model: prov_vo.used
   pk: 28
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_2MASS'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_2MASS', description: 'rave:used_extract_2MASS'}
 - model: prov_vo.used
   pk: 29
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_PPMX'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_PPMX', description: 'rave:used_extract_PPMX'}
 - model: prov_vo.used
   pk: 30
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_PPMXL'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_PPMXL', description: 'rave:used_extract_PPMXL'}
 - model: prov_vo.used
   pk: 31
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_SPM4'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_SPM4', description: 'rave:used_extract_SPM4'}
 - model: prov_vo.used
   pk: 32
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_TYCHO2'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_TYCHO2', description: 'rave:used_extract_TYCHO2'}
 - model: prov_vo.used
   pk: 33
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_UCAC2'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_UCAC2', description: 'rave:used_extract_UCAC2'}
 - model: prov_vo.used
   pk: 34
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_UCAC3'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_UCAC3', description: 'rave:used_extract_UCAC3'}
 - model: prov_vo.used
   pk: 35
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_UCAC4'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_UCAC4', description: 'rave:used_extract_UCAC4'}
 - model: prov_vo.used
   pk: 36
-  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_USNOB1'}
+  fields: {activity: 'rave:act_dataextraction', entity: 'rave:DR4_rave_USNOB1', description: 'rave:used_extract_USNOB1'}
 
 
 - model: prov_vo.used
   pk: 37
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383I00001_fits',
-    role: raw image}
+    description: 'rave:used_iraf_orig'}
 - model: prov_vo.used
   pk: 38
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383I00002_fits',
-    role: raw image}
+    description: 'rave:used_iraf_orig'}
 - model: prov_vo.used
   pk: 39
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383I00003_fits',
-    role: raw image}
+    description: 'rave:used_iraf_orig'}
 - model: prov_vo.used
   pk: 40
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383I00004_fits',
-    role: raw image}
+    description: 'rave:used_iraf_orig'}
 - model: prov_vo.used
   pk: 41
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383I00005_fits',
-    role: raw image}
+    description: 'rave:used_iraf_orig'}
 - model: prov_vo.used
   pk: 42
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383I00006_fits',
-    role: raw image}
+    description: 'rave:used_iraf_orig'}
 - model: prov_vo.used
   pk: 43
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383I00007_fits',
-    role: raw image}
+    description: 'rave:used_iraf_orig'}
 - model: prov_vo.used
   pk: 44
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383I00008_fits',
-    role: raw image}
+    description: 'rave:used_iraf_orig'}
 - model: prov_vo.used
   pk: 45
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383I00009_fits',
-    role: raw image}
+    description: 'rave:used_iraf_orig'}
 - model: prov_vo.used
   pk: 46
   fields: {activity: 'rave:act_irafReduction', entity: 'rave:20121220_0752m383I00010_fits',
-    role: raw image}
+    description: 'rave:used_iraf_orig'}
+
+
 - model: prov_vo.used
   pk: 47
   fields: {activity: 'rave:act_sparvPipeline', entity: 'rave:20121220_0752m38_rvsun_fts',
-    role: reduced spectrum}
+    description: 'rave:used_sparv_iraf'}
+  #  role: reduced spectrum}
 - model: prov_vo.used
   pk: 48
   fields: {activity: 'rave:act_sparvPipeline', entity: 'rave:20121220_0752m38_sky_fts',
     role: sky image}
+    #, description: rave:used_sparv_reduced}
 - model: prov_vo.used
   pk: 49
   fields: {activity: 'rave:act_dataextraction', entity: 'rave:20121220_0752m38_rvsun_089_cont_txt',
