@@ -105,9 +105,9 @@
 - model: prov_vo.activityDescription
   pk: rave:actdesc_observations_UK-SCHMIDT
   fields:
-    name: RAVE Observation with UK-SCHMIDT Telesope
+    name: RAVE Observation with UK-SCHMIDT Telescope
     type: 'obs:Observation'
-    annotation: 'Single observation within RAVE project, with UK-SCHMIDT Telesope'
+    annotation: 'Single observation within RAVE project, with UK-SCHMIDT Telescope'
     #doculink: 'RAVE DR4: Kordopatis et al. 2013, AJ, 146, Issue 5, article id. 134, pp.421-451'
 
 - model: prov_vo.activity
